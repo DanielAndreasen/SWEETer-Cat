@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="https://bootswatch.com/lumen/bootstrap.css" />
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <title>SWEETer-Cat</title>
+  </head>
+
+  <!-- <header>
+    <nav class="navbar navbar-default">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="/"><span class="glyphicon glyphicon-home"></span> SWEETer-Cat</a>
+          <a class="navbar-text" href="/newrecipe/"><span class="glyphicon glyphicon-grain" aria-hidden="true"></span> New recipe</a>
+          <a class="navbar-text" href="/recipes/"><span class="glyphicon glyphicon-list" aria-hidden="true"></span> All recipes</a>
+          <a class="navbar-text" href="/menu/"><span class="glyphicon glyphicon-calendar" aria-hidden="true"></span> Weekly menu</a>
+        </div>
+
+        <div class="collapse navbar-collapse">
+          <ul class="navbar-right">
+            {% if session.logged_in %}
+              <a class="navbar-text" href="/favourites/"><span class="glyphicon glyphicon-heart"></span> Favourites</a>
+              <a class="navbar-text" href="/user/"><span class="glyphicon glyphicon-user"></span> {{ session.username }}</a>
+              <a class="navbar-text" href="/logout/"><span class="glyphicon glyphicon-log-out"></span> Logout</a></h5>
+            {% else %}
+              <a class="navbar-text" href="/register/"><span class="glyphicon glyphicon-pencil"></span> Sign up</a>
+              <a class="navbar-text" href="/login/"><span class="glyphicon glyphicon-log-in"></span> Login</a>
+            {% endif %}
+          </ul>
+        </div>
+      </div>
+    </nav>
+  </header> -->
+
+  <body>
+    <div class="container-fluid" style="min-hight:100%">
+      {% with messages = get_flashed_messages() %}
+        {% if messages %}
+          {% for message in messages %}
+            <div class="alert alert-info alert-dismissible">
+              <a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">&times;</a>
+              {{message}}
+            </div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+
+      {% block body %}
+
+      {% endblock %}
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="//cdn.ckeditor.com/4.6.2/basic/ckeditor.js"></script>
+    <script type="text/javascript">
+      CKEDITOR.replace('editor')
+    </script>
+  </body>
+</html>
