@@ -22,11 +22,11 @@
         <div class="collapse navbar-collapse">
           <ul class="navbar-right">
             {% if session.logged_in %}
-              <a class="navbar-text" href="/add/"><span class="glyphicon glyphicon-heart"></span> Favourites</a>
-              <a class="navbar-text" href="/edit/"><span class="glyphicon glyphicon-user"></span> {{ session.username }}</a>
-              <a class="navbar-text" href="/logout/"><span class="glyphicon glyphicon-log-out"></span> Logout</a></h5>
+              <a class="navbar-text" href="#"><span class="glyphicon glyphicon-heart"></span> Favourites</a>
+              <a class="navbar-text" href="#"><span class="glyphicon glyphicon-user"></span> {{ session.username }}</a>
+              <a class="navbar-text" href="#"><span class="glyphicon glyphicon-log-out"></span> Logout</a></h5>
             {% else %}
-              <a class="navbar-text" href="/login/"><span class="glyphicon glyphicon-log-in"></span> Login</a>
+              <a class="navbar-text" href="#"><span class="glyphicon glyphicon-log-in"></span> Login</a>
             {% endif %}
           </ul>
         </div>
