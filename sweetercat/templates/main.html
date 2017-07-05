@@ -7,4 +7,25 @@
   <p>Bringing <a href="https://www.astro.up.pt/resources/sweet-cat/">SWEET-Cat</a> to new sweets!</p>
 
 
+  <table class="table table-hover table-responsive">
+    <thead>
+      <tr>
+        <th>Star</th>
+        {% for column in columns %}
+          <th>{{ column }}</th>
+        {% endfor %}
+      </tr>
+    </thead>
+    <tbody>
+      {% for row in rows %}
+      <tr>
+        <th scope="row">{{ row['Star'] }}</th>
+        {% for column in columns %}
+          <td>{{row[column]}}</td>
+        {% endfor %}
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
 {% endblock %}

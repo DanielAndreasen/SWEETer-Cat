@@ -16,12 +16,6 @@ colors = {
     'Purple': '#9467bd',
 }
 
-def getitem(obj, item, default):
-    if item not in obj:
-        return default
-    else:
-        return obj[item]
-
 
 def readSC():
     names = ['Star', 'HD', 'RA', 'dec', 'Vmag', 'Vmagerr', 'par', 'parerr', 'source',
@@ -37,17 +31,20 @@ def readSC():
 # Setup Flask
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'cniuo324fny7w98r4m8374ty893724hf8'
+df, columns = readSC()
 
 
 @app.route('/')
 def homepage():
-    return render_template('main.html')
+    dfs = df.sort_values('updated', ascending=False)[:50]
+    columns = dfs.columns
+    dfs = dfs.loc[:, columns]
+    dfs = dfs.to_dict('records')
+    return render_template('main.html', rows=dfs, columns=columns[1:])
 
 
 @app.route("/plot/", methods=['GET', 'POST'])
 def plot():
-    # Read SC
-    df, columns = readSC()
     if request.method == 'POST':  # Something is being submitted
         color = request.form['color']
         x = request.form['x']
