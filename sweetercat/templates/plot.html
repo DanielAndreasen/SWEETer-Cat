@@ -1,0 +1,43 @@
+{% extends "template.html" %}
+
+{% block body %}
+
+    {{ js_resources|indent(4)|safe }}
+
+    {{ css_resources|indent(4)|safe }}
+
+    {{ plot_script|indent(4)|safe }}
+    <!-- A simple form for changing the graph -->
+    <p> Select your settings: </p>
+    <form name="color_button" method='POST'>
+        Color:
+        <select name="color">
+            {% for color in colors %}
+              <option {{ "selected" if color|indent(4)|safe == "{{ color }}" }} value="{{ color }}">{{ color }}</option>
+            {% endfor %}
+            <option selected="selected">{{ color }}</option>
+        </select>
+        xmin: <input type="text" name="x1" value="{{ x1 }}">
+        xmax: <input type="text" name="x2" value="{{ x2 }}">
+        ymin: <input type="text" name="y1" value="{{ y1 }}">
+        ymax: <input type="text" name="y2" value="{{ y2 }}">
+        <br>
+        x:
+        <select name="x">
+          {% for column in columns %}
+            <option value="{{ column }}">{{ column }}</option>
+          {% endfor %}
+          <option selected="selected">{{ x }}</option>
+        </select>
+        y:
+        <select name="y">
+          {% for column in columns %}
+            <option value="{{ column }}">{{ column }}</option>
+          {% endfor %}
+          <option selected="selected">{{ y }}</option>
+        </select>
+        <button type="submit">Submit</button>
+    </form>
+    {{ plot_div|indent(4)|safe }}
+
+{% endblock %}
