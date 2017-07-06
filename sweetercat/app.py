@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, url_for, redirect, session
-
+import numpy as np
 import pandas as pd
 from bokeh.plotting import figure, ColumnDataSource
 from bokeh.embed import components
@@ -7,8 +7,6 @@ from bokeh.plotting import figure
 from bokeh.resources import INLINE
 from bokeh.util.string import encode_utf8
 from bokeh.models import HoverTool, ColorBar, LinearColorMapper
-import matplotlib as mpl
-import matplotlib.pyplot as plt
 from bokeh.palettes import Viridis11
 
 COLORS = Viridis11
@@ -22,14 +20,22 @@ colors = {
 }
 
 
+def absolute_magnitude(parallax, m):
+    d = 1/parallax
+    mu = 5*np.log10(d) - 5
+    M = m-mu
+    return M
+
+
 def readSC():
     names = ['Star', 'HD', 'RA', 'dec', 'Vmag', 'Vmagerr', 'par', 'parerr', 'source',
              'teff', 'tefferr', 'logg', 'loggerr', 'logglc', 'logglcerr',
              'vt', 'vterr', 'feh', 'feherr', 'mass', 'masserr', 'Author', 'flag', 'updated', 'Comment']
     df = pd.read_table('sc.txt', names=names, na_values=['~'])
     df['flag'] = df['flag'] == 1
+    df['Vabs'] = [absolute_magnitude(p, m) for p, m in df[['par', 'Vmag']].values]
 
-    plots = ['Vmag', 'Vmagerr', 'par', 'parerr', 'teff', 'tefferr',
+    plots = ['Vmag', 'Vmagerr', 'Vabs', 'par', 'parerr', 'teff', 'tefferr',
              'logg', 'loggerr', 'logglc', 'logglcerr', 'vt', 'vterr',
              'feh', 'feherr', 'mass', 'masserr']
     return df, plots
@@ -89,14 +95,14 @@ def plot():
     else:
         color = 'Blue'
         x = df['teff']
-        y = df['logg']
-        z = None
+        y = df['Vabs']
+        z = df['logg']
         x1, x2 = 9000, 2500
-        y1, y2 = 1, 5.5
+        y1, y2 = 10, 33
         title = 'HR diagram'
         session['x'] = 'teff'
-        session['y'] = 'logg'
-        session['z'] = None
+        session['y'] = 'Vabs'
+        session['z'] = 'logg'
 
     stars = list(df['Star'].values)
     source = ColumnDataSource(data=dict(x=x, y=y, star=stars))
