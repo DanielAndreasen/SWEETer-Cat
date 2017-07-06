@@ -36,6 +36,14 @@
           {% endfor %}
           <option selected="selected">{{ y }}</option>
         </select>
+        Color:
+        <select name="z">
+          <option value="None">None</option>
+          {% for column in columns %}
+            <option value="{{ column }}">{{ column }}</option>
+          {% endfor %}
+          <option selected="selected">{{ z }}</option>
+        </select>
         <button type="submit">Submit</button>
     </form>
     {{ plot_div|indent(4)|safe }}

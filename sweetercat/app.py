@@ -6,7 +6,12 @@ from bokeh.embed import components
 from bokeh.plotting import figure
 from bokeh.resources import INLINE
 from bokeh.util.string import encode_utf8
-from bokeh.models import HoverTool
+from bokeh.models import HoverTool, ColorBar, LinearColorMapper
+import matplotlib as mpl
+import matplotlib.pyplot as plt
+from bokeh.palettes import Viridis11
+
+COLORS = Viridis11
 
 colors = {
     'Blue': '#1f77b4',
@@ -53,10 +58,19 @@ def homepage():
 def plot():
     if request.method == 'POST':  # Something is being submitted
         color = request.form['color']
-        x = request.form['x']
-        y = request.form['y']
-        if (not x in columns) or (not y in columns):
+        x = str(request.form['x'])
+        y = str(request.form['y'])
+        z = str(request.form['z'])
+        z = None if z == 'None' else z
+
+        if (x not in columns) or (y not in columns):
             return redirect(url_for('plot'))
+        if z is not None:
+            if z not in columns:
+                return redirect(url_for('plot'))
+            else:
+                z = df[z]
+                session['z'] = z.name
         x = df[x]
         y = df[y]
         x1, x2 = float(request.form['x1']), float(request.form['x2'])
@@ -76,11 +90,13 @@ def plot():
         color = 'Blue'
         x = df['teff']
         y = df['logg']
+        z = None
         x1, x2 = 9000, 2500
         y1, y2 = 1, 5.5
         title = 'HR diagram'
         session['x'] = 'teff'
         session['y'] = 'logg'
+        session['z'] = None
 
     stars = list(df['Star'].values)
     source = ColumnDataSource(data=dict(x=x, y=y, star=stars))
@@ -90,13 +106,25 @@ def plot():
         ("Star", "@star"),
     ])
 
+
     tools="resize,crosshair,pan,wheel_zoom,box_zoom,reset,box_select,lasso_select,save".split(',')
     fig = figure(title=title, tools=tools+[hover], plot_width=800, plot_height=400,
                  toolbar_location='above',
                  x_range=[x1, x2], y_range=[y1, y2])
 
-    cr = fig.circle('x', 'y', source=source, size=10,
-                    color=colors[color], fill_alpha=0.2, line_color=None)
+    if z is not None:  # Add colours and a colorbar
+        groups = pd.qcut(z.values, len(COLORS))
+        c = [COLORS[xx] for xx in groups.codes]
+        color_mapper = LinearColorMapper(palette="Viridis256", low=z.min(), high=z.max())
+        color_bar = ColorBar(color_mapper=color_mapper, label_standoff=12,
+                             border_line_color=None, location=(0,0))
+        fig.add_layout(color_bar, 'right')
+        cr = fig.circle('x', 'y', source=source, size=10,
+                        color=c, fill_alpha=0.2, line_color=None)
+        z = z.name
+    else:  # Simple colorbar
+        cr = fig.circle('x', 'y', source=source, size=10,
+                        color=colors[color], fill_alpha=0.2, line_color=None)
 
     js_resources = INLINE.render_js()
     css_resources = INLINE.render_css()
@@ -110,7 +138,7 @@ def plot():
         css_resources=css_resources,
         color=color,
         colors=colors,
-        x=x.name, y=y.name,
+        x=x.name, y=y.name, z=z,
         x1=x1, x2=x2, y1=y1, y2=y2,
         columns=columns
     )
