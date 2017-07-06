@@ -19,9 +19,9 @@
     <tbody>
       {% for row in rows %}
       <tr>
-        <th scope="row">{{ row['Star'] }}</th>
+        <th scope="row" style="white-space:nowrap;">{{ row['Star'] }}</th>
         {% for column in columns %}
-          <td>{{row[column]}}</td>
+          <td style="white-space:nowrap;">{{row[column]}}</td>
         {% endfor %}
       </tr>
       {% endfor %}
