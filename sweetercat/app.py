@@ -22,6 +22,7 @@ def readSC():
              'teff', 'tefferr', 'logg', 'loggerr', 'logglc', 'logglcerr',
              'vt', 'vterr', 'feh', 'feherr', 'mass', 'masserr', 'Author', 'flag', 'updated', 'Comment']
     df = pd.read_table('sc.txt', names=names, na_values=['~'])
+    df['flag'] = df['flag'] == 1
 
     plots = ['Vmag', 'Vmagerr', 'par', 'parerr', 'teff', 'tefferr',
              'logg', 'loggerr', 'logglc', 'logglcerr', 'vt', 'vterr',
@@ -37,6 +38,7 @@ df, columns = readSC()
 @app.route('/')
 def homepage():
     dfs = df.sort_values('updated', ascending=False)[:50]
+    dfs.fillna('...', inplace=True)
     columns = dfs.columns
     dfs = dfs.loc[:, columns]
     dfs = dfs.to_dict('records')
