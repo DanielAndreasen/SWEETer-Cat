@@ -38,6 +38,10 @@ df, columns = readSC()
 @app.route('/')
 def homepage():
     dfs = df.sort_values('updated', ascending=False)[:50]
+    for col in ('teff', 'tefferr'):  # These should be integers
+        idx = dfs[col].isnull()
+        dfs[col] = dfs[col].astype(str)
+        dfs.loc[~idx, col] = map(lambda s: s[:-2], dfs.loc[~idx, col])
     dfs.fillna('...', inplace=True)
     columns = dfs.columns
     dfs = dfs.loc[:, columns]
