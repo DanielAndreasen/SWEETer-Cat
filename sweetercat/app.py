@@ -37,7 +37,7 @@ df, columns = readSC()
 
 @app.route('/')
 def homepage():
-    dfs = df.sort_values('updated', ascending=False)[:50]
+    dfs = df.sort_values('updated', ascending=False)[:50]  # TODO: Remove the slicing!
     for col in ('teff', 'tefferr'):  # These should be integers
         idx = dfs[col].isnull()
         dfs[col] = dfs[col].astype(str)
