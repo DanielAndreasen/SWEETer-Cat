@@ -52,7 +52,7 @@ def homepage():
     for col in ('teff', 'tefferr'):  # These should be integers
         idx = dfs[col].isnull()
         dfs[col] = dfs[col].astype(str)
-        dfs.loc[~idx, col] = map(lambda s: s[:-2], dfs.loc[~idx, col])
+        dfs.loc[~idx, col] = list(map(lambda s: s[:-2], dfs.loc[~idx, col]))
     dfs.fillna('...', inplace=True)
     columns = dfs.columns
     dfs = dfs.loc[:, columns]
