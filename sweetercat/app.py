@@ -57,7 +57,6 @@ def planetAndStar():
 # Setup Flask
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'cniuo324fny7w98r4m8374ty893724hf8'
-df, columns = readSC()
 
 
 @app.route('/')
@@ -76,6 +75,7 @@ def homepage():
 
 @app.route("/plot/", methods=['GET', 'POST'])
 def plot():
+    df, columns = readSC()
     if request.method == 'POST':  # Something is being submitted
         color = request.form['color']
         x = str(request.form['x'])
@@ -88,9 +88,14 @@ def plot():
         if z is not None:
             if z not in columns:
                 return redirect(url_for('plot'))
-            else:
-                z = df[z]
-                session['z'] = z.name
+
+        if z is not None:
+            df = df[['Star', x, y, z]]
+            df.dropna(inplace=True)
+            z = df[z]
+        else:
+            df = df[['Star', x, y]]
+            df.dropna(inplace=True)
         x = df[x]
         y = df[y]
 
@@ -206,9 +211,14 @@ def plot_exo():
         if z is not None:
             if z not in columns:
                 return redirect(url_for('plot'))
-            else:
-                z = df[z]
-                session['z'] = z.name
+
+        if z is not None:
+            df = df[['Star', x, y, z]]
+            df.dropna(inplace=True)
+            z = df[z]
+        else:
+            df = df[['Star', x, y]]
+            df.dropna(inplace=True)
         x = df[x]
         y = df[y]
 
