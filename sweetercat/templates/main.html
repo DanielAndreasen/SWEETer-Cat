@@ -20,7 +20,7 @@
     <tbody>
       {% for row in rows %}
       <tr>
-        <th scope="row" style="white-space:nowrap;">{{ row['Star'] }}</th>
+        <th scope="row" style="white-space:nowrap;"><a target="_blank" href="http://simbad.u-strasbg.fr/simbad/sim-basic?Ident={{ row['Star'] }}">{{ row['Star'] }}</a></th>
         {% for column in columns %}
           <td style="white-space:nowrap;">{{row[column]}}</td>
         {% endfor %}
