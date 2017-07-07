@@ -50,7 +50,7 @@ def planetAndStar():
     df, columns = readSC()
     d = pd.merge(df, deu, left_on='Star', right_on='stName')
 
-    return d, columns+cols
+    return d, columns+cols[1:]
 
 
 # Setup Flask
