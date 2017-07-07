@@ -1,13 +1,13 @@
 from flask import Flask, render_template, request, url_for, redirect, session
 import numpy as np
 import pandas as pd
-from bokeh.plotting import figure, ColumnDataSource
+from PyAstronomy import pyasl
 from bokeh.embed import components
-from bokeh.plotting import figure
 from bokeh.resources import INLINE
-from bokeh.util.string import encode_utf8
-from bokeh.models import HoverTool, ColorBar, LinearColorMapper, LabelSet
 from bokeh.palettes import Viridis11
+from bokeh.util.string import encode_utf8
+from bokeh.plotting import figure, ColumnDataSource
+from bokeh.models import HoverTool, ColorBar, LinearColorMapper, LabelSet
 
 COLORS = Viridis11
 
@@ -39,6 +39,19 @@ def readSC():
              'logg', 'loggerr', 'logglc', 'logglcerr', 'vt', 'vterr',
              'feh', 'feherr', 'mass', 'masserr']
     return df, plots
+
+
+def planetAndStar():
+    deu = pd.DataFrame(pyasl.ExoplanetEU().data)
+    cols = ['stName', 'plMass', 'plRadius', 'period', 'sma', 'eccentricity',
+            'inclination', 'discovered', 'dist',
+            'mag_v', 'mag_i', 'mag_j', 'mag_h', 'mag_k']
+    deu = deu[cols]
+    df, columns = readSC()
+    d = pd.merge(df, deu, left_on='Star', right_on='stName')
+
+    return d, columns+cols
+
 
 # Setup Flask
 app = Flask(__name__)
@@ -165,6 +178,7 @@ def plot():
 
 @app.route("/plot-exo/", methods=['GET', 'POST'])
 def plot_exo():
+    df, columns = planetAndStar()
     if request.method == 'POST':  # Something is being submitted
         color = request.form['color']
         x = str(request.form['x'])
@@ -194,18 +208,23 @@ def plot_exo():
             y2 = max(y)
             session['y'] = y.name
 
+        xscale = str(request.form['xscale'])
+        yscale = str(request.form['yscale'])
+
         title = '{} vs. {}'.format(x.name, y.name)
     else:
         color = 'Blue'
-        x = df['teff']
-        y = df['Vabs']
-        z = df['logg']
-        x1, x2 = 9000, 2500
-        y1, y2 = 10, 33
-        title = 'HR diagram'
-        session['x'] = 'teff'
-        session['y'] = 'Vabs'
-        session['z'] = 'logg'
+        x = df['discovered']
+        y = df['plMass']
+        z = None
+        x1, x2 = 1985, 2020
+        y1, y2 = 0.0001, 200
+        xscale = 'linear'
+        yscale = 'log'
+        title = 'Towards Earth 2.0'
+        session['x'] = 'discovered'
+        session['y'] = 'plMass'
+        session['z'] = 'None'
 
     stars = list(df['Star'].values)
     source = ColumnDataSource(data=dict(x=x, y=y, star=stars))
@@ -219,7 +238,8 @@ def plot_exo():
     tools="resize,crosshair,pan,wheel_zoom,box_zoom,reset,box_select,lasso_select,save".split(',')
     fig = figure(title=title, tools=tools+[hover], plot_width=800, plot_height=400,
                  toolbar_location='above',
-                 x_range=[x1, x2], y_range=[y1, y2])
+                 x_range=[x1, x2], y_range=[y1, y2],
+                 x_axis_type=xscale, y_axis_type=yscale)
 
     if z is not None:  # Add colours and a colorbar
         groups = pd.qcut(z.values, len(COLORS))
@@ -231,9 +251,14 @@ def plot_exo():
         cr = fig.circle('x', 'y', source=source, size=10,
                         color=c, fill_alpha=0.2, line_color=None)
         z = z.name
+        fig.xaxis.axis_label = x.name
+        fig.yaxis.axis_label = y.name
+        color_bar.title = z
     else:  # Simple colorbar
         cr = fig.circle('x', 'y', source=source, size=10,
                         color=colors[color], fill_alpha=0.2, line_color=None)
+        fig.xaxis.axis_label = x.name
+        fig.yaxis.axis_label = y.name
 
     js_resources = INLINE.render_js()
     css_resources = INLINE.render_css()
@@ -249,6 +274,7 @@ def plot_exo():
         colors=colors,
         x=x.name, y=y.name, z=z,
         x1=x1, x2=x2, y1=y1, y2=y2,
+        xscale=xscale, yscale=yscale,
         columns=columns
     )
     return encode_utf8(html)
