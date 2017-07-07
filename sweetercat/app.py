@@ -93,8 +93,23 @@ def plot():
                 session['z'] = z.name
         x = df[x]
         y = df[y]
-        x1, x2 = float(request.form['x1']), float(request.form['x2'])
-        y1, y2 = float(request.form['y1']), float(request.form['y2'])
+
+        # Setting the limits
+        limits = [request.form['x1'], request.form['x2'],
+                  request.form['y1'], request.form['y2']]
+        for i, lim in enumerate(limits):
+            try:
+                limits[i] = float(lim)
+            except ValueError:
+                if i == 0:
+                    limits[i] = min(x)
+                elif i == 1:
+                    limits[i] = max(x)
+                elif i == 2:
+                    limits[i] = min(y)
+                elif i == 3:
+                    limits[i] = max(y)
+        x1, x2, y1, y2 = limits
 
         if x.name != session['x']:
             x1 = min(x)
@@ -196,8 +211,23 @@ def plot_exo():
                 session['z'] = z.name
         x = df[x]
         y = df[y]
-        x1, x2 = float(request.form['x1']), float(request.form['x2'])
-        y1, y2 = float(request.form['y1']), float(request.form['y2'])
+
+        # Setting the limits
+        limits = [request.form['x1'], request.form['x2'],
+                  request.form['y1'], request.form['y2']]
+        for i, lim in enumerate(limits):
+            try:
+                limits[i] = float(lim)
+            except ValueError:
+                if i == 0:
+                    limits[i] = min(x)
+                elif i == 1:
+                    limits[i] = max(x)
+                elif i == 2:
+                    limits[i] = min(y)
+                elif i == 3:
+                    limits[i] = max(y)
+        x1, x2, y1, y2 = limits
 
         if x.name != session['x']:
             x1 = min(x)
