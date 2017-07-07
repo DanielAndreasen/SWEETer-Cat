@@ -44,6 +44,18 @@
           {% endfor %}
           <option selected="selected">{{ z }}</option>
         </select>
+        x scale:
+        <select name="xscale">
+          <option value="linear">Linear</option>
+          <option value="log">Log</option>
+          <option selected="selected">{{ xscale }}</option>
+        </select>
+        y scale:
+        <select name="yscale">
+          <option value="linear">Linear</option>
+          <option value="log">Log</option>
+          <option selected="selected">{{ yscale }}</option>
+        </select>
         <button type="submit">Submit</button>
     </form>
 

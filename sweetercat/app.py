@@ -91,6 +91,109 @@ def plot():
             y2 = max(y)
             session['y'] = y.name
 
+        xscale = str(request.form['xscale'])
+        yscale = str(request.form['yscale'])
+
+        title = '{} vs. {}'.format(x.name, y.name)
+    else:
+        color = 'Blue'
+        x = df['teff']
+        y = df['Vabs']
+        z = df['logg']
+        x1, x2 = 9000, 2500
+        y1, y2 = 10, 33
+        xscale = 'linear'
+        yscale = 'linear'
+        title = 'HR diagram'
+        session['x'] = 'teff'
+        session['y'] = 'Vabs'
+        session['z'] = 'logg'
+
+    stars = list(df['Star'].values)
+    source = ColumnDataSource(data=dict(x=x, y=y, star=stars))
+    hover = HoverTool(tooltips=[
+        ("{}".format(x.name), "$x"),
+        ("{}".format(y.name), "$y"),
+        ("Star", "@star"),
+    ])
+
+
+    tools="resize,crosshair,pan,wheel_zoom,box_zoom,reset,box_select,lasso_select,save".split(',')
+    fig = figure(title=title, tools=tools+[hover], plot_width=800, plot_height=400,
+                 toolbar_location='above',
+                 x_range=[x1, x2], y_range=[y1, y2],
+                 x_axis_type=xscale, y_axis_type=yscale)
+
+    if z is not None:  # Add colours and a colorbar
+        groups = pd.qcut(z.values, len(COLORS))
+        c = [COLORS[xx] for xx in groups.codes]
+        color_mapper = LinearColorMapper(palette="Viridis256", low=z.min(), high=z.max())
+        color_bar = ColorBar(color_mapper=color_mapper, label_standoff=12,
+                             border_line_color=None, location=(0,0))
+        fig.add_layout(color_bar, 'right')
+        cr = fig.circle('x', 'y', source=source, size=10,
+                        color=c, fill_alpha=0.2, line_color=None)
+        z = z.name
+        fig.xaxis.axis_label = x.name
+        fig.yaxis.axis_label = y.name
+        color_bar.title = z
+    else:  # Simple colorbar
+        cr = fig.circle('x', 'y', source=source, size=10,
+                        color=colors[color], fill_alpha=0.2, line_color=None)
+        fig.xaxis.axis_label = x.name
+        fig.yaxis.axis_label = y.name
+
+    js_resources = INLINE.render_js()
+    css_resources = INLINE.render_css()
+
+    script, div = components(fig)
+    html = render_template(
+        'plot.html',
+        plot_script=script,
+        plot_div=div,
+        js_resources=js_resources,
+        css_resources=css_resources,
+        color=color,
+        colors=colors,
+        x=x.name, y=y.name, z=z,
+        x1=x1, x2=x2, y1=y1, y2=y2,
+        xscale=xscale, yscale=yscale,
+        columns=columns
+    )
+    return encode_utf8(html)
+
+
+@app.route("/plot-exo/", methods=['GET', 'POST'])
+def plot_exo():
+    if request.method == 'POST':  # Something is being submitted
+        color = request.form['color']
+        x = str(request.form['x'])
+        y = str(request.form['y'])
+        z = str(request.form['z'])
+        z = None if z == 'None' else z
+
+        if (x not in columns) or (y not in columns):
+            return redirect(url_for('plot'))
+        if z is not None:
+            if z not in columns:
+                return redirect(url_for('plot'))
+            else:
+                z = df[z]
+                session['z'] = z.name
+        x = df[x]
+        y = df[y]
+        x1, x2 = float(request.form['x1']), float(request.form['x2'])
+        y1, y2 = float(request.form['y1']), float(request.form['y2'])
+
+        if x.name != session['x']:
+            x1 = min(x)
+            x2 = max(x)
+            session['x'] = x.name
+        if y.name != session['y']:
+            y1 = min(y)
+            y2 = max(y)
+            session['y'] = y.name
+
         title = '{} vs. {}'.format(x.name, y.name)
     else:
         color = 'Blue'
@@ -128,14 +231,9 @@ def plot():
         cr = fig.circle('x', 'y', source=source, size=10,
                         color=c, fill_alpha=0.2, line_color=None)
         z = z.name
-        fig.xaxis.axis_label = x.name
-        fig.yaxis.axis_label = y.name
-        color_bar.title = z
     else:  # Simple colorbar
         cr = fig.circle('x', 'y', source=source, size=10,
                         color=colors[color], fill_alpha=0.2, line_color=None)
-        fig.xaxis.axis_label = x.name
-        fig.yaxis.axis_label = y.name
 
     js_resources = INLINE.render_js()
     css_resources = INLINE.render_css()
@@ -154,6 +252,7 @@ def plot():
         columns=columns
     )
     return encode_utf8(html)
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
