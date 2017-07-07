@@ -13,17 +13,17 @@ COLORS = Viridis11
 
 colors = {
     'Blue': '#1f77b4',
-    'Orange':   '#ff7f0e',
+    'Orange': '#ff7f0e',
     'Green': '#2ca02c',
-    'Red':  '#d62728',
+    'Red': '#d62728',
     'Purple': '#9467bd',
 }
 
 
 def absolute_magnitude(parallax, m):
-    d = 1/parallax
-    mu = 5*np.log10(d) - 5
-    M = m-mu
+    d = 1 / parallax
+    mu = 5 * np.log10(d) - 5
+    M = m - mu
     return M
 
 
@@ -39,6 +39,7 @@ def readSC():
              'logg', 'loggerr', 'logglc', 'logglcerr', 'vt', 'vterr',
              'feh', 'feherr', 'mass', 'masserr']
     return df, plots
+
 
 # Setup Flask
 app = Flask(__name__)
@@ -117,9 +118,8 @@ def plot():
         ("Star", "@star"),
     ])
 
-
-    tools="resize,crosshair,pan,wheel_zoom,box_zoom,reset,box_select,lasso_select,save".split(',')
-    fig = figure(title=title, tools=tools+[hover], plot_width=800, plot_height=400,
+    tools = "resize,crosshair,pan,wheel_zoom,box_zoom,reset,box_select,lasso_select,save".split(',')
+    fig = figure(title=title, tools=tools + [hover], plot_width=800, plot_height=400,
                  toolbar_location='above',
                  x_range=[x1, x2], y_range=[y1, y2],
                  x_axis_type=xscale, y_axis_type=yscale)
@@ -129,7 +129,7 @@ def plot():
         c = [COLORS[xx] for xx in groups.codes]
         color_mapper = LinearColorMapper(palette="Viridis256", low=z.min(), high=z.max())
         color_bar = ColorBar(color_mapper=color_mapper, label_standoff=12,
-                             border_line_color=None, location=(0,0))
+                             border_line_color=None, location=(0, 0))
         fig.add_layout(color_bar, 'right')
         cr = fig.circle('x', 'y', source=source, size=10,
                         color=c, fill_alpha=0.2, line_color=None)
@@ -215,9 +215,8 @@ def plot_exo():
         ("Star", "@star"),
     ])
 
-
-    tools="resize,crosshair,pan,wheel_zoom,box_zoom,reset,box_select,lasso_select,save".split(',')
-    fig = figure(title=title, tools=tools+[hover], plot_width=800, plot_height=400,
+    tools = "resize,crosshair,pan,wheel_zoom,box_zoom,reset,box_select,lasso_select,save".split(',')
+    fig = figure(title=title, tools=tools + [hover], plot_width=800, plot_height=400,
                  toolbar_location='above',
                  x_range=[x1, x2], y_range=[y1, y2])
 
@@ -226,7 +225,7 @@ def plot_exo():
         c = [COLORS[xx] for xx in groups.codes]
         color_mapper = LinearColorMapper(palette="Viridis256", low=z.min(), high=z.max())
         color_bar = ColorBar(color_mapper=color_mapper, label_standoff=12,
-                             border_line_color=None, location=(0,0))
+                             border_line_color=None, location=(0, 0))
         fig.add_layout(color_bar, 'right')
         cr = fig.circle('x', 'y', source=source, size=10,
                         color=c, fill_alpha=0.2, line_color=None)
