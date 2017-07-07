@@ -20,3 +20,5 @@ tornado==4.5.1
 urllib3==1.21.1
 Werkzeug==0.12.2
 pandas==0.20.2
+PyAstronomy==0.11.0
+scipy==0.19.1

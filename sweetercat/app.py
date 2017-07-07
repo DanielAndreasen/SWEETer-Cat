@@ -47,6 +47,7 @@ def planetAndStar():
             'inclination', 'discovered', 'dist',
             'mag_v', 'mag_i', 'mag_j', 'mag_h', 'mag_k']
     deu = deu[cols]
+    deu['stName'] = [s.decode() for s in deu['stName']]
     df, columns = readSC()
     d = pd.merge(df, deu, left_on='Star', right_on='stName')
 
