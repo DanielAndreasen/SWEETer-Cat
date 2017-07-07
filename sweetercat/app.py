@@ -6,7 +6,7 @@ from bokeh.embed import components
 from bokeh.plotting import figure
 from bokeh.resources import INLINE
 from bokeh.util.string import encode_utf8
-from bokeh.models import HoverTool, ColorBar, LinearColorMapper
+from bokeh.models import HoverTool, ColorBar, LinearColorMapper, LabelSet
 from bokeh.palettes import Viridis11
 
 COLORS = Viridis11
@@ -128,9 +128,14 @@ def plot():
         cr = fig.circle('x', 'y', source=source, size=10,
                         color=c, fill_alpha=0.2, line_color=None)
         z = z.name
+        fig.xaxis.axis_label = x.name
+        fig.yaxis.axis_label = y.name
+        color_bar.title = z
     else:  # Simple colorbar
         cr = fig.circle('x', 'y', source=source, size=10,
                         color=colors[color], fill_alpha=0.2, line_color=None)
+        fig.xaxis.axis_label = x.name
+        fig.yaxis.axis_label = y.name
 
     js_resources = INLINE.render_js()
     css_resources = INLINE.render_css()
