@@ -7,14 +7,11 @@ This is an effort to modernise and update SWEET-Cat with plotting capabilities.
 
 ## Installation
 
-First, clone this repository
+Install and use this tool
 
     git clone https://github.com/DanielAndreasen/SWEETer-Cat
-
-Then install dependencies: `pip install -r requirements`
-
-Finally, change directory to the `sweetercat`, and run the `app.py`:
-
+    cd SWEETer-Cat
+    pip install -r requirements.txt
     cd sweetercat
     python app.py
 
