@@ -147,8 +147,8 @@ def plot():
         x = df['teff']
         y = df['Vabs']
         z = df['logg']
-        x1, x2 = 9000, 2500
-        y1, y2 = 10, 33
+        x1, x2 = 8000, 2500
+        y1, y2 = 33, 10
         xscale = 'linear'
         yscale = 'linear'
         session['x'] = 'teff'
