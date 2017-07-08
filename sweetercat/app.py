@@ -32,7 +32,7 @@ def readSC():
              'teff', 'tefferr', 'logg', 'loggerr', 'logglc', 'logglcerr',
              'vt', 'vterr', 'feh', 'feherr', 'mass', 'masserr', 'Author', 'flag', 'updated', 'Comment']
     df = pd.read_table('sc.txt', names=names, na_values=['~'])
-    df['flag'] = df['flag'] == 1
+    df['flag'] = df['flag'] == 1  # Turn to bool
     df['Vabs'] = [absolute_magnitude(p, m) for p, m in df[['par', 'Vmag']].values]
 
     plots = ['Vmag', 'Vmagerr', 'Vabs', 'par', 'parerr', 'teff', 'tefferr',
@@ -91,11 +91,11 @@ def plot():
                 return redirect(url_for('plot'))
 
         if z is not None:
-            df = df[list(set(['Star', x, y, z]))]
+            df = df[list(set(['Star', x, y, z, "flag"]))]
             df.dropna(inplace=True)
             z = df[z]
         else:
-            df = df[list(set(['Star', x, y]))]
+            df = df[list(set(['Star', x, y, "flag"]))]
             df.dropna(inplace=True)
         x = df[x]
         y = df[y]
@@ -129,6 +129,7 @@ def plot():
         xscale = str(request.form['xscale'])
         yscale = str(request.form['yscale'])
 
+        checkboxes = request.form.getlist("checkboxes")
     else:
         color = 'Blue'
         x = df['teff']
@@ -141,8 +142,19 @@ def plot():
         session['x'] = 'teff'
         session['y'] = 'Vabs'
         session['z'] = 'logg'
+        checkboxes = []
 
-    stars = list(df['Star'].values)
+
+    stars = df['Star']
+    if "homo" in checkboxes:
+        flag = df["flag"]
+        stars = stars[flag]
+        x = x[flag]
+        y = y[flag]
+        if z is not None:
+            z = z[flag]
+
+    stars = list(stars.values)  # Turn series into list.
     source = ColumnDataSource(data=dict(x=x, y=y, star=stars))
     hover = HoverTool(tooltips=[
         ("{}".format(x.name), "$x"),
@@ -153,7 +165,7 @@ def plot():
     minx, maxx, miny, maxy = min([x1, x2]), max([x1, x2]), min([y1, y2]), max([y1, y2])  # Incase axis is revesed
     num_points = np.sum((minx < x) & (x < maxx) & (miny < y) & (y < maxy))
     title = '{} vs. {}\tNumber of objects in plot: {}'.format(x.name, y.name, num_points)
-    
+
     tools = "resize,crosshair,pan,wheel_zoom,box_zoom,reset,box_select,lasso_select,save".split(',')
     fig = figure(title=title, tools=tools + [hover], plot_width=800, plot_height=400,
                  toolbar_location='above',
@@ -194,6 +206,7 @@ def plot():
         x=x.name, y=y.name, z=z,
         x1=x1, x2=x2, y1=y1, y2=y2,
         xscale=xscale, yscale=yscale,
+        checkboxes=checkboxes,
         columns=columns
     )
     return encode_utf8(html)
@@ -216,11 +229,11 @@ def plot_exo():
                 return redirect(url_for('plot'))
 
         if z is not None:
-            df = df[list(set(['Star', x, y, z]))]
+            df = df[list(set(['Star', x, y, z, "flag"]))]
             df.dropna(inplace=True)
             z = df[z]
         else:
-            df = df[list(set(['Star', x, y]))]
+            df = df[list(set(['Star', x, y, "flag"]))]
             df.dropna(inplace=True)
         x = df[x]
         y = df[y]
@@ -254,6 +267,8 @@ def plot_exo():
         xscale = str(request.form['xscale'])
         yscale = str(request.form['yscale'])
 
+        checkboxes = request.form.getlist("checkboxes")
+
         title = '{} vs. {}'.format(x.name, y.name)
     else:
         color = 'Blue'
@@ -268,8 +283,18 @@ def plot_exo():
         session['x'] = 'discovered'
         session['y'] = 'plMass'
         session['z'] = 'None'
+        checkboxes = []
 
-    stars = list(df['Star'].values)
+    stars = df['Star']
+    if "homo" in checkboxes:
+        flag = df["flag"]
+        stars = stars[flag]
+        x = x[flag]
+        y = y[flag]
+        if z is not None:
+            z = z[flag]
+
+    stars = list(stars.values)  # Turn series into list.
     source = ColumnDataSource(data=dict(x=x, y=y, star=stars))
     hover = HoverTool(tooltips=[
         ("{}".format(x.name), "$x"),
@@ -317,6 +342,7 @@ def plot_exo():
         x=x.name, y=y.name, z=z,
         x1=x1, x2=x2, y1=y1, y2=y2,
         xscale=xscale, yscale=yscale,
+        checkboxes=checkboxes,
         columns=columns
     )
     return encode_utf8(html)
