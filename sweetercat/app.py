@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, url_for, redirect, session
+from werkzeug.contrib.cache import SimpleCache
 import numpy as np
 import pandas as pd
 from PyAstronomy import pyasl
@@ -10,6 +11,11 @@ from bokeh.plotting import figure, ColumnDataSource
 from bokeh.models import HoverTool, ColorBar, LinearColorMapper, LabelSet
 
 COLORS = Viridis11
+
+# Setup Flask
+app = Flask(__name__)
+app.config['SECRET_KEY'] = 'cniuo324fny7w98r4m8374ty893724hf8'
+cache = SimpleCache()
 
 colors = {
     'Blue': '#1f77b4',
@@ -28,35 +34,41 @@ def absolute_magnitude(parallax, m):
 
 
 def readSC():
-    names = ['Star', 'HD', 'RA', 'dec', 'Vmag', 'Vmagerr', 'par', 'parerr', 'source',
-             'teff', 'tefferr', 'logg', 'loggerr', 'logglc', 'logglcerr',
-             'vt', 'vterr', 'feh', 'feherr', 'mass', 'masserr', 'Author', 'flag', 'updated', 'Comment']
-    df = pd.read_table('sc.txt', names=names, na_values=['~'])
-    df['flag'] = df['flag'] == 1  # Turn to bool
-    df['Vabs'] = [absolute_magnitude(p, m) for p, m in df[['par', 'Vmag']].values]
+    df = cache.get('starDB')
+    plots = cache.get('starCols')
+    if df is None:
+        names = ['Star', 'HD', 'RA', 'dec', 'Vmag', 'Vmagerr', 'par', 'parerr', 'source',
+                 'teff', 'tefferr', 'logg', 'loggerr', 'logglc', 'logglcerr',
+                 'vt', 'vterr', 'feh', 'feherr', 'mass', 'masserr', 'Author', 'flag', 'updated', 'Comment']
+        df = pd.read_table('sc.txt', names=names, na_values=['~'])
+        df['flag'] = df['flag'] == 1  # Turn to bool
+        df['Vabs'] = [absolute_magnitude(p, m) for p, m in df[['par', 'Vmag']].values]
 
-    plots = ['Vmag', 'Vmagerr', 'Vabs', 'par', 'parerr', 'teff', 'tefferr',
-             'logg', 'loggerr', 'logglc', 'logglcerr', 'vt', 'vterr',
-             'feh', 'feherr', 'mass', 'masserr']
+        plots = ['Vmag', 'Vmagerr', 'Vabs', 'par', 'parerr', 'teff', 'tefferr',
+                 'logg', 'loggerr', 'logglc', 'logglcerr', 'vt', 'vterr',
+                 'feh', 'feherr', 'mass', 'masserr']
+        cache.set('starDB', df, timeout=5*60)
+        cache.set('starCols', plots, timeout=5*60)
     return df, plots
 
 
 def planetAndStar():
-    deu = pd.DataFrame(pyasl.ExoplanetEU().data)
-    cols = ['stName', 'plMass', 'plRadius', 'period', 'sma', 'eccentricity',
-            'inclination', 'discovered', 'dist',
-            'mag_v', 'mag_i', 'mag_j', 'mag_h', 'mag_k']
-    deu = deu[cols]
-    deu['stName'] = [s.decode() for s in deu['stName']]
-    df, columns = readSC()
-    d = pd.merge(df, deu, left_on='Star', right_on='stName')
+    d = cache.get('planetDB')
+    c = cache.get('planetCols')
+    if d is None:
+        deu = pd.DataFrame(pyasl.ExoplanetEU().data)
+        cols = ['stName', 'plMass', 'plRadius', 'period', 'sma', 'eccentricity',
+                'inclination', 'discovered', 'dist',
+                'mag_v', 'mag_i', 'mag_j', 'mag_h', 'mag_k']
+        deu = deu[cols]
+        deu['stName'] = [s.decode() for s in deu['stName']]
+        df, columns = readSC()
+        d = pd.merge(df, deu, left_on='Star', right_on='stName')
+        c = columns+cols[1:]
+        cache.set('planetDB', d, timeout=5*60)
+        cache.set('planetCols', c, timeout=5*60)
 
-    return d, columns+cols[1:]
-
-
-# Setup Flask
-app = Flask(__name__)
-app.config['SECRET_KEY'] = 'cniuo324fny7w98r4m8374ty893724hf8'
+    return d, c
 
 
 @app.route('/')
