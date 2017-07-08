@@ -61,6 +61,7 @@ app.config['SECRET_KEY'] = 'cniuo324fny7w98r4m8374ty893724hf8'
 
 @app.route('/')
 def homepage():
+    df, columns = readSC()
     dfs = df.sort_values('updated', ascending=False)[:50]  # TODO: Remove the slicing!
     for col in ('teff', 'tefferr'):  # These should be integers
         idx = dfs[col].isnull()
