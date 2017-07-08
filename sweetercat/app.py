@@ -167,7 +167,6 @@ def plot():
             z = z[flag]
 
     stars = list(stars.values)  # Turn series into list.
-    source = ColumnDataSource(data=dict(x=x, y=y, star=stars))
     hover = HoverTool(tooltips=[
         ("{}".format(x.name), "$x"),
         ("{}".format(y.name), "$y"),
@@ -187,17 +186,20 @@ def plot():
     if z is not None:  # Add colours and a colorbar
         groups = pd.qcut(z.values, len(COLORS))
         c = [COLORS[xx] for xx in groups.codes]
+        source = ColumnDataSource(data=dict(x=x, y=y, c=c, star=stars))
+
         color_mapper = LinearColorMapper(palette="Viridis256", low=z.min(), high=z.max())
         color_bar = ColorBar(color_mapper=color_mapper, label_standoff=12,
                              border_line_color=None, location=(0, 0))
         fig.add_layout(color_bar, 'right')
         cr = fig.circle('x', 'y', source=source, size=10,
-                        color=c, fill_alpha=0.2, line_color=None)
+                        color='c', fill_alpha=0.2, line_color=None)
         z = z.name
         fig.xaxis.axis_label = x.name
         fig.yaxis.axis_label = y.name
         color_bar.title = z
     else:  # Simple colorbar
+        source = ColumnDataSource(data=dict(x=x, y=y, star=stars))
         cr = fig.circle('x', 'y', source=source, size=10,
                         color=colors[color], fill_alpha=0.2, line_color=None)
         fig.xaxis.axis_label = x.name
@@ -304,7 +306,6 @@ def plot_exo():
             z = z[flag]
 
     stars = list(stars.values)  # Turn series into list.
-    source = ColumnDataSource(data=dict(x=x, y=y, star=stars))
     hover = HoverTool(tooltips=[
         ("{}".format(x.name), "$x"),
         ("{}".format(y.name), "$y"),
@@ -324,17 +325,20 @@ def plot_exo():
     if z is not None:  # Add colours and a colorbar
         groups = pd.qcut(z.values, len(COLORS))
         c = [COLORS[xx] for xx in groups.codes]
+        source = ColumnDataSource(data=dict(x=x, y=y, c=c, star=stars))
+
         color_mapper = LinearColorMapper(palette="Viridis256", low=z.min(), high=z.max())
         color_bar = ColorBar(color_mapper=color_mapper, label_standoff=12,
                              border_line_color=None, location=(0, 0))
         fig.add_layout(color_bar, 'right')
         cr = fig.circle('x', 'y', source=source, size=10,
-                        color=c, fill_alpha=0.2, line_color=None)
+                        color='c', fill_alpha=0.2, line_color=None)
         z = z.name
         fig.xaxis.axis_label = x.name
         fig.yaxis.axis_label = y.name
         color_bar.title = z
-    else:  # Simple colorbar
+    else:
+        source = ColumnDataSource(data=dict(x=x, y=y, star=stars))
         cr = fig.circle('x', 'y', source=source, size=10,
                         color=colors[color], fill_alpha=0.2, line_color=None)
         fig.xaxis.axis_label = x.name
