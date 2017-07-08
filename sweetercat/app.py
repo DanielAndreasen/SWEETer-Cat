@@ -129,7 +129,6 @@ def plot():
         xscale = str(request.form['xscale'])
         yscale = str(request.form['yscale'])
 
-        title = '{} vs. {}'.format(x.name, y.name)
     else:
         color = 'Blue'
         x = df['teff']
@@ -139,7 +138,6 @@ def plot():
         y1, y2 = 10, 33
         xscale = 'linear'
         yscale = 'linear'
-        title = 'HR diagram'
         session['x'] = 'teff'
         session['y'] = 'Vabs'
         session['z'] = 'logg'
@@ -152,6 +150,10 @@ def plot():
         ("Star", "@star"),
     ])
 
+    minx, maxx, miny, maxy = min([x1, x2]), max([x1, x2]), min([y1, y2]), max([y1, y2])  # Incase axis is revesed
+    num_points = np.sum((minx < x) & (x < maxx) & (miny < y) & (y < maxy))
+    title = '{} vs. {}\tNumber of objects in plot: {}'.format(x.name, y.name, num_points)
+    
     tools = "resize,crosshair,pan,wheel_zoom,box_zoom,reset,box_select,lasso_select,save".split(',')
     fig = figure(title=title, tools=tools + [hover], plot_width=800, plot_height=400,
                  toolbar_location='above',
