@@ -91,11 +91,11 @@ def plot():
                 return redirect(url_for('plot'))
 
         if z is not None:
-            df = df[['Star', x, y, z]]
+            df = df[list(set(['Star', x, y, z]))]
             df.dropna(inplace=True)
             z = df[z]
         else:
-            df = df[['Star', x, y]]
+            df = df[list(set(['Star', x, y]))]
             df.dropna(inplace=True)
         x = df[x]
         y = df[y]
@@ -214,11 +214,11 @@ def plot_exo():
                 return redirect(url_for('plot'))
 
         if z is not None:
-            df = df[['Star', x, y, z]]
+            df = df[list(set(['Star', x, y, z]))]
             df.dropna(inplace=True)
             z = df[z]
         else:
-            df = df[['Star', x, y]]
+            df = df[list(set(['Star', x, y]))]
             df.dropna(inplace=True)
         x = df[x]
         y = df[y]
