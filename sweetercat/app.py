@@ -39,8 +39,10 @@ def readSC():
     if df is None:
         names = ['Star', 'HD', 'RA', 'dec', 'Vmag', 'Vmagerr', 'par', 'parerr', 'source',
                  'teff', 'tefferr', 'logg', 'loggerr', 'logglc', 'logglcerr',
-                 'vt', 'vterr', 'feh', 'feherr', 'mass', 'masserr', 'Author', 'flag', 'updated', 'Comment']
-        df = pd.read_table('sc.txt', names=names, na_values=['~'])
+                 'vt', 'vterr', 'feh', 'feherr', 'mass', 'masserr', 'Author', 'link',
+                 'flag', 'updated', 'Comment', 'tmp']
+        df = pd.read_table('WEBSITE_online.rdb', names=names)
+        df.drop('tmp', axis=1, inplace=True)
         df['flag'] = df['flag'] == 1  # Turn to bool
         df['Vabs'] = [absolute_magnitude(p, m) for p, m in df[['par', 'Vmag']].values]
 
@@ -83,7 +85,7 @@ def homepage():
     columns = dfs.columns
     dfs = dfs.loc[:, columns]
     dfs = dfs.to_dict('records')
-    return render_template('main.html', rows=dfs, columns=columns[1:])
+    return render_template('main.html', rows=dfs, columns=columns[1:-1])
 
 
 @app.route("/plot/", methods=['GET', 'POST'])

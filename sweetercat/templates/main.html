@@ -13,7 +13,10 @@
       <tr>
         <th>Star</th>
         {% for column in columns %}
-          <th>{{ column }}</th>
+          {% if column == 'link' %}
+          {% else %}
+            <th>{{ column }}</th>
+          {% endif %}
         {% endfor %}
       </tr>
     </thead>
@@ -22,7 +25,12 @@
       <tr>
         <th scope="row" style="white-space:nowrap;"><a target="_blank" href="http://simbad.u-strasbg.fr/simbad/sim-basic?Ident={{ row['Star'] }}">{{ row['Star'] }}</a></th>
         {% for column in columns %}
-          <td style="white-space:nowrap;">{{row[column]}}</td>
+          {% if column == 'Author' %}
+            <td style="white-space:nowrap;"><a target="_blank" href="{{ row['link'] }}">{{ row['Author'] }}</a></td>
+          {% elif column == 'link' %}
+          {% else %}
+            <td style="white-space:nowrap;">{{row[column]}}</td>
+          {% endif %}
         {% endfor %}
       </tr>
       {% endfor %}
