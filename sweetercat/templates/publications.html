@@ -1,0 +1,24 @@
+{% extends "template.html" %}
+
+{% block body %}
+
+
+<h1>Main papers</h1>
+
+{% for paper in publications %}
+  <h3>{{ paper }}</h3>
+  <h4>Authors:</h4>
+  <small>
+    {% for author in publications[paper]['Authors'] %}
+      {{ author }},
+    {% endfor %}
+  </small>
+  <h4>Abstract: </h4>
+  <p>{{ publications[paper]['Abstract']|truncate(50) }}</p>
+{% endfor %}
+
+
+<h1>Derived papers</h1>
+
+
+{% endblock %}

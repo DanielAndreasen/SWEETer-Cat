@@ -367,5 +367,14 @@ def plot_exo():
     return encode_utf8(html)
 
 
+@app.route("/publications/")
+def publications():
+    pubs = {'Paper 1': {'Authors': ['Nuno', 'Sergio', 'Garik'],
+                        'Abstract': 'Some very nice paper presented here on SC'},
+            'Paper 2': {'Authors': ['Daniel', 'Sergio', 'Annelies', 'Nuno'],
+                        'Abstract': 'Some very nice paper presented here on SC and FASMA'},}
+    return render_template('publications.html', publications=pubs)
+
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
