@@ -5,20 +5,28 @@
 
 <h1>Main papers</h1>
 
-{% for paper in publications %}
-  <h3>{{ paper }}</h3>
+{% for paper in publications['main'] %}
+  <h3><a href="{{ paper['adsabs'] }}" target="_blank">{{ paper['title'] }}</a></h3>
   <h4>Authors:</h4>
   <small>
-    {% for author in publications[paper]['Authors'] %}
-      {{ author }},
-    {% endfor %}
+    {{ paper['authors'] }}
   </small>
   <h4>Abstract: </h4>
-  <p>{{ publications[paper]['Abstract']|truncate(50) }}</p>
+  <p>{{ paper['abstract'] }}</p>
 {% endfor %}
 
 
 <h1>Derived papers</h1>
+
+{% for paper in publications['other'] %}
+  <h3><a href="{{ paper['adsabs'] }}" target="_blank">{{ paper['title'] }}</a></h3>
+  <h4>Authors:</h4>
+  <small>
+    {{ paper['authors'] }}
+  </small>
+  <h4>Abstract: </h4>
+  <p>{{ paper['abstract'] }}</p>
+{% endfor %}
 
 
 {% endblock %}

@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, url_for, redirect, session
 from werkzeug.contrib.cache import SimpleCache
+import json
 import numpy as np
 import pandas as pd
 from PyAstronomy import pyasl
@@ -369,10 +370,8 @@ def plot_exo():
 
 @app.route("/publications/")
 def publications():
-    pubs = {'Paper 1': {'Authors': ['Nuno', 'Sergio', 'Garik'],
-                        'Abstract': 'Some very nice paper presented here on SC'},
-            'Paper 2': {'Authors': ['Daniel', 'Sergio', 'Annelies', 'Nuno'],
-                        'Abstract': 'Some very nice paper presented here on SC and FASMA'},}
+    with open('publications.json') as pubs:
+        pubs = json.load(pubs)
     return render_template('publications.html', publications=pubs)
 
 
