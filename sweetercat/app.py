@@ -217,7 +217,7 @@ def plot_page(df, columns, request, page):
                  x_axis_type=xscale, y_axis_type=yscale)
 
     if z is not None:  # Add colours and a colorbar
-        groups = pd.qcut(z.values, len(COLORS))
+        groups = pd.qcut(z.values, len(COLORS), duplicates="drop")
         c = [COLORS[xx] for xx in groups.codes]
         source = ColumnDataSource(data=dict(x=x, y=y, c=c, star=stars))
 
