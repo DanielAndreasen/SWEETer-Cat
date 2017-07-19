@@ -75,40 +75,6 @@ def planetAndStar():
     return d, c
 
 
-@app.route('/')
-def homepage():
-    df, columns = readSC()
-    dfs = df.sort_values('updated', ascending=False)[:50]  # TODO: Remove the slicing!
-    for col in ('teff', 'tefferr'):  # These should be integers
-        idx = dfs[col].isnull()
-        dfs[col] = dfs[col].astype(str)
-        dfs.loc[~idx, col] = list(map(lambda s: s[:-2], dfs.loc[~idx, col]))
-    dfs.fillna('...', inplace=True)
-    columns = dfs.columns
-    dfs = dfs.loc[:, columns]
-    dfs = dfs.to_dict('records')
-    return render_template('main.html', rows=dfs, columns=columns[1:-1])
-
-
-@app.route("/plot/", methods=['GET', 'POST'])
-def plot():
-    df, columns = readSC()
-    return plot_page(df, columns, request, page="sc")
-
-
-@app.route("/plot-exo/", methods=['GET', 'POST'])
-def plot_exo():
-    df, columns = planetAndStar()
-    return plot_page(df, columns, request, page="exo")
-
-
-@app.route("/publications/")
-def publications():
-    with open('publications.json') as pubs:
-        pubs = json.load(pubs)
-    return render_template('publications.html', publications=pubs)
-
-
 def plot_page(df, columns, request, page):
     if request.method == 'POST':  # Something is being submitted
         color = request.form['color']
@@ -299,6 +265,40 @@ def plot_page(df, columns, request, page):
         columns=columns
     )
     return encode_utf8(html)
+
+
+@app.route('/')
+def homepage():
+    df, columns = readSC()
+    dfs = df.sort_values('updated', ascending=False)[:50]  # TODO: Remove the slicing!
+    for col in ('teff', 'tefferr'):  # These should be integers
+        idx = dfs[col].isnull()
+        dfs[col] = dfs[col].astype(str)
+        dfs.loc[~idx, col] = list(map(lambda s: s[:-2], dfs.loc[~idx, col]))
+    dfs.fillna('...', inplace=True)
+    columns = dfs.columns
+    dfs = dfs.loc[:, columns]
+    dfs = dfs.to_dict('records')
+    return render_template('main.html', rows=dfs, columns=columns[1:-1])
+
+
+@app.route("/plot/", methods=['GET', 'POST'])
+def plot():
+    df, columns = readSC()
+    return plot_page(df, columns, request, page="sc")
+
+
+@app.route("/plot-exo/", methods=['GET', 'POST'])
+def plot_exo():
+    df, columns = planetAndStar()
+    return plot_page(df, columns, request, page="exo")
+
+
+@app.route("/publications/")
+def publications():
+    with open('publications.json') as pubs:
+        pubs = json.load(pubs)
+    return render_template('publications.html', publications=pubs)
 
 
 if __name__ == '__main__':
