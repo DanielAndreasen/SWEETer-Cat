@@ -244,11 +244,10 @@ def plot_page(df, columns, request, page):
         fig.yaxis.axis_label = y.name
 
     # Horizontal historgram
-    print(x[~np.isfinite(x)])
     if xscale == 'linear':
         hhist, hedges = np.histogram(x, bins=int(num_points/50))
     else:
-        xh1, xh2 = min(np.log10(x)), max(np.log10(x))
+        xh1, xh2 = np.log10(min(x)), np.log10(max(x))
         hhist, hedges = np.histogram(x, bins=np.logspace(xh1, xh2, int(num_points/50)))
     hzeros = np.zeros(len(hedges) - 1)
     hmax = max(hhist) * 1.1
@@ -270,7 +269,7 @@ def plot_page(df, columns, request, page):
     if yscale == 'linear':
         vhist, vedges = np.histogram(y, bins=int(num_points/50))
     else:
-        yh1, yh2 = min(np.log10(y)), max(np.log10(y))
+        yh1, yh2 = np.log10(min(y)), np.log10(max(y))
         vhist, vedges = np.histogram(y, bins=np.logspace(yh1, yh2, int(num_points/50)))
     vzeros = np.zeros(len(vedges) - 1)
     vmax = max(vhist) * 1.1
