@@ -165,6 +165,8 @@ def plot_page(df, columns, request, page):
     else:
         if page == "exo":
             color = 'Blue'
+            df = df[list(set(['Star', 'discovered', 'plMass']))]
+            df.dropna(inplace=True)
             x = df['discovered']
             y = df['plMass']
             z = None
@@ -178,6 +180,8 @@ def plot_page(df, columns, request, page):
             checkboxes = []
         else:
             color = 'Blue'
+            df = df[list(set(['Star', 'teff', 'Vabs', 'logg']))]
+            df.dropna(inplace=True)
             x = df['teff']
             y = df['Vabs']
             z = df['logg']
