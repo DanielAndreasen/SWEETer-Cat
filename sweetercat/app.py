@@ -245,14 +245,19 @@ def plot_page(df, columns, request, page):
 
     # Horizontal historgram
     print(x[~np.isfinite(x)])
-    hhist, hedges = np.histogram(x, bins=20)
+    if xscale == 'linear':
+        hhist, hedges = np.histogram(x, bins=int(num_points/50))
+    else:
+        xh1, xh2 = min(np.log10(x)), max(np.log10(x))
+        hhist, hedges = np.histogram(x, bins=np.logspace(xh1, xh2, int(num_points/50)))
     hzeros = np.zeros(len(hedges) - 1)
     hmax = max(hhist) * 1.1
 
     LINE_ARGS = dict(color="#3A5785", line_color=None)
 
     ph = figure(toolbar_location=None, plot_width=fig.plot_width, plot_height=200, x_range=fig.x_range,
-                y_range=(-hmax, hmax), min_border=10, min_border_left=50, y_axis_location="right")
+                y_range=(-hmax*0.1, hmax), min_border=10, min_border_left=50, y_axis_location="right",
+                x_axis_type=xscale)
     ph.xgrid.grid_line_color = None
     ph.yaxis.major_label_orientation = np.pi / 4
     ph.background_fill_color = "#fafafa"
@@ -262,12 +267,16 @@ def plot_page(df, columns, request, page):
     hh2 = ph.quad(bottom=0, left=hedges[:-1], right=hedges[1:], top=hzeros, alpha=0.1, **LINE_ARGS)
 
     # vertical historgram
-    vhist, vedges = np.histogram(y, bins=20)
+    if yscale == 'linear':
+        vhist, vedges = np.histogram(y, bins=int(num_points/50))
+    else:
+        yh1, yh2 = min(np.log10(y)), max(np.log10(y))
+        vhist, vedges = np.histogram(y, bins=np.logspace(yh1, yh2, int(num_points/50)))
     vzeros = np.zeros(len(vedges) - 1)
     vmax = max(vhist) * 1.1
 
-    pv = figure(toolbar_location=None, plot_width=200, plot_height=fig.plot_height, x_range=(-vmax, vmax),
-                y_range=fig.y_range, min_border=10, y_axis_location="right")
+    pv = figure(toolbar_location=None, plot_width=200, plot_height=fig.plot_height, x_range=(-vmax*0.1, vmax),
+                y_range=fig.y_range, min_border=10, y_axis_location="right", y_axis_type=yscale)
     pv.ygrid.grid_line_color = None
     pv.xaxis.major_label_orientation = np.pi / 4
     pv.background_fill_color = "#fafafa"
