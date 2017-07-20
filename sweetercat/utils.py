@@ -66,4 +66,4 @@ def plDensity(mass, radius):
     Assumes Jupiter mass and radius given."""
     Mjup_cgs = 1.8986e30     # Jupiter mass in g
     Rjup_cgs = 6.9911e9      # Jupiter radius in cm
-    return Mjup_cgs * mass / (Rjup_cgs * radius)**3   # g/cm^3
+    return 3 * Mjup_cgs * mass / (4 * np.pi * (Rjup_cgs * radius)**3)   # g/cm^3
