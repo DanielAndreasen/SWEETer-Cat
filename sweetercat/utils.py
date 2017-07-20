@@ -46,14 +46,24 @@ def planetAndStar():
     c = cache.get('planetCols')
     if (d is None) or (c is None):
         deu = pd.DataFrame(pyasl.ExoplanetEU().data)
+        deu['plDensity'] = plDensity(deu['plMass'], deu['plRadius'])  # Add planet density
         cols = ['stName', 'plMass', 'plRadius', 'period', 'sma', 'eccentricity',
                 'inclination', 'discovered', 'dist',
-                'mag_v', 'mag_i', 'mag_j', 'mag_h', 'mag_k']
+                'mag_v', 'mag_i', 'mag_j', 'mag_h', 'mag_k', 'plDensity']
         deu = deu[cols]
         deu['stName'] = [s.decode() for s in deu['stName']]
         df, columns = readSC()
         d = pd.merge(df, deu, left_on='Star', right_on='stName')
-        c = columns+cols[1:]
+        c = columns + cols[1:]
         cache.set('planetDB', d, timeout=5*60)
         cache.set('planetCols', c, timeout=5*60)
     return d, c
+
+
+def plDensity(mass, radius):
+    """Calculate planet density.
+
+    Assumes Jupiter mass and radius given."""
+    Mjup_cgs = 1.8986e30     # Jupiter mass in g
+    Rjup_cgs = 6.9911e9      # Jupiter radius in cm
+    return Mjup_cgs * mass / (Rjup_cgs * radius)**3   # g/cm^3
