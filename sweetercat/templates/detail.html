@@ -1,64 +1,58 @@
 {% extends "template.html" %}
 
 {% block body %}
-{{ info }}
+{{ info[0] }}
 <br><br><br>
-<h1><a target="_blank" href="http://simbad.u-strasbg.fr/simbad/sim-basic?Ident={{ info['Star'] }}">{{ info['Star'] }}</a></h1>
+<h1><a target="_blank" href="http://simbad.u-strasbg.fr/simbad/sim-basic?Ident={{ info[0]['Star'] }}">{{ info[0]['Star'] }}</a></h1>
 <div class="col-lg-6">
   <h2>Stellar information</h2>
   <h3>General info</h3>
-  <p>Reference article: <a href="{{ info['link'] }}" target="_blank">{{ info['Author'] }}</a></p>
-  <p>Right ascension: {{ info['RA'] }}</p>
-  <p>Declination: {{ info['dec'] }}</p>
-  <p>Magnitude: {{ info['Vmag'] }} &plusmn; {{ info['Vmagerr'] }}</p>
-  <p>Parallax: {{ info['par'] }} &plusmn; {{ info['parerr'] }} mas</p>
+  <p>Reference article: <a href="{{ info[0]['link'] }}" target="_blank">{{ info[0]['Author'] }}</a></p>
+  <p>Right ascension: {{ info[0]['RA'] }}</p>
+  <p>Declination: {{ info[0]['dec_x'] }}</p>
+  <p>Magnitude: {{ info[0]['Vmag'] }} &plusmn; {{ info[0]['Vmagerr'] }}</p>
+  <p>Parallax: {{ info[0]['par'] }} &plusmn; {{ info[0]['parerr'] }} mas</p>
 
   <h3>Atmospheric parameters
-  {% if info['flag'] %}
+  {% if info[0]['flag'] %}
     <small>Parameters analysed by the Porto group</small>
   {% else %}
     <small>Parameters from the literature</small>
   {% endif %}
   </h3>
-  <p>Teff: {{ info['teff']|int }} &plusmn; {{ info['tefferr']|int }}K</p>
-  <p>logg: {{ info['logg'] }} &plusmn; {{ info['loggerr'] }} dex</p>
-  <p>[Fe/H]: {{ info['feh'] }} &plusmn; {{ info['feherr'] }} dex</p>
-  <p>vt: {{ info['vt'] }} &plusmn; {{ info['vterr'] }} km/s</p>
+  <p>Teff: {{ info[0]['teff']|int }} &plusmn; {{ info[0]['tefferr']|int }}K</p>
+  <p>logg: {{ info[0]['logg'] }} &plusmn; {{ info[0]['loggerr'] }} dex</p>
+  <p>[Fe/H]: {{ info[0]['feh'] }} &plusmn; {{ info[0]['feherr'] }} dex</p>
+  <p>vt: {{ info[0]['vt'] }} &plusmn; {{ info[0]['vterr'] }} km/s</p>
 
   <h3>Other informations</h3>
-  <p>Mass: {{ info['mass'] }} &plusmn; {{ info['masserr'] }}</p>
-  {% if info['Comment']|string != 'nan' %}
-    <p>Special comment: {{ info['Comment'] }}</p>
+  <p>Mass: {{ info[0]['mass'] }} &plusmn; {{ info[0]['masserr'] }}</p>
+  {% if info[0]['Comment']|string != 'nan' %}
+    <p>Special comment: {{ info[0]['Comment'] }}</p>
   {% endif %}
 </div>
 
 <!-- This needs to loop through the exoplanets once the df is merged with the exoplanetEU -->
 <div class="col-lg-6">
   <h2>Planetary information</h2>
-  <h3>General info</h3>
-  <p>Reference article: <a href="{{ info['link'] }}" target="_blank">{{ info['Author'] }}</a></p>
-  <p>Right ascension: {{ info['RA'] }}</p>
-  <p>Declination: {{ info['dec'] }}</p>
-  <p>Magnitude: {{ info['Vmag'] }} &plusmn; {{ info['Vmagerr'] }}</p>
-  <p>Parallax: {{ info['par'] }} &plusmn; {{ info['parerr'] }} mas</p>
 
-  <h3>Atmospheric parameters
-  {% if info['flag'] %}
-    <small>Parameters analysed by the Porto group</small>
-  {% else %}
-    <small>Parameters from the literature</small>
-  {% endif %}
-  </h3>
-  <p>Teff: {{ info['teff']|int }} &plusmn; {{ info['tefferr']|int }}K</p>
-  <p>logg: {{ info['logg'] }} &plusmn; {{ info['loggerr'] }} dex</p>
-  <p>[Fe/H]: {{ info['feh'] }} &plusmn; {{ info['feherr'] }} dex</p>
-  <p>vt: {{ info['vt'] }} &plusmn; {{ info['vterr'] }} km/s</p>
+  {% for planet in info %}
+    <h2><a href="{{ planet['exolink'] }}" target="_blank">{{ planet['plName'] }}</a></h2>
+    <h3>General info</h3>
+    <p>Period: {{ planet['period'] }}days</p>
+    {% if planet['plMass']|string != 'nan' %}
+      <p>Mass: {{ planet['plMass'] }}M<sub>Jup</sub></p>
+    {% endif %}
+    {% if planet['plRadius']|string != 'nan' %}
+      <p>Radius: {{ planet['plRadius']|string }}R<sub>Jup</sub></p>
+    {% endif %}
+    {% if planet['plDensity']|string != 'nan' %}
+      <p>Density: {{ planet['plRadius']|string }}g/cm<sup>3</sup></p>
+    {% endif %}
 
-  <h3>Other informations</h3>
-  <p>Mass: {{ info['mass'] }} &plusmn; {{ info['masserr'] }}</p>
-  {% if info['Comment']|string != 'nan' %}
-    <p>Special comment: {{ info['Comment'] }}</p>
-  {% endif %}
+  {% endfor %}
+
+
 </div>
 
 
