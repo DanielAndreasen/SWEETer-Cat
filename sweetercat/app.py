@@ -10,8 +10,16 @@ app.config['SECRET_KEY'] = 'cniuo324fny7w98r4m8374ty893724hf8'
 
 
 @app.route('/')
-def homepage():
+@app.route('/<string:star>')
+def homepage(star=None):
     df, columns = readSC()
+    print(star)
+    if star is not None:
+        d = df.loc[df['Star'] == star, :]
+        if len(d):
+            print(d)
+            # TODO: Merge with exoplanetEU to get planetary details
+            return render_template('detail.html', info=d.to_dict('records')[0])
     dfs = df.sort_values('updated', ascending=False)[:50]  # TODO: Remove the slicing!
     for col in ('teff', 'tefferr'):  # These should be integers
         idx = dfs[col].isnull()

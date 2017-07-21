@@ -1,0 +1,66 @@
+{% extends "template.html" %}
+
+{% block body %}
+{{ info }}
+<br><br><br>
+<h1><a target="_blank" href="http://simbad.u-strasbg.fr/simbad/sim-basic?Ident={{ info['Star'] }}">{{ info['Star'] }}</a></h1>
+<div class="col-lg-6">
+  <h2>Stellar information</h2>
+  <h3>General info</h3>
+  <p>Reference article: <a href="{{ info['link'] }}" target="_blank">{{ info['Author'] }}</a></p>
+  <p>Right ascension: {{ info['RA'] }}</p>
+  <p>Declination: {{ info['dec'] }}</p>
+  <p>Magnitude: {{ info['Vmag'] }} &plusmn; {{ info['Vmagerr'] }}</p>
+  <p>Parallax: {{ info['par'] }} &plusmn; {{ info['parerr'] }} mas</p>
+
+  <h3>Atmospheric parameters
+  {% if info['flag'] %}
+    <small>Parameters analysed by the Porto group</small>
+  {% else %}
+    <small>Parameters from the literature</small>
+  {% endif %}
+  </h3>
+  <p>Teff: {{ info['teff']|int }} &plusmn; {{ info['tefferr']|int }}K</p>
+  <p>logg: {{ info['logg'] }} &plusmn; {{ info['loggerr'] }} dex</p>
+  <p>[Fe/H]: {{ info['feh'] }} &plusmn; {{ info['feherr'] }} dex</p>
+  <p>vt: {{ info['vt'] }} &plusmn; {{ info['vterr'] }} km/s</p>
+
+  <h3>Other informations</h3>
+  <p>Mass: {{ info['mass'] }} &plusmn; {{ info['masserr'] }}</p>
+  {% if info['Comment']|string != 'nan' %}
+    <p>Special comment: {{ info['Comment'] }}</p>
+  {% endif %}
+</div>
+
+<!-- This needs to loop through the exoplanets once the df is merged with the exoplanetEU -->
+<div class="col-lg-6">
+  <h2>Planetary information</h2>
+  <h3>General info</h3>
+  <p>Reference article: <a href="{{ info['link'] }}" target="_blank">{{ info['Author'] }}</a></p>
+  <p>Right ascension: {{ info['RA'] }}</p>
+  <p>Declination: {{ info['dec'] }}</p>
+  <p>Magnitude: {{ info['Vmag'] }} &plusmn; {{ info['Vmagerr'] }}</p>
+  <p>Parallax: {{ info['par'] }} &plusmn; {{ info['parerr'] }} mas</p>
+
+  <h3>Atmospheric parameters
+  {% if info['flag'] %}
+    <small>Parameters analysed by the Porto group</small>
+  {% else %}
+    <small>Parameters from the literature</small>
+  {% endif %}
+  </h3>
+  <p>Teff: {{ info['teff']|int }} &plusmn; {{ info['tefferr']|int }}K</p>
+  <p>logg: {{ info['logg'] }} &plusmn; {{ info['loggerr'] }} dex</p>
+  <p>[Fe/H]: {{ info['feh'] }} &plusmn; {{ info['feherr'] }} dex</p>
+  <p>vt: {{ info['vt'] }} &plusmn; {{ info['vterr'] }} km/s</p>
+
+  <h3>Other informations</h3>
+  <p>Mass: {{ info['mass'] }} &plusmn; {{ info['masserr'] }}</p>
+  {% if info['Comment']|string != 'nan' %}
+    <p>Special comment: {{ info['Comment'] }}</p>
+  {% endif %}
+</div>
+
+
+
+{% endblock %}
