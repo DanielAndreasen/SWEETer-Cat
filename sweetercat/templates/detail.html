@@ -20,14 +20,14 @@
     <small>Parameters from the literature</small>
   {% endif %}
   </h3>
-  <p>Teff: {{ info[0]['teff']|int }} &plusmn; {{ info[0]['tefferr']|int }}K</p>
+  <p>Teff: {{ info[0]['teff']|int }} &plusmn; {{ info[0]['tefferr']|int }} K</p>
   <p>logg: {{ info[0]['logg'] }} &plusmn; {{ info[0]['loggerr'] }} dex</p>
   <p>[Fe/H]: {{ info[0]['feh'] }} &plusmn; {{ info[0]['feherr'] }} dex</p>
   <p>vt: {{ info[0]['vt'] }} &plusmn; {{ info[0]['vterr'] }} km/s</p>
 
   <h3>Other informations</h3>
   <p>Mass: {{ info[0]['mass'] }} &plusmn; {{ info[0]['masserr'] }}</p>
-  {% if info[0]['Comment']|string != 'nan' %}
+  {% if info[0]['Comment']|string != '...' %}
     <p>Special comment: {{ info[0]['Comment'] }}</p>
   {% endif %}
 </div>
@@ -39,17 +39,23 @@
   {% for planet in info %}
     <h2><a href="{{ planet['exolink'] }}" target="_blank">{{ planet['plName'] }}</a></h2>
     <h3>General info</h3>
-    <p>Period: {{ planet['period'] }}days</p>
-    {% if planet['plMass']|string != 'nan' %}
+    {% if planet['plMass']|string != '...' %}
       <p>Mass: {{ planet['plMass'] }}M<sub>Jup</sub></p>
     {% endif %}
-    {% if planet['plRadius']|string != 'nan' %}
+    {% if planet['plRadius']|string != '...' %}
       <p>Radius: {{ planet['plRadius']|string }}R<sub>Jup</sub></p>
     {% endif %}
-    {% if planet['plDensity']|string != 'nan' %}
-      <p>Density: {{ planet['plRadius']|string }}g/cm<sup>3</sup></p>
+    {% if planet['plDensity']|string != '...' %}
+      <p>Density: {{ planet['plRadius']|string }} g/cm<sup>3</sup></p>
     {% endif %}
 
+    <h3>Orbital parameters</h3>
+    <p>Period: {{ planet['period'] }}days</p>
+    {% if planet['sma']|string != '...' %}
+      <p>Semi-major axis: {{ planet['sma'] }} AU</p>
+      <p>Inner habitable zone limit: {{ planet['hz1'] }} AU</p>
+      <p>Outer habitable zone limit: {{ planet['hz2'] }} AU</p>
+    {% endif %}
   {% endfor %}
 
 

@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, url_for, redirect, session
 import json
 from plot import plot_page
-from utils import readSC, planetAndStar
+from utils import readSC, planetAndStar, hz
 
 
 # Setup Flask
@@ -31,9 +31,13 @@ def stardetail(star=None):
         df, columns = planetAndStar(full=True)
         d = df.loc[df['Star'] == star, :]
         if len(d):
+            d.fillna('...', inplace=True)
             d['plName'] = list(map(lambda s: s.decode(), d['plName']))
             d['plName'] = list(map(lambda s: '{} {}'.format(s[:-2], s[-1].lower()), d['plName']))
             d['exolink'] = list(map(lambda s: 'http://exoplanet.eu/catalog/{}/'.format(s.lower().replace(' ', '_')), d['plName']))
+            d['lum'] = (d.teff/5777)**4 * (d.mass/((10**d.logg)/(10**4.44)))**2
+            d['hz1'] = round(hz(d.teff, d.lum, model=2), 5)
+            d['hz2'] = round(hz(d.teff, d.lum, model=4), 5)
             return render_template('detail.html', info=d.to_dict('records'))
     return redirect(url_for('homepage'))
 
