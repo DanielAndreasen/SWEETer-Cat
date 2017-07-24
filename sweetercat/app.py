@@ -28,7 +28,7 @@ def homepage(star=None):
 def stardetail(star=None):
     if star is not None:
         print(star)
-        df, columns = planetAndStar(full=True)
+        df, columns = planetAndStar(full=True, how='left')
         d = df.loc[df['Star'] == star, :]
         if len(d):
             d.fillna('...', inplace=True)

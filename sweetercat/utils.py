@@ -41,7 +41,7 @@ def readSC():
     return df, plots
 
 
-def planetAndStar(full=False):
+def planetAndStar(full=False, how='inner'):
     d = cache.get('planetDB')
     c = cache.get('planetCols')
     if (d is None) or (c is None):
@@ -54,7 +54,7 @@ def planetAndStar(full=False):
             deu = deu[cols]
         deu['stName'] = [s.decode() for s in deu['stName']]
         df, columns = readSC()
-        d = pd.merge(df, deu, left_on='Star', right_on='stName')
+        d = pd.merge(df, deu, left_on='Star', right_on='stName', how=how)
         c = columns + cols[1:]
         cache.set('planetDB', d, timeout=5*60)
         cache.set('planetCols', c, timeout=5*60)
