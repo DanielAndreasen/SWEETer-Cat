@@ -1,8 +1,7 @@
 {% extends "template.html" %}
 
 {% block body %}
-{{ info[0] }}
-<br><br><br>
+
 <h1><a target="_blank" href="http://simbad.u-strasbg.fr/simbad/sim-basic?Ident={{ info[0]['Star'] }}">{{ info[0]['Star'] }}</a></h1>
 <div class="col-lg-6">
   <h2>Stellar information</h2>
@@ -32,31 +31,33 @@
   {% endif %}
 </div>
 
-<!-- This needs to loop through the exoplanets once the df is merged with the exoplanetEU -->
+
 <div class="col-lg-6">
-  <h2>Planetary information</h2>
+  {% if show_planet %}
+    <h2>Planetary information</h2>
 
-  {% for planet in info %}
-    <h2><a href="{{ planet['exolink'] }}" target="_blank">{{ planet['plName'] }}</a></h2>
-    <h3>General info</h3>
-    {% if planet['plMass']|string != '...' %}
-      <p>Mass: {{ planet['plMass'] }}M<sub>Jup</sub></p>
-    {% endif %}
-    {% if planet['plRadius']|string != '...' %}
-      <p>Radius: {{ planet['plRadius']|string }}R<sub>Jup</sub></p>
-    {% endif %}
-    {% if planet['plDensity']|string != '...' %}
-      <p>Density: {{ planet['plRadius']|string }} g/cm<sup>3</sup></p>
-    {% endif %}
+    {% for planet in info %}
+      <h2><a href="{{ planet['exolink'] }}" target="_blank">{{ planet['plName'] }}</a></h2>
+      <h3>General info</h3>
+      {% if planet['plMass']|string != '...' %}
+        <p>Mass: {{ planet['plMass'] }}M<sub>Jup</sub></p>
+      {% endif %}
+      {% if planet['plRadius']|string != '...' %}
+        <p>Radius: {{ planet['plRadius']|string }}R<sub>Jup</sub></p>
+      {% endif %}
+      {% if planet['plDensity']|string != '...' %}
+        <p>Density: {{ planet['plRadius']|string }} g/cm<sup>3</sup></p>
+      {% endif %}
 
-    <h3>Orbital parameters</h3>
-    <p>Period: {{ planet['period'] }}days</p>
-    {% if planet['sma']|string != '...' %}
-      <p>Semi-major axis: {{ planet['sma'] }} AU</p>
-      <p>Inner habitable zone limit: {{ planet['hz1'] }} AU</p>
-      <p>Outer habitable zone limit: {{ planet['hz2'] }} AU</p>
-    {% endif %}
-  {% endfor %}
+      <h3>Orbital parameters</h3>
+      <p>Period: {{ planet['period'] }}days</p>
+      {% if planet['sma']|string != '...' %}
+        <p>Semi-major axis: {{ planet['sma'] }} AU</p>
+        <p>Inner habitable zone limit: {{ planet['hz1'] }} AU</p>
+        <p>Outer habitable zone limit: {{ planet['hz2'] }} AU</p>
+      {% endif %}
+    {% endfor %}
+  {% endif %}
 
 
 </div>

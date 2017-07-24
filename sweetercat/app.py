@@ -27,18 +27,18 @@ def homepage(star=None):
 @app.route('/star/<string:star>/')
 def stardetail(star=None):
     if star is not None:
-        print(star)
         df, columns = planetAndStar(full=True, how='left')
         d = df.loc[df['Star'] == star, :]
+        show_planet = bool(~d['plName'].isnull().values[0])
         if len(d):
             d.fillna('...', inplace=True)
             d['plName'] = list(map(lambda s: s.decode(), d['plName']))
             d['plName'] = list(map(lambda s: '{} {}'.format(s[:-2], s[-1].lower()), d['plName']))
             d['exolink'] = list(map(lambda s: 'http://exoplanet.eu/catalog/{}/'.format(s.lower().replace(' ', '_')), d['plName']))
             d['lum'] = (d.teff/5777)**4 * (d.mass/((10**d.logg)/(10**4.44)))**2
-            return render_template('detail.html', info=d.to_dict('records'))
             d['hz1'] = round(hz(d.teff.values[0], d.lum.values[0], model=2), 5)
             d['hz2'] = round(hz(d.teff.values[0], d.lum.values[0], model=4), 5)
+            return render_template('detail.html', info=d.to_dict('records'), show_planet=show_planet)
     return redirect(url_for('homepage'))
 
 
