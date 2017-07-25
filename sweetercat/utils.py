@@ -52,7 +52,7 @@ def planetAndStar(full=False, how='inner'):
                 'mag_v', 'mag_i', 'mag_j', 'mag_h', 'mag_k', 'plDensity']
         if not full:
             deu = deu[cols]
-        deu['stName'] = [s.decode() for s in deu['stName']]
+        deu['stName'] = [s.decode() if isinstance(s, bytes) else s for s in deu['stName']]
         df, columns = readSC()
         d = pd.merge(df, deu, left_on='Star', right_on='stName', how=how)
         c = columns + cols[1:]

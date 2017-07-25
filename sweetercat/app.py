@@ -32,7 +32,7 @@ def stardetail(star=None):
         show_planet = bool(~d['plName'].isnull().values[0])
         if len(d):
             d.fillna('...', inplace=True)
-            d['plName'] = list(map(lambda s: s.decode(), d['plName']))
+            d['plName'] = list(map(lambda s: s.decode() if isinstance(s, bytes) else s, d['plName']))
             d['plName'] = list(map(lambda s: '{} {}'.format(s[:-2], s[-1].lower()), d['plName']))
             d['exolink'] = list(map(lambda s: 'http://exoplanet.eu/catalog/{}/'.format(s.lower().replace(' ', '_')), d['plName']))
             d['lum'] = (d.teff/5777)**4 * (d.mass/((10**d.logg)/(10**4.44)))**2
