@@ -16,7 +16,7 @@ def homepage(star=None):
     for col in ('teff', 'tefferr'):  # These should be integers
         idx = dfs[col].isnull()
         dfs[col] = dfs[col].astype(str)
-        dfs.loc[~idx, col] = list(map(lambda s: s[:-2], dfs.loc[~idx, col]))
+        dfs.loc[~idx, col] = [s[:-2] for s in dfs.loc[~idx, col]]
     dfs.fillna('...', inplace=True)
     columns = dfs.columns
     dfs = dfs.loc[:, columns]
@@ -32,9 +32,9 @@ def stardetail(star=None):
         show_planet = bool(~d['plName'].isnull().values[0])
         if len(d):
             d.fillna('...', inplace=True)
-            d['plName'] = list(map(lambda s: s.decode() if isinstance(s, bytes) else s, d['plName']))
-            d['plName'] = list(map(lambda s: '{} {}'.format(s[:-2], s[-1].lower()), d['plName']))
-            d['exolink'] = list(map(lambda s: 'http://exoplanet.eu/catalog/{}/'.format(s.lower().replace(' ', '_')), d['plName']))
+            d['plName'] = [s.decode() if isinstance(s, bytes) else s for s in d['plName']]
+            d['plName'] = ['{} {}'.format(s[:-2], s[-1].lower()) for s in d['plName']]
+            d['exolink'] = ['http://exoplanet.eu/catalog/{}/'.format(s.lower().replace(' ', '_')) for s in d['plName']]
             d['lum'] = (d.teff/5777)**4 * (d.mass/((10**d.logg)/(10**4.44)))**2
             d['hz1'] = round(hz(d.teff.values[0], d.lum.values[0], model=2), 5)
             d['hz2'] = round(hz(d.teff.values[0], d.lum.values[0], model=4), 5)
