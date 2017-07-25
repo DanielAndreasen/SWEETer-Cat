@@ -28,17 +28,23 @@ def homepage(star=None):
 def stardetail(star=None):
     if star is not None:
         df, columns = planetAndStar(full=True, how='left')
-        d = df.loc[df['Star'] == star, :]
+        index = df['Star'] == star
+        d = df.loc[index, :]
         show_planet = bool(~d['plName'].isnull().values[0])
         if len(d):
-            d.fillna('...', inplace=True)
-            d['plName'] = [s.decode() if isinstance(s, bytes) else s for s in d['plName']]
-            d['plName'] = ['{} {}'.format(s[:-2], s[-1].lower()) for s in d['plName']]
-            d['exolink'] = ['http://exoplanet.eu/catalog/{}/'.format(s.lower().replace(' ', '_')) for s in d['plName']]
-            d['lum'] = (d.teff/5777)**4 * (d.mass/((10**d.logg)/(10**4.44)))**2
-            d['hz1'] = round(hz(d.teff.values[0], d.lum.values[0], model=2), 5)
-            d['hz2'] = round(hz(d.teff.values[0], d.lum.values[0], model=4), 5)
-            return render_template('detail.html', info=d.to_dict('records'), show_planet=show_planet)
+            df.fillna('...', inplace=True)
+            df.loc[index, 'plName'] = [s.decode() if isinstance(s, bytes) else s for s in d['plName']]
+            df.loc[index, 'plName'] = ['{} {}'.format(s[:-2], s[-1].lower()) for s in d['plName']]
+            df.loc[index, 'exolink'] = ['http://exoplanet.eu/catalog/{}/'.format(s.lower().replace(' ', '_')) for s in d['plName']]
+            df.loc[index, 'lum'] = (d.teff/5777)**4 * (d.mass/((10**d.logg)/(10**4.44)))**2
+            df.loc[index, 'hz1'] = round(hz(df.loc[index, 'teff'].values[0],
+                                            df.loc[index,  'lum'].values[0],
+                                            model=2), 5)
+            df.loc[index, 'hz2'] = round(hz(df.loc[index, 'teff'].values[0],
+                                            df.loc[index,  'lum'].values[0],
+                                            model=4), 5)
+            info = df.loc[index, :].to_dict('records')
+            return render_template('detail.html', info=info, show_planet=show_planet)
     return redirect(url_for('homepage'))
 
 
