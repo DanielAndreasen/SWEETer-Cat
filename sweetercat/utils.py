@@ -45,10 +45,27 @@ def planetAndStar(full=False, how='inner'):
     d = cache.get('planetDB')
     c = cache.get('planetCols')
     if (d is None) or (c is None):
-        deu = pd.DataFrame(pyasl.ExoplanetEU().data)
+        deu = pyasl.ExoplanetEU2().getAllDataPandas()
+        rename = {'name': 'plName',
+                  'star_name': 'stName',
+                  'mass': 'plMass',
+                  'radius': 'plRadius',
+                  'orbital_period': 'period',
+                  'semi_major_axis': 'sma',
+                  'eccentricity': 'eccentricity',
+                  'inclination': 'inclination',
+                  'discovered': 'discovered',
+                  'impact_parameter': 'b',
+                  'star_distance': 'dist',
+                  'mag_v': 'mag_v',
+                  'mag_i': 'mag_i',
+                  'mag_j': 'mag_j',
+                  'mag_h': 'mag_h',
+                  'mag_k': 'mag_k'}
+        deu.rename(columns=rename, inplace=True)
         deu['plDensity'] = plDensity(deu['plMass'], deu['plRadius'])  # Add planet density
         cols = ['stName', 'plMass', 'plRadius', 'period', 'sma', 'eccentricity',
-                'inclination', 'discovered', 'dist',
+                'inclination', 'discovered', 'dist', 'b',
                 'mag_v', 'mag_i', 'mag_j', 'mag_h', 'mag_k', 'plDensity']
         if not full:
             deu = deu[cols]
