@@ -24,7 +24,7 @@
   <p>[Fe/H]: {{ info[0]['feh'] }} &plusmn; {{ info[0]['feherr'] }} dex</p>
   <p>vt: {{ info[0]['vt'] }} &plusmn; {{ info[0]['vterr'] }} km/s</p>
 
-  <h3>Other informations</h3>
+  <h3>Other info</h3>
   <p>Mass: {{ info[0]['mass'] }} &plusmn; {{ info[0]['masserr'] }}</p>
   {% if info[0]['Comment']|string != '...' %}
     <p>Special comment: {{ info[0]['Comment'] }}</p>
