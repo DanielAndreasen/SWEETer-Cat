@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, url_for, redirect, session
 import json
 from plot import plot_page
-from utils import readSC, planetAndStar
+from utils import readSC, planetAndStar, hz
 
 
 # Setup Flask
@@ -10,18 +10,46 @@ app.config['SECRET_KEY'] = 'cniuo324fny7w98r4m8374ty893724hf8'
 
 
 @app.route('/')
-def homepage():
+def homepage(star=None):
     df, columns = readSC()
     dfs = df.sort_values('updated', ascending=False)[:50]  # TODO: Remove the slicing!
     for col in ('teff', 'tefferr'):  # These should be integers
         idx = dfs[col].isnull()
         dfs[col] = dfs[col].astype(str)
-        dfs.loc[~idx, col] = list(map(lambda s: s[:-2], dfs.loc[~idx, col]))
+        dfs.loc[~idx, col] = [s[:-2] for s in dfs.loc[~idx, col]]
     dfs.fillna('...', inplace=True)
     columns = dfs.columns
     dfs = dfs.loc[:, columns]
     dfs = dfs.to_dict('records')
     return render_template('main.html', rows=dfs, columns=columns[1:-1])
+
+
+@app.route('/star/<string:star>/')
+def stardetail(star=None):
+    if star is not None:
+        df, columns = planetAndStar(full=True, how='left')
+        index = df['Star'] == star
+        d = df.loc[index, :]
+        show_planet = bool(~d['plName'].isnull().values[0])
+        if len(d):
+            df.fillna('...', inplace=True)
+            if show_planet:
+                s = df.loc[index, 'plName'].values[0]
+                df.loc[index, 'plName'] = s.decode() if isinstance(s, bytes) else s
+                s = df.loc[index, 'plName'].values[0]
+                df.loc[index, 'plName'] = '{} {}'.format(s[:-2], s[-1].lower())
+                s = df.loc[index, 'plName'].values[0]
+                df.loc[index, 'exolink'] = 'http://exoplanet.eu/catalog/{}/'.format(s.lower().replace(' ', '_'))
+            df.loc[index, 'lum'] = (d.teff/5777)**4 * (d.mass/((10**d.logg)/(10**4.44)))**2
+            df.loc[index, 'hz1'] = round(hz(df.loc[index, 'teff'].values[0],
+                                            df.loc[index,  'lum'].values[0],
+                                            model=2), 5)
+            df.loc[index, 'hz2'] = round(hz(df.loc[index, 'teff'].values[0],
+                                            df.loc[index,  'lum'].values[0],
+                                            model=4), 5)
+            info = df.loc[index, :].to_dict('records')
+            return render_template('detail.html', info=info, show_planet=show_planet)
+    return redirect(url_for('homepage'))
 
 
 @app.route("/plot/", methods=['GET', 'POST'])

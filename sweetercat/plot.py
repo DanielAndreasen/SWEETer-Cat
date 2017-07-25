@@ -30,12 +30,12 @@ def plot_page(df, columns, request, page):
                 return redirect(url_for('plot'))
 
         if z is not None:
-            df = df[list(set(['Star', x, y, z, "flag"]))]
-            df.dropna(inplace=True)
+            cols = list(set(['Star', x, y, z, "flag"]))
+            df = df.loc[:, cols].dropna()
             z = df[z]
         else:
-            df = df[list(set(['Star', x, y, "flag"]))]
-            df.dropna(inplace=True)
+            cols = list(set(['Star', x, y, "flag"]))
+            df = df.loc[:, cols].dropna()
         x = df[x]
         y = df[y]
 
@@ -72,8 +72,8 @@ def plot_page(df, columns, request, page):
     else:
         if page == "exo":
             color = 'Blue'
-            df = df[list(set(['Star', 'discovered', 'plMass']))]
-            df.dropna(inplace=True)
+            cols = list(set(['Star', 'discovered', 'plMass']))
+            df = df.loc[:, cols].dropna()
             x = df['discovered']
             y = df['plMass']
             z = None
@@ -87,8 +87,8 @@ def plot_page(df, columns, request, page):
             checkboxes = []
         else:
             color = 'Blue'
-            df = df[list(set(['Star', 'teff', 'Vabs', 'logg']))]
-            df.dropna(inplace=True)
+            cols = list(set(['Star', 'teff', 'Vabs', 'logg']))
+            df = df.loc[:, cols].dropna()
             x = df['teff']
             y = df['Vabs']
             z = df['logg']
