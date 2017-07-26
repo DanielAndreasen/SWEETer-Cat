@@ -50,7 +50,7 @@ def readSC(nrows=None):
                  'teff', 'tefferr', 'logg', 'loggerr', 'logglc', 'logglcerr',
                  'vt', 'vterr', 'feh', 'feherr', 'mass', 'masserr', 'Author', 'link',
                  'flag', 'updated', 'Comment', 'tmp']
-        df = pd.read_table('WEBSITE_online.rdb', names=names)
+        df = pd.read_table('table/sweet-cat.tsv', names=names)
         df.drop('tmp', axis=1, inplace=True)
         df['flag'] = df['flag'] == 1  # Turn to bool
         df['Vabs'] = [absolute_magnitude(p, m) for p, m in df[['par', 'Vmag']].values]

@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, url_for, redirect, session
+from flask import Flask, render_template, request, url_for, redirect, session, send_from_directory
 import os
 import json
 from plot import plot_page
@@ -75,6 +75,14 @@ def publications():
 @app.errorhandler(404)
 def error_404(error):
     return render_template('404.html')
+
+
+@app.route('/download/<path:filename>')
+def download(filename):
+    if os.path.isfile(os.path.join('table', filename)):
+        return send_from_directory('table', filename)
+    else:
+        return redirect(url_for('homepage'))
 
 
 if __name__ == '__main__':
