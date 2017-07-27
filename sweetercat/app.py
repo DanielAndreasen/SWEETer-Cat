@@ -20,11 +20,11 @@ def cache_data():
 def homepage(star=None):
     df, columns = readSC()
     dfs = df.sort_values('updated', ascending=False)[:50]  # TODO: Remove the slicing!
+    dfs.fillna('...', inplace=True)
     for col in ('teff', 'tefferr'):  # These should be integers
         idx = dfs[col].isnull()
         dfs[col] = dfs[col].astype(str)
-        dfs.loc[~idx, col] = [s[:-2] for s in dfs.loc[~idx, col]]
-    dfs.fillna('...', inplace=True)
+        dfs.loc[~idx, col] = [s[:-2] if s != '...' else s for s in dfs.loc[~idx, col]]
     columns = dfs.columns
     dfs = dfs.loc[:, columns]
     dfs = dfs.to_dict('records')
