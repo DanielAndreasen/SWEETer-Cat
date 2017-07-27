@@ -79,8 +79,8 @@ def error_404(error):
 
 @app.route('/download/<path:filename>')
 def download(filename):
-    if os.path.isfile(os.path.join('table', filename)):
-        return send_from_directory('table', filename)
+    if os.path.isfile(os.path.join('data', filename)):
+        return send_from_directory('data', filename)
     else:
         return redirect(url_for('homepage'))
 
