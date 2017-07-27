@@ -10,6 +10,12 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'cniuo324fny7w98r4m8374ty893724hf8'
 
 
+@app.before_first_request
+def cache_data():
+    # This will cache the databases when the app starts
+    _ = planetAndStar(full=True)
+
+
 @app.route('/')
 def homepage(star=None):
     df, columns = readSC()
