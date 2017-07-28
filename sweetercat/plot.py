@@ -42,9 +42,8 @@ def plot_page(df, columns, request, page):
 
         if (x not in columns) or (y not in columns):
             return redirect(url_for('plot'))
-        if z is not None:
-            if z not in columns:
-                return redirect(url_for('plot'))
+        if z not in columns:
+            return redirect(url_for('plot'))
 
         if z is not None:
             cols = list(set(['Star', x, y, z, "flag"]))
