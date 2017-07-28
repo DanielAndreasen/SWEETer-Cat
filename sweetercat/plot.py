@@ -172,7 +172,7 @@ def plot_page(df, columns, request, page):
         vhist, vedges = np.histogram(y, bins=max([5, int(num_points/50)]))
     else:
         yh1, yh2 = np.log10(min(y)), np.log10(max(y))
-        vhist, vedges = np.histogram(y, bins=np.logspace(yh1, yh2, max([5, int(num_points/50)]))
+        vhist, vedges = np.histogram(y, bins=np.logspace(yh1, yh2, max([5, int(num_points/50)])))
     vzeros = np.zeros(len(vedges) - 1)
     vmax = max(vhist) * 1.1
 
