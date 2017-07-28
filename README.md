@@ -16,6 +16,7 @@ Install and use this tool
     cd SWEETer-Cat
     pip install -r requirements.txt
     cd sweetercat
+    export SC_secret=<random chars>
     python app.py
 
 Open up http://0.0.0.0:5000/ in your browser.
