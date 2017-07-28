@@ -122,9 +122,9 @@ def plDensity(mass, radius):
     """Calculate planet density.
 
     Assumes Jupiter mass and radius given."""
-    Mjup_cgs = 1.8986e30     # Jupiter mass in g
-    Rjup_cgs = 6.9911e9      # Jupiter radius in cm
-    return 3 * Mjup_cgs * mass / (4 * np.pi * (Rjup_cgs * radius)**3)   # g/cm^3
+    mjup_cgs = 1.8986e30     # Jupiter mass in g
+    rjup_cgs = 6.9911e9      # Jupiter radius in cm
+    return 3 * mjup_cgs * mass / (4 * np.pi * (rjup_cgs * radius)**3)   # g/cm^3
 
 
 def hz(teff, lum, model=1):
@@ -145,9 +145,9 @@ def hz(teff, lum, model=1):
     elif model == 5:  # Early Mars
         p = [0.3179, 5.4513E-5, 1.5313E-9, -2.7786E-12, -4.8997E-16]
 
-    Seff_sun = p[0]
+    seff_sun = p[0]
     ts = teff-5780
     a, b, c, d = p[1], p[2], p[3], p[4]
-    Seff = Seff_sun + a*ts + b*ts**2 + c*ts**3 + d*ts**4
-    dist = np.sqrt(lum/Seff)
+    seff = seff_sun + a*ts + b*ts**2 + c*ts**3 + d*ts**4
+    dist = np.sqrt(lum/seff)
     return dist
