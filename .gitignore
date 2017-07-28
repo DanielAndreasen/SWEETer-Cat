@@ -1,4 +1,6 @@
 # Python stuff
 venv
 *.pyc
-.cache
+
+sweetercat/.cache
+.coverage
