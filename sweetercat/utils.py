@@ -163,3 +163,21 @@ def hz(teff, lum, model=1):
     seff = seff_sun + a*ts + b*ts**2 + c*ts**3 + d*ts**4
     dist = np.sqrt(lum/seff)
     return dist
+
+
+def table_convert(df, name, fmt="csv"):
+    """Convert the SC data into different formats.
+
+    To make available for download.
+    """
+    # others netcdf, fits?
+    # https://pandas.pydata.org/pandas-docs/stable/io.html
+    name = "{}.{}".format(name, fmt)
+    if fmt is "hdf":
+        df.to_hdf(name, key="sweetcat", mode="w")
+    elif fmt is "tsv":
+            df.to_csv(name, sep="\t")
+    elif fmt is "csv":
+        df.to_csv(name, sep=",")
+    else:
+        NotImplementedError("Conversion format to {} not available.".format(fmt))
