@@ -14,6 +14,19 @@ colors = {
 
 
 def absolute_magnitude(parallax, m):
+    """Calculate the absolute magnitude based on distance and apparent mag.
+    Inputs
+    ------
+    parallax : float
+      The parallax in mas
+    m : float
+      The apparent magnitude
+
+    Output
+    ------
+    M : float
+      The absolute magnitude
+    """
     d = 1 / parallax
     mu = 5 * np.log10(d) - 5
     M = m - mu
@@ -21,6 +34,15 @@ def absolute_magnitude(parallax, m):
 
 
 def readSC():
+    """Read the SWEET-Cat database and cache it (if it isn't already).
+
+    Output
+    ------
+    df : pd.DataFrame
+      The DataFrame of SWEET-Cat
+    plots : list
+      The columns that can be used for plotting
+    """
     df = cache.get('starDB')
     plots = cache.get('starCols')
     if (df is None) or (plots is None):
@@ -42,6 +64,24 @@ def readSC():
 
 
 def planetAndStar(full=False, how='inner'):
+    """Read the SWEET-Cat and ExoplanetEU databases, merge them and cache them
+    (if it isn't already).
+
+    Inputs
+    ------
+    full : bool (default: False)
+      If True, then return the entire DataFrame, otherwise return what is needed
+      for plots
+    how : str (default: 'inner')
+      How to merge the two DataFrames. See pd.merge for documentation
+
+    Output
+    ------
+    d : pd.DataFrame
+      The DataFrame of merged DataFrame
+    c : list
+      The columns that can be used for plotting
+    """
     d = cache.get('planetDB')
     c = cache.get('planetCols')
     if (d is None) or (c is None):

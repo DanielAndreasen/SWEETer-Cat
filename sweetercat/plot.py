@@ -16,6 +16,23 @@ COLORS = Viridis11
 
 
 def plot_page(df, columns, request, page):
+    """Render the Bokeh plot.
+
+    Inputs
+    ------
+    df : pd.DataFrame
+      The DataFrame with the data
+    columns : list
+      Which columns to use for choices in the plot
+    request : flask
+      The request object from flask
+    page : str ('exo', 'star')
+      Which page to render (for combined [exo] or just stars [star])
+
+    Output
+    ------
+    The rendered page with the plot
+    """
     if request.method == 'POST':  # Something is being submitted
         color = request.form['color']
         x = str(request.form['x'])
