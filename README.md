@@ -1,4 +1,5 @@
 [![Code Issues](https://www.quantifiedcode.com/api/v1/project/fb7a0839dd5744a39d6f6c695235424b/badge.svg)](https://www.quantifiedcode.com/app/project/fb7a0839dd5744a39d6f6c695235424b)
+[![Build Status](https://travis-ci.org/DanielAndreasen/SWEETer-Cat.svg?branch=master)](https://travis-ci.org/DanielAndreasen/SWEETer-Cat)
 
 # SWEETer-Cat
 Make [SWEET-Cat](https://www.astro.up.pt/resources/sweet-cat/) sweet again
