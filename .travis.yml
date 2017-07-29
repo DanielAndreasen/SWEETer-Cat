@@ -30,6 +30,10 @@ install:
   # Testing requirements
   - pip install pytest-flask pytest-cov python-coveralls codeclimate-test-reporter
 
+  # Setup PyAstronomy folder
+  - echo -n $HOME/PyAData > $HOME/.pyaConfigWhere
+  - mkdir $HOME/PyAData
+
 # command to run tests
 script:
   - cd sweetercat
