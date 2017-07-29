@@ -26,15 +26,14 @@ install:
   - source activate test-environment
   # - pip install pyastronomy
   # - python setup.py install
+   - pip install -r requirements.txt
 
-  - pip install pytest-cov python-coveralls codeclimate-test-reporter
-  - pip install -r requirements.txt
+  # Testing requirements
+  - pip install pytest-flask pytest-cov python-coveralls codeclimate-test-reporter
 
 # command to run tests
 script:
   - pytest --cov=. --cov-report term-missing
-  # - py.test --cov=spectrum_overload spectrum_overload/ --cov-report term-missing
-  # - pytest --cov=spectrum_overload --cov-report term-missing --durations 5
 
 after_success:
   - coveralls
