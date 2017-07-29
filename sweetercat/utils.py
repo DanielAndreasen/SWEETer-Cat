@@ -141,7 +141,7 @@ def hz(teff, lum, model=1):
     for parameter in (teff, lum):
         if not isinstance(parameter, (int, float)):
             return np.nan
-    if (teff < 2500) or (teff > 7200):
+    if not (2500 < teff < 7200):
         return np.nan
 
     if model == 1:  # Recent Venus
