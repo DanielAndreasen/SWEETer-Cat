@@ -24,7 +24,6 @@ before_install:
 install:
   - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION
   - source activate test-environment
-  # - pip install pyastronomy
   # - python setup.py install
    - pip install -r requirements.txt
 
