@@ -15,23 +15,17 @@ def app():
 
 # First test using the client fixture from pytest-flask
 def test_status_codes(client):
-    for end_point in ('homepage', 'plot', 'publications'):
-        print(end_point)
+    for end_point in ('homepage', 'plot', 'publications', 'plot_exo'):
         assert client.get(url_for(end_point)).status_code == 200
 
 
 # Need to check for 'stardetail' which also requires a star name.
-@pytest.mark.skip(reason='This takes a long time(!), so do not do it every time')
 def test_stardetail_status_code(client):
     df, _ = readSC()
-    stars = df['Star'].values
+    # All stars are a slow test
+    stars = df['Star'].values[:5]
     for star in stars:
         assert client.get(url_for("stardetail", star=star)).status_code == 200
-
-
-# @pytest.mark.xfail()  # VO table error
-def test_plot_exo_status_code(client):
-    assert client.get(url_for('plot_exo')).status_code == 200
 
 
 def test_stardetail_request_path():
