@@ -32,6 +32,7 @@ install:
 
 # command to run tests
 script:
+  - cd sweetercat
   - pytest --cov=. --cov-report term-missing
 
 after_success:
