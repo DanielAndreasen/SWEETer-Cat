@@ -24,6 +24,12 @@ def test_plDensity():
 
 
 def test_hz():
+    df, _ = readSC()
+    for (teff, logg, mass) in df.loc[:, ['teff', 'logg', 'mass']].values:
+        lum = (teff/5777)**4 * (mass/((10**logg)/(10**4.44)))**2
+        assert isinstance(hz(teff, lum, model=2), float)
+        assert isinstance(hz(teff, lum, model=4), float)
+
     teff = 5777
     lum = 1
     for model in range(1, 6):
@@ -34,7 +40,6 @@ def test_hz():
     assert hz(teff, lum, 2) < hz(teff, lum, 4)  # hz1 < hz2
 
 
-@pytest.mark.xfail()   # Need to "fix" location of database
 def test_readSC():
     df, plot_names = readSC()
     assert isinstance(df, pd.DataFrame)    #
