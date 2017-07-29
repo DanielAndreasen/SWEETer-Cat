@@ -134,6 +134,12 @@ def hz(teff, lum, model=1):
     Reference: Kopparapu+ 2013
     http://adsabs.harvard.edu/abs/2013ApJ...765..131K
     """
+    for parameter in (teff, lum):
+        if not isinstance(parameter, (int, float)):
+            return np.nan
+    if (teff < 2500) or (teff > 7200):
+        return np.nan
+
     if model == 1:  # Recent Venus
         p = [1.7753, 1.4316E-4, 2.9875E-9, -7.5702E-12, -1.1635E-15]
     elif model == 2:  # Runaway greenhouse
