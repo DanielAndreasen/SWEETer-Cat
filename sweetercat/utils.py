@@ -14,6 +14,19 @@ colors = {
 
 
 def absolute_magnitude(parallax, m):
+    """Calculate the absolute magnitude based on distance and apparent mag.
+    Inputs
+    ------
+    parallax : float
+      The parallax in mas
+    m : float
+      The apparent magnitude
+
+    Output
+    ------
+    M : float
+      The absolute magnitude
+    """
     d = 1 / parallax
     mu = 5 * np.log10(d) - 5
     M = m - mu
@@ -21,6 +34,15 @@ def absolute_magnitude(parallax, m):
 
 
 def readSC():
+    """Read the SWEET-Cat database and cache it (if it isn't already).
+
+    Output
+    ------
+    df : pd.DataFrame
+      The DataFrame of SWEET-Cat
+    plots : list
+      The columns that can be used for plotting
+    """
     df = cache.get('starDB')
     plots = cache.get('starCols')
     if (df is None) or (plots is None):
@@ -42,6 +64,24 @@ def readSC():
 
 
 def planetAndStar(full=False, how='inner'):
+    """Read the SWEET-Cat and ExoplanetEU databases, merge them and cache them
+    (if it isn't already).
+
+    Inputs
+    ------
+    full : bool (default: False)
+      If True, then return the entire DataFrame, otherwise return what is needed
+      for plots
+    how : str (default: 'inner')
+      How to merge the two DataFrames. See pd.merge for documentation
+
+    Output
+    ------
+    d : pd.DataFrame
+      The DataFrame of merged DataFrame
+    c : list
+      The columns that can be used for plotting
+    """
     d = cache.get('planetDB')
     c = cache.get('planetCols')
     if (d is None) or (c is None):
@@ -82,9 +122,9 @@ def plDensity(mass, radius):
     """Calculate planet density.
 
     Assumes Jupiter mass and radius given."""
-    Mjup_cgs = 1.8986e30     # Jupiter mass in g
-    Rjup_cgs = 6.9911e9      # Jupiter radius in cm
-    return 3 * Mjup_cgs * mass / (4 * np.pi * (Rjup_cgs * radius)**3)   # g/cm^3
+    mjup_cgs = 1.8986e30     # Jupiter mass in g
+    rjup_cgs = 6.9911e9      # Jupiter radius in cm
+    return 3 * mjup_cgs * mass / (4 * np.pi * (rjup_cgs * radius)**3)   # g/cm^3
 
 
 def hz(teff, lum, model=1):
@@ -105,9 +145,9 @@ def hz(teff, lum, model=1):
     elif model == 5:  # Early Mars
         p = [0.3179, 5.4513E-5, 1.5313E-9, -2.7786E-12, -4.8997E-16]
 
-    Seff_sun = p[0]
+    seff_sun = p[0]
     ts = teff-5780
     a, b, c, d = p[1], p[2], p[3], p[4]
-    Seff = Seff_sun + a*ts + b*ts**2 + c*ts**3 + d*ts**4
-    dist = np.sqrt(lum/Seff)
+    seff = seff_sun + a*ts + b*ts**2 + c*ts**3 + d*ts**4
+    dist = np.sqrt(lum/seff)
     return dist

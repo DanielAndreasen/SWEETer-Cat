@@ -22,17 +22,17 @@ before_install:
   - conda update -q conda
   - conda info -a
 install:
-  - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION numpy scipy astropy
+  - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION
   - source activate test-environment
-  - pip install pyastronomy
-  - python setup.py install
+  # - pip install pyastronomy
+  # - python setup.py install
 
   - pip install pytest-cov python-coveralls codeclimate-test-reporter
   - pip install -r requirements.txt
 
 # command to run tests
 script:
-  - py.test --cov coveralls --cov-report term-missing
+  - pytest --cov=. --cov-report term-missing
   # - py.test --cov=spectrum_overload spectrum_overload/ --cov-report term-missing
   # - pytest --cov=spectrum_overload --cov-report term-missing --durations 5
 

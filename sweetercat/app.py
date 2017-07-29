@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, url_for, redirect, session
+import os
 import json
 from plot import plot_page
 from utils import readSC, planetAndStar, hz
@@ -6,7 +7,7 @@ from utils import readSC, planetAndStar, hz
 
 # Setup Flask
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'cniuo324fny7w98r4m8374ty893724hf8'
+app.config['SECRET_KEY'] = os.environ['SC_secret']
 
 
 @app.route('/')
