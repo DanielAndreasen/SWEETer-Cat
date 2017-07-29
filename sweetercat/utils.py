@@ -84,7 +84,11 @@ def planetAndStar(full=False, how='inner'):
     """
     d = cache.get('planetDB')
     c = cache.get('planetCols')
-    if (d is None) or (c is None):
+    new = False
+    if (c is not None):
+        if (full and d.shape[1] == 43) or (not full and d.shape[1] != 43):
+            new = True
+    if (d is None) or (c is None) or new:
         deu = pyasl.ExoplanetEU2().getAllDataPandas()
         rename = {'name': 'plName',
                   'star_name': 'stName',
