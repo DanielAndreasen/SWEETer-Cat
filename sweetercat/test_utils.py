@@ -1,7 +1,7 @@
 from __future__ import division
 import pytest
 import pandas as pd
-from utils import absolute_magnitude, plDensity, hz, readSC
+from utils import absolute_magnitude, plDensity, hz, readSC, planetAndStar
 
 
 def test_absolute_magnitude():
@@ -42,7 +42,18 @@ def test_hz():
 
 def test_readSC():
     df, plot_names = readSC()
-    assert isinstance(df, pd.DataFrame)    #
+    assert isinstance(df, pd.DataFrame)
     assert isinstance(plot_names, list)
     for name in plot_names:
         assert isinstance(name, str)
+
+
+def test_planetAndStar():
+    df, columns = planetAndStar()
+    df1, columns1 = planetAndStar(full=True)
+    assert isinstance(df, pd.DataFrame)
+    assert isinstance(columns, list)
+    for column in columns:
+        assert isinstance(column, str)
+
+    assert df1.shape[1] > df.shape[1]
