@@ -65,16 +65,16 @@ def test_publication_response_data(client):
         pubs = json.load(pubs)
     for paper_key in pubs:
         for paper in pubs[paper_key]:
-            for key, val in paper.items():
-                val = bytes(val, 'utf-8')
+            for key, value in paper.items():
+                value = value.encode('utf-8')
                 if "adsabs" in key:
                     url = paper["adsabs"].replace("&", "&amp;")
-                    read_more = bytes('...<a href="{0}" target="_blank"> read more</a>'.format(url), 'utf-8')
-                    title_link = bytes('<a href="{0}" target="_blank">{1}</a>'.format(url, paper["title"]), 'utf-8')
+                    read_more = '...<a href="{0}" target="_blank"> read more</a>'.format(url).encode('utf-8')
+                    title_link = '<a href="{0}" target="_blank">{1}</a>'.format(url, paper["title"]).encode('utf-8')
                     assert title_link in response.data
                     assert read_more in response.data
                 elif "abstract" in key:
-                    assert val[:400] in response.data
+                    assert value[:480] in response.data
                 else:
-                    assert val in response.data
+                    assert value in response.data
 
