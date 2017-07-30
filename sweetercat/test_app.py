@@ -1,5 +1,6 @@
 import pytest
 import flask
+import json
 from flask import url_for
 from app import app as sc_app
 from utils import readSC
@@ -44,3 +45,36 @@ def test_request_paths():
     for path in ('/', '/plot/', '/plot-exo/', '/publications/', '/stardetail'):
         with sc_app.test_request_context(path):
             assert flask.request.path == path
+
+
+def test_publication_headings(client):
+    """ Test for the labels Abstact:, Authors: etc.
+    """
+    response = client.get(url_for("publications"))
+    for heading in [b"Main papers", b"Derived papers", b"Authors:", b"Abstract:", b"read more"]:
+        assert heading in response.data
+
+
+def test_publication_response_data(client):
+    """Test all the plublication data is present.
+
+    Test that links are inserted for the title and "read more" sections.
+    """
+    response = client.get(url_for("publications"))
+    with open('publications.json') as pubs:
+        pubs = json.load(pubs)
+    for paper_key in pubs:
+        for paper in pubs[paper_key]:
+            for key, val in paper.items():
+                val = bytes(val, 'utf-8')
+                if "adsabs" in key:
+                    url = paper["adsabs"].replace("&", "&amp;")
+                    read_more = bytes('...<a href="{0}" target="_blank"> read more</a>'.format(url), 'utf-8')
+                    title_link = bytes('<a href="{0}" target="_blank">{1}</a>'.format(url, paper["title"]), 'utf-8')
+                    assert title_link in response.data
+                    assert read_more in response.data
+                elif "abstract" in key:
+                    assert val[:400] in response.data
+                else:
+                    assert val in response.data
+
