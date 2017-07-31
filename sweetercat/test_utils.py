@@ -2,7 +2,7 @@ from __future__ import division
 import pytest
 import numpy as np
 import pandas as pd
-from utils import absolute_magnitude, plDensity, hz, readSC, planetAndStar, short_readSC
+from utils import absolute_magnitude, plDensity, hz, readSC, planetAndStar
 
 
 def test_absolute_magnitude():
@@ -66,7 +66,7 @@ def test_planetAndStar():
 
 def test_short_readSC():
     for nrows in [2, 5]:
-        df, plot_names = short_readSC(nrows=nrows)
+        df, plot_names = readSC(nrows=nrows)
         assert isinstance(df, pd.DataFrame)
         assert isinstance(plot_names, list)
         for name in plot_names:

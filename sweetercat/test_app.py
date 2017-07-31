@@ -3,7 +3,7 @@ import flask
 import json
 from flask import url_for
 from app import app as sc_app
-from utils import readSC, short_readSC
+from utils import readSC
 
 
 # app fixture required for pytest-flask client
@@ -22,7 +22,7 @@ def test_status_codes(client):
 
 # Need to check for 'stardetail' which also requires a star name.
 def test_stardetail_status_code(client):
-    df, _ = short_readSC(nrows=5)
+    df, _ = readSC(nrows=5)
     # All stars are a slow test
     stars = df.Star.values
     for star in stars:
@@ -30,8 +30,7 @@ def test_stardetail_status_code(client):
 
 
 def test_stardetail_request_path():
-    # df, _ = readSC()
-    df, _ = short_readSC(nrows=50)
+    df, _ = readSC(nrows=50)
     stars = df.Star.values
     for star in stars:
         # BD+ stars have replaced it with a space. Not a problem in app since
@@ -49,8 +48,7 @@ def test_request_paths():
 
 
 def test_publication_headings(client):
-    """ Test for the labels Abstact:, Authors: etc.
-    """
+    """ Test for the labels Abstact:, Authors: etc."""
     response = client.get(url_for("publications"))
     for heading in [b"Main papers", b"Derived papers", b"Authors:", b"Abstract:", b"read more"]:
         assert heading in response.data
@@ -91,7 +89,7 @@ def test_stardetail_template_text(client):
     pltext = ["Planetary information", "Mass", "MJup", "Radius", "RJup", "Density",
                  "Orbital parameters", "Period:", "days", "Semi-major axis:", "AU",
                  "Inner habitable zone limit:", "Density", "Outer habitable zone limit:"]
-    df, __ = short_readSC(nrows=10)
+    df, __ = readSC(nrows=10)
     stars = df.Star.values
     for i, star in enumerate(stars):
         response = client.get(url_for("stardetail", star=star))
@@ -105,5 +103,3 @@ def test_stardetail_template_text(client):
     # if (star has planet parameters): # Need planetandStar instead of readSC
     # for text in pltext:
     #     assert text.encode("utf-8") in response.data
-
-

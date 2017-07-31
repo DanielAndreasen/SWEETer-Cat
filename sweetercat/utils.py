@@ -33,7 +33,7 @@ def absolute_magnitude(parallax, m):
     return M
 
 
-def readSC():
+def readSC(nrows=None):
     """Read the SWEET-Cat database and cache it (if it isn't already).
 
     Output
@@ -60,20 +60,9 @@ def readSC():
                  'feh', 'feherr', 'mass', 'masserr']
         cache.set('starDB', df, timeout=5*60)
         cache.set('starCols', plots, timeout=5*60)
+    if nrows is not None:
+        return df.loc[:nrows-1, :], plots
     return df, plots
-
-
-def short_readSC(nrows=None):
-    """Only read the first nrows of the SWEET-Cat database."""
-    names = ['Star', 'HD', 'RA', 'dec', 'Vmag', 'Vmagerr', 'par', 'parerr', 'source',
-             'teff', 'tefferr', 'logg', 'loggerr', 'logglc', 'logglcerr',
-             'vt', 'vterr', 'feh', 'feherr', 'mass', 'masserr', 'Author', 'link',
-             'flag', 'updated', 'Comment', 'tmp']
-    df = pd.read_table('WEBSITE_online.rdb', names=names, nrows=nrows)
-    df.drop('tmp', axis=1, inplace=True)
-    df['flag'] = df['flag'] == 1  # Turn to bool
-    df['Vabs'] = [absolute_magnitude(p, m) for p, m in df[['par', 'Vmag']].values]
-    return df, names
 
 
 def planetAndStar(full=False, how='inner'):
