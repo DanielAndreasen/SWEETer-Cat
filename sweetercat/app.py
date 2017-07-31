@@ -12,6 +12,7 @@ app.config['SECRET_KEY'] = os.environ['SC_secret']
 
 @app.route('/')
 def homepage(star=None):
+    """Home page for SWEETer-Cat with updated table"""
     df, columns = readSC()
     dfs = df.sort_values('updated', ascending=False)[:50]  # TODO: Remove the slicing!
     for col in ('teff', 'tefferr'):  # These should be integers
@@ -27,6 +28,7 @@ def homepage(star=None):
 
 @app.route('/star/<string:star>/')
 def stardetail(star=None):
+    """Page with details on the individual system"""
     if star is not None:
         df, columns = planetAndStar(full=True, how='left')
         index = df['Star'] == star
@@ -55,18 +57,21 @@ def stardetail(star=None):
 
 @app.route("/plot/", methods=['GET', 'POST'])
 def plot():
+    """Plot stellar parameters"""
     df, columns = readSC()
     return plot_page(df, columns, request, page="sc")
 
 
 @app.route("/plot-exo/", methods=['GET', 'POST'])
 def plot_exo():
+    """Plot stellar and planetary parameters"""
     df, columns = planetAndStar()
     return plot_page(df, columns, request, page="exo")
 
 
 @app.route("/publications/")
 def publications():
+    """Show relevant publications for SWEET-Cat"""
     with open('publications.json') as pubs:
         pubs = json.load(pubs)
     return render_template('publications.html', publications=pubs)
@@ -74,11 +79,13 @@ def publications():
 
 @app.errorhandler(404)
 def error_404(error):
+    """Simple handler for status code: 404"""
     return render_template('404.html')
 
 
 @app.route('/download/<path:fname>')
 def download(fname):
+    """Download SWEET-Cat table in different formats and clean afterwards"""
     fmt = fname.split('.')[-1]
     if fmt in ['csv', 'hdf']:
         table_convert(fmt=fmt)

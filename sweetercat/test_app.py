@@ -16,12 +16,14 @@ def app():
 
 # First test using the client fixture from pytest-flask
 def test_status_codes(client):
+    """Test that all pages return status code: 200 using the end_points"""
     for end_point in ('homepage', 'plot', 'publications', 'plot_exo'):
         assert client.get(url_for(end_point)).status_code == 200
 
 
 # Need to check for 'stardetail' which also requires a star name.
 def test_stardetail_status_code(client):
+    """Test stardetail will return status code: 200 when submitted with star"""
     df, _ = readSC(nrows=5)
     # All stars are a slow test
     stars = df.Star.values
@@ -30,6 +32,7 @@ def test_stardetail_status_code(client):
 
 
 def test_stardetail_request_path():
+    """Test that the stardetail renders properly"""
     df, _ = readSC(nrows=50)
     stars = df.Star.values
     for star in stars:
@@ -42,6 +45,7 @@ def test_stardetail_request_path():
 
 
 def test_request_paths():
+    """Test the different URL paths return the right path"""
     for path in ('/', '/plot/', '/plot-exo/', '/publications/', '/stardetail'):
         with sc_app.test_request_context(path):
             assert flask.request.path == path

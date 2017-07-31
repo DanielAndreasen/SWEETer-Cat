@@ -7,6 +7,7 @@ from utils import absolute_magnitude, plDensity, hz, readSC, planetAndStar, tabl
 
 
 def test_absolute_magnitude():
+    """Test the absolute_magnitude function"""
     m = 10
     assert isinstance(absolute_magnitude(1, 1), float)
     assert absolute_magnitude(1, m) > m
@@ -19,6 +20,7 @@ def test_absolute_magnitude():
 
 
 def test_plDensity():
+    """Test the plDensity function"""
     m, r = 1, 1
     assert isinstance(plDensity(m, r), float)
     assert round(plDensity(m, r), 2) == 1.33
@@ -26,6 +28,7 @@ def test_plDensity():
 
 
 def test_hz():
+    """Test the hz function"""
     df, _ = readSC()
     for (teff, logg, mass) in df.loc[:, ['teff', 'logg', 'mass']].values:
         lum = (teff/5777)**4 * (mass/((10**logg)/(10**4.44)))**2
@@ -47,6 +50,7 @@ def test_hz():
 
 
 def test_readSC():
+    """Test the readSC function"""
     df, plot_names = readSC()
     assert isinstance(df, pd.DataFrame)
     assert isinstance(plot_names, list)
@@ -55,6 +59,7 @@ def test_readSC():
 
 
 def test_planetAndStar():
+    """Test the planetAndStar function"""
     df, columns = planetAndStar()
     df1, columns1 = planetAndStar(full=True)
     assert isinstance(df, pd.DataFrame)
@@ -66,6 +71,7 @@ def test_planetAndStar():
 
 
 def test_short_readSC():
+    """Test the short readSC function"""
     for nrows in [2, 5]:
         df, plot_names = readSC(nrows=nrows)
         assert isinstance(df, pd.DataFrame)
@@ -76,6 +82,7 @@ def test_short_readSC():
 
 
 def test_table_convert():
+    """Test the table_convert function"""
     for fmt in ['tsv', 'csv', 'hdf']:
         table_convert(fmt=fmt)
         fname = 'data/sweet-cat.{}'.format(fmt)
