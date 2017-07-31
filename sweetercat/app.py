@@ -72,7 +72,7 @@ def plot_exo():
 @app.route("/publications/")
 def publications():
     """Show relevant publications for SWEET-Cat"""
-    with open('publications.json') as pubs:
+    with open('data/publications.json') as pubs:
         pubs = json.load(pubs)
     return render_template('publications.html', publications=pubs)
 

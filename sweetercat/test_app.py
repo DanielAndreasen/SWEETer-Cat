@@ -64,7 +64,7 @@ def test_publication_response_data(client):
     Test that links are inserted for the title and "read more" sections.
     """
     response = client.get(url_for("publications"))
-    with open('publications.json') as pubs:
+    with open('data/publications.json') as pubs:
         pubs = json.load(pubs)
     for paper_key in pubs:
         for paper in pubs[paper_key]:
