@@ -16,6 +16,23 @@ COLORS = Viridis11
 
 
 def plot_page(df, columns, request, page):
+    """Render the Bokeh plot.
+
+    Inputs
+    ------
+    df : pd.DataFrame
+      The DataFrame with the data
+    columns : list
+      Which columns to use for choices in the plot
+    request : flask
+      The request object from flask
+    page : str ('exo', 'star')
+      Which page to render (for combined [exo] or just stars [star])
+
+    Output
+    ------
+    The rendered page with the plot
+    """
     if request.method == 'POST':  # Something is being submitted
         color = request.form['color']
         x = str(request.form['x'])
@@ -25,9 +42,8 @@ def plot_page(df, columns, request, page):
 
         if (x not in columns) or (y not in columns):
             return redirect(url_for('plot'))
-        if z is not None:
-            if z not in columns:
-                return redirect(url_for('plot'))
+        if z not in columns:
+            return redirect(url_for('plot'))
 
         if z is not None:
             cols = list(set(['Star', x, y, z, "flag"]))
@@ -151,10 +167,10 @@ def plot_page(df, columns, request, page):
 
     # Horizontal historgram
     if xscale == 'linear':
-        hhist, hedges = np.histogram(x, bins=int(num_points/50))
+        hhist, hedges = np.histogram(x, bins=max([5, int(num_points/50)]))
     else:
         xh1, xh2 = np.log10(min(x)), np.log10(max(x))
-        hhist, hedges = np.histogram(x, bins=np.logspace(xh1, xh2, int(num_points/50)))
+        hhist, hedges = np.histogram(x, bins=np.logspace(xh1, xh2, max([5, int(num_points/50)])))
     hzeros = np.zeros(len(hedges) - 1)
     hmax = max(hhist) * 1.1
 
@@ -169,10 +185,10 @@ def plot_page(df, columns, request, page):
 
     # vertical historgram
     if yscale == 'linear':
-        vhist, vedges = np.histogram(y, bins=int(num_points/50))
+        vhist, vedges = np.histogram(y, bins=max([5, int(num_points/50)]))
     else:
         yh1, yh2 = np.log10(min(y)), np.log10(max(y))
-        vhist, vedges = np.histogram(y, bins=np.logspace(yh1, yh2, int(num_points/50)))
+        vhist, vedges = np.histogram(y, bins=np.logspace(yh1, yh2, max([5, int(num_points/50)])))
     vzeros = np.zeros(len(vedges) - 1)
     vmax = max(vhist) * 1.1
 

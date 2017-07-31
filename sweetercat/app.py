@@ -1,13 +1,13 @@
-from flask import Flask, render_template, request, url_for, redirect, session, send_from_directory
+from flask import Flask, render_template, request, url_for, redirect, session, send_from_directory, after_this_request
 import os
 import json
 from plot import plot_page
-from utils import readSC, planetAndStar, hz
+from utils import readSC, planetAndStar, hz, table_convert
 
 
 # Setup Flask
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'cniuo324fny7w98r4m8374ty893724hf8'
+app.config['SECRET_KEY'] = os.environ['SC_secret']
 
 
 @app.before_first_request
@@ -18,6 +18,7 @@ def cache_data():
 
 @app.route('/')
 def homepage(star=None):
+    """Home page for SWEETer-Cat with updated table"""
     df, columns = readSC()
     dfs = df.sort_values('updated', ascending=False)[:50]  # TODO: Remove the slicing!
     dfs.fillna('...', inplace=True)
@@ -33,6 +34,7 @@ def homepage(star=None):
 
 @app.route('/star/<string:star>/')
 def stardetail(star=None):
+    """Page with details on the individual system"""
     if star is not None:
         df, columns = planetAndStar(full=True, how='left')
         index = df['Star'] == star
@@ -61,32 +63,45 @@ def stardetail(star=None):
 
 @app.route("/plot/", methods=['GET', 'POST'])
 def plot():
+    """Plot stellar parameters"""
     df, columns = readSC()
     return plot_page(df, columns, request, page="sc")
 
 
 @app.route("/plot-exo/", methods=['GET', 'POST'])
 def plot_exo():
+    """Plot stellar and planetary parameters"""
     df, columns = planetAndStar()
     return plot_page(df, columns, request, page="exo")
 
 
 @app.route("/publications/")
 def publications():
-    with open('publications.json') as pubs:
+    """Show relevant publications for SWEET-Cat"""
+    with open('data/publications.json') as pubs:
         pubs = json.load(pubs)
     return render_template('publications.html', publications=pubs)
 
 
 @app.errorhandler(404)
 def error_404(error):
+    """Simple handler for status code: 404"""
     return render_template('404.html')
 
 
-@app.route('/download/<path:filename>')
-def download(filename):
-    if os.path.isfile(os.path.join('data', filename)):
-        return send_from_directory('data', filename)
+@app.route('/download/<path:fname>')
+def download(fname):
+    """Download SWEET-Cat table in different formats and clean afterwards"""
+    fmt = fname.split('.')[-1]
+    if fmt in ['csv', 'hdf']:
+        table_convert(fmt=fmt)
+        @after_this_request
+        def remove_file(response):
+            os.remove('data/{}'.format(fname))
+            return response
+        return send_from_directory('data', fname)
+    elif fmt == 'tsv':
+        return send_from_directory('data', fname)
     else:
         return redirect(url_for('homepage'))
 
