@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, url_for, redirect, session, send_from_directory
+from flask import Flask, render_template, request, url_for, redirect, session, send_from_directory, after_this_request
 import os
 import json
 from plot import plot_page
@@ -80,8 +80,17 @@ def error_404(error):
 @app.route('/download/<path:fname>')
 def download(fname):
     fmt = fname.split('.')[-1]
-    if fmt in ['hdf', 'tsv', 'csv']:
+    if fmt in ['csv', 'hdf']:
         table_convert(fmt=fmt)
+        @after_this_request
+        def remove_file(response):
+            try:
+                os.remove('data/{}'.format(fname))
+            except Exception as error:
+                app.logger.error("Error removing downloaded file handle", error)
+            return response
+        return send_from_directory('data', fname)
+    elif fmt == 'tsv':
         return send_from_directory('data', fname)
     else:
         return redirect(url_for('homepage'))
