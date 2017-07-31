@@ -22,3 +22,4 @@ Werkzeug==0.12.2
 pandas==0.20.2
 PyAstronomy==0.11.0
 scipy==0.19.1
+astropy==2.0

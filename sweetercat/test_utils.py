@@ -1,7 +1,8 @@
 from __future__ import division
 import pytest
+import numpy as np
 import pandas as pd
-from utils import absolute_magnitude, plDensity, hz, readSC
+from utils import absolute_magnitude, plDensity, hz, readSC, planetAndStar
 
 
 def test_absolute_magnitude():
@@ -24,19 +25,50 @@ def test_plDensity():
 
 
 def test_hz():
+    df, _ = readSC()
+    for (teff, logg, mass) in df.loc[:, ['teff', 'logg', 'mass']].values:
+        lum = (teff/5777)**4 * (mass/((10**logg)/(10**4.44)))**2
+        assert isinstance(hz(teff, lum, model=2), float)
+        assert isinstance(hz(teff, lum, model=4), float)
+
     teff = 5777
     lum = 1
+    invalids = [{teff: lum}, [teff, lum], (teff, lum), "..."]
     for model in range(1, 6):
         assert isinstance(hz(teff, lum, model), float)
     results = [0.75, 0.98, 0.99, 1.71, 1.77]
     for model, result in enumerate(results, start=1):
         assert round(hz(teff, lum, model), 2) == result
+        for invalid in invalids:
+            assert np.isnan(hz(invalid, lum, model))
+            assert np.isnan(hz(teff, invalid, model))
     assert hz(teff, lum, 2) < hz(teff, lum, 4)  # hz1 < hz2
 
 
 def test_readSC():
     df, plot_names = readSC()
-    assert isinstance(df, pd.DataFrame)    #
+    assert isinstance(df, pd.DataFrame)
     assert isinstance(plot_names, list)
     for name in plot_names:
         assert isinstance(name, str)
+
+
+def test_planetAndStar():
+    df, columns = planetAndStar()
+    df1, columns1 = planetAndStar(full=True)
+    assert isinstance(df, pd.DataFrame)
+    assert isinstance(columns, list)
+    for column in columns:
+        assert isinstance(column, str)
+
+    assert df1.shape[1] > df.shape[1]
+
+
+def test_short_readSC():
+    for nrows in [2, 5]:
+        df, plot_names = readSC(nrows=nrows)
+        assert isinstance(df, pd.DataFrame)
+        assert isinstance(plot_names, list)
+        for name in plot_names:
+            assert isinstance(name, str)
+        assert len(df) == nrows

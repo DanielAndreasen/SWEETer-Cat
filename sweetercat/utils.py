@@ -33,7 +33,7 @@ def absolute_magnitude(parallax, m):
     return M
 
 
-def readSC():
+def readSC(nrows=None):
     """Read the SWEET-Cat database and cache it (if it isn't already).
 
     Output
@@ -60,6 +60,8 @@ def readSC():
                  'feh', 'feherr', 'mass', 'masserr']
         cache.set('starDB', df, timeout=5*60)
         cache.set('starCols', plots, timeout=5*60)
+    if nrows is not None:
+        return df.loc[:nrows-1, :], plots
     return df, plots
 
 
@@ -84,7 +86,11 @@ def planetAndStar(full=False, how='inner'):
     """
     d = cache.get('planetDB')
     c = cache.get('planetCols')
-    if (d is None) or (c is None):
+    new = False
+    if (c is not None):
+        if (full and d.shape[1] == 43) or (not full and d.shape[1] != 43):
+            new = True
+    if (d is None) or (c is None) or new:
         deu = pyasl.ExoplanetEU2().getAllDataPandas()
         rename = {'name': 'plName',
                   'star_name': 'stName',
@@ -134,6 +140,12 @@ def hz(teff, lum, model=1):
     Reference: Kopparapu+ 2013
     http://adsabs.harvard.edu/abs/2013ApJ...765..131K
     """
+    for parameter in (teff, lum):
+        if not isinstance(parameter, (int, float)):
+            return np.nan
+    if not (2500 < teff < 7200):
+        return np.nan
+
     if model == 1:  # Recent Venus
         p = [1.7753, 1.4316E-4, 2.9875E-9, -7.5702E-12, -1.1635E-15]
     elif model == 2:  # Runaway greenhouse
