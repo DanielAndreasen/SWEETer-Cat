@@ -39,7 +39,7 @@ install:
 before_script:
   # - ./cc-test-reporter before-build
   # Pre-download the PyAData.
-  - python -c "from PyAstronomy.pyasl import ExoplanetEU; ExoplanetEU()"
+  - python -c "from PyAstronomy.pyasl import ExoplanetEU2; ExoplanetEU2()"
 # command to run tests
 script:
   - cd sweetercat
