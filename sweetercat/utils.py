@@ -63,6 +63,19 @@ def readSC():
     return df, plots
 
 
+def short_readSC(nrows=None):
+    """Only read the first nrows of the SWEET-Cat database."""
+    names = ['Star', 'HD', 'RA', 'dec', 'Vmag', 'Vmagerr', 'par', 'parerr', 'source',
+             'teff', 'tefferr', 'logg', 'loggerr', 'logglc', 'logglcerr',
+             'vt', 'vterr', 'feh', 'feherr', 'mass', 'masserr', 'Author', 'link',
+             'flag', 'updated', 'Comment', 'tmp']
+    df = pd.read_table('WEBSITE_online.rdb', names=names, nrows=nrows)
+    df.drop('tmp', axis=1, inplace=True)
+    df['flag'] = df['flag'] == 1  # Turn to bool
+    df['Vabs'] = [absolute_magnitude(p, m) for p, m in df[['par', 'Vmag']].values]
+    return df, names
+
+
 def planetAndStar(full=False, how='inner'):
     """Read the SWEET-Cat and ExoplanetEU databases, merge them and cache them
     (if it isn't already).

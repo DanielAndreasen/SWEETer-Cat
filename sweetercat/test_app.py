@@ -3,7 +3,7 @@ import flask
 import json
 from flask import url_for
 from app import app as sc_app
-from utils import readSC
+from utils import readSC, short_readSC
 
 
 # app fixture required for pytest-flask client
@@ -22,15 +22,16 @@ def test_status_codes(client):
 
 # Need to check for 'stardetail' which also requires a star name.
 def test_stardetail_status_code(client):
-    df, _ = readSC()
+    df, _ = short_readSC(nrows=5)
     # All stars are a slow test
-    stars = df['Star'].values[:5]
+    stars = df.Star.values
     for star in stars:
         assert client.get(url_for("stardetail", star=star)).status_code == 200
 
 
 def test_stardetail_request_path():
-    df, _ = readSC()
+    # df, _ = readSC()
+    df, _ = short_readSC(nrows=50)
     stars = df.Star.values
     for star in stars:
         # BD+ stars have replaced it with a space. Not a problem in app since
