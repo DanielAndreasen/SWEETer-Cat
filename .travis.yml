@@ -44,6 +44,6 @@ script:
   - pytest --cov=. --cov-report term-missing --durations 5
 
 after_success:
-  - coveralls
+  - coveralls -i
   # - cd ..
   # - ./cc-test-reporter after-build
