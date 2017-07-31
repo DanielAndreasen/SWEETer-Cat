@@ -79,3 +79,31 @@ def test_publication_response_data(client):
                 else:
                     assert value in response.data
 
+
+def test_stardetail_template_text(client):
+    """Test that that text on the stardetails are returned.
+
+    (Maybe a bit overboard)
+    """
+    sttext = ["General info", "Reference article:", "Right ascension:", "Declination:",
+                "Magnitude:", "Parallax:", "mas", "Atmospheric parameters", "Teff:", "K",
+                "logg:", "[Fe/H]:", "dex", "vt:", "km/s", "Other info", "Mass:"]
+    pltext = ["Planetary information", "Mass", "MJup", "Radius", "RJup", "Density",
+                 "Orbital parameters", "Period:", "days", "Semi-major axis:", "AU",
+                 "Inner habitable zone limit:", "Density", "Outer habitable zone limit:"]
+    df, __ = short_readSC(nrows=10)
+    stars = df.Star.values
+    for i, star in enumerate(stars):
+        response = client.get(url_for("stardetail", star=star))
+        if df["flag"][i]:
+            assert b"Parameters analysed by the Porto group" in response.data
+        else:
+            assert b"Parameters from the literature" in response.data
+        for text in sttext:
+            assert text.encode("utf-8") in response.data
+
+    # if (star has planet parameters): # Need planetandStar instead of readSC
+    # for text in pltext:
+    #     assert text.encode("utf-8") in response.data
+
+
