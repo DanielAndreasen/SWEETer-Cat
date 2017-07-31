@@ -1,5 +1,6 @@
 from __future__ import division
 import pytest
+import numpy as np
 import pandas as pd
 from utils import absolute_magnitude, plDensity, hz, readSC, planetAndStar, short_readSC
 
@@ -32,11 +33,15 @@ def test_hz():
 
     teff = 5777
     lum = 1
+    invalids = [{teff: lum}, [teff, lum], (teff, lum), "..."]
     for model in range(1, 6):
         assert isinstance(hz(teff, lum, model), float)
     results = [0.75, 0.98, 0.99, 1.71, 1.77]
     for model, result in enumerate(results, start=1):
         assert round(hz(teff, lum, model), 2) == result
+        for invalid in invalids:
+            assert np.isnan(hz(invalid, lum, model))
+            assert np.isnan(hz(teff, invalid, model))
     assert hz(teff, lum, 2) < hz(teff, lum, 4)  # hz1 < hz2
 
 
