@@ -176,6 +176,6 @@ def table_convert(fmt="csv"):
     else:
         df = pd.read_table('data/sweet-cat.tsv')
         if fmt == "hdf":
-            df.to_hdf(name, key="sweetcat", mode="w")
+            df.to_hdf(name, key="sweetcat", mode="w", format='table')
         elif fmt == "csv":
             df.to_csv(name, sep=",", index=False)
