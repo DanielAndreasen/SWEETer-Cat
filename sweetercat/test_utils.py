@@ -63,9 +63,11 @@ def test_planetAndStar():
     df, columns = planetAndStar()
     df1, columns1 = planetAndStar(full=True)
     assert isinstance(df, pd.DataFrame)
+    assert isinstance(df1, pd.DataFrame)
     assert isinstance(columns, list)
     for column in columns:
         assert isinstance(column, str)
+        assert column in columns1
 
     assert df1.shape[1] > df.shape[1]
 
