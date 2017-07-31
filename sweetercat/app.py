@@ -91,10 +91,7 @@ def download(fname):
         table_convert(fmt=fmt)
         @after_this_request
         def remove_file(response):
-            try:
-                os.remove('data/{}'.format(fname))
-            except Exception as error:
-                app.logger.error("Error removing downloaded file handle", error)
+            os.remove('data/{}'.format(fname))
             return response
         return send_from_directory('data', fname)
     elif fmt == 'tsv':

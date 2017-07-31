@@ -107,3 +107,10 @@ def test_stardetail_template_text(client):
     # if (star has planet parameters): # Need planetandStar instead of readSC
     # for text in pltext:
     #     assert text.encode("utf-8") in response.data
+
+
+def test_download_status_code(client):
+    for fmt in ('csv', 'tsv', 'hdf'):
+        fname = 'sweet-cat.{}'.format(fmt)
+        assert client.get(url_for('download', fname=fname)).status_code == 200
+    assert client.get(url_for('download', fname='sweet-cat.fits')).status_code == 302
