@@ -5,7 +5,7 @@ import json
 from utils import readSC
 from flask import url_for
 from app import app as sc_app
-
+from PyAstronomy.pyaC.pyaErrors import PyADownloadError
 
 # app fixture required for pytest-flask client
 @pytest.fixture
@@ -15,7 +15,7 @@ def app():
     return sc_app
 
 
-# First test using the client fixture from pytest-flask
+@pytest.mark.xfail(raises=PyADownloadError)
 def test_status_codes(client):
     """Test that all pages return status code: 200 using the end_points"""
     for end_point in ('homepage', 'plot', 'publications', 'plot_exo'):
