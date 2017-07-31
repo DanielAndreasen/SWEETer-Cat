@@ -36,10 +36,12 @@ install:
   # Setup PyAstronomy folder
   - echo -n $HOME/PyAData > $HOME/.pyaConfigWhere
   - mkdir $HOME/PyAData
-
+before_script:
+  # - ./cc-test-reporter before-build
+  # Pre-download the PyAData.
+  - python -c "from PyAstronomy.pyasl import ExoplanetEU; ExoplanetEU()"
 # command to run tests
 script:
-  # - ./cc-test-reporter before-build
   - cd sweetercat
   - pytest --cov=. --cov-report term-missing --durations 5
 
