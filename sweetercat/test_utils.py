@@ -89,3 +89,5 @@ def test_table_convert():
         assert os.path.isfile(fname)
         if fmt != 'tsv':
             os.remove(fname)
+    with pytest.raises(NotImplementedError):
+        table_convert('fits')
