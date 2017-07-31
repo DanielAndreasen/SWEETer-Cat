@@ -1,9 +1,10 @@
 import pytest
 import flask
+import os
 import json
+from utils import readSC
 from flask import url_for
 from app import app as sc_app
-from utils import readSC
 
 
 # app fixture required for pytest-flask client
@@ -110,7 +111,10 @@ def test_stardetail_template_text(client):
 
 
 def test_download_status_code(client):
-    for fmt in ('csv', 'tsv', 'hdf'):
+    for fmt in ('csv', 'hdf'):
         fname = 'sweet-cat.{}'.format(fmt)
         assert client.get(url_for('download', fname=fname)).status_code == 200
+        assert not os.path.isfile('data/{}'.format(fname))
+    assert client.get(url_for('download', fname='sweet-cat.tsv')).status_code == 200
+    assert os.path.isfile('data/sweet-cat.tsv')
     assert client.get(url_for('download', fname='sweet-cat.fits')).status_code == 302
