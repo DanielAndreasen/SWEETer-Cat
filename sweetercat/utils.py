@@ -46,11 +46,7 @@ def readSC(nrows=None):
     df = cache.get('starDB')
     plots = cache.get('starCols')
     if (df is None) or (plots is None):
-        names = ['Star', 'HD', 'RA', 'dec', 'Vmag', 'Vmagerr', 'par', 'parerr', 'source',
-                 'teff', 'tefferr', 'logg', 'loggerr', 'logglc', 'logglcerr',
-                 'vt', 'vterr', 'feh', 'feherr', 'mass', 'masserr', 'Author', 'link',
-                 'flag', 'updated', 'Comment', 'tmp']
-        df = pd.read_table('WEBSITE_online.rdb', names=names)
+        df = pd.read_table('data/sweet-cat.tsv')
         df.drop('tmp', axis=1, inplace=True)
         df['flag'] = df['flag'] == 1  # Turn to bool
         df['Vabs'] = [absolute_magnitude(p, m) for p, m in df[['par', 'Vmag']].values]
@@ -163,3 +159,23 @@ def hz(teff, lum, model=1):
     seff = seff_sun + a*ts + b*ts**2 + c*ts**3 + d*ts**4
     dist = np.sqrt(lum/seff)
     return dist
+
+
+def table_convert(fmt="csv"):
+    """Convert the SC data into different formats.
+
+    To make available for download.
+    """
+    # others netcdf, fits?
+    # https://pandas.pydata.org/pandas-docs/stable/io.html
+    if fmt not in ['tsv', 'csv', 'hdf']:
+        raise NotImplementedError("Conversion format to {} not available.".format(fmt))
+    name = "data/sweet-cat.{}".format(fmt)
+    if fmt is "tsv":  # This is the standard
+        pass
+    else:
+        df = pd.read_table('data/sweet-cat.tsv')
+        if fmt == "hdf":
+            df.to_hdf(name, key="sweetcat", mode="w", format='table')
+        elif fmt == "csv":
+            df.to_csv(name, sep=",", index=False)

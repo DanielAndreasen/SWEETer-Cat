@@ -1,8 +1,9 @@
 from __future__ import division
+import os
 import pytest
 import numpy as np
 import pandas as pd
-from utils import absolute_magnitude, plDensity, hz, readSC, planetAndStar
+from utils import absolute_magnitude, plDensity, hz, readSC, planetAndStar, table_convert
 
 
 def test_absolute_magnitude():
@@ -72,3 +73,12 @@ def test_short_readSC():
         for name in plot_names:
             assert isinstance(name, str)
         assert len(df) == nrows
+
+
+def test_table_convert():
+    for fmt in ['tsv', 'csv', 'hdf']:
+        table_convert(fmt=fmt)
+        fname = 'data/sweet-cat.{}'.format(fmt)
+        assert os.path.isfile(fname)
+        if fmt != 'tsv':
+            os.remove(fname)

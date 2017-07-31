@@ -2,5 +2,6 @@
 venv
 *.pyc
 
+*.csv
 sweetercat/.cache
 .coverage
