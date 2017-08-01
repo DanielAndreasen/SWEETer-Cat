@@ -5,7 +5,6 @@ python:
   - "3.5"
   - "3.6"
 
-# command to install dependencies
 # Setup anaconda
 before_install:
   # http://conda.pydata.org/docs/travis.html
@@ -23,6 +22,7 @@ before_install:
   - conda info -a
   # - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
   # - chmod +x ./cc-test-reporter
+
 install:
   - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION
   - source activate test-environment
@@ -31,19 +31,20 @@ install:
   - pip install -r requirements.txt
 
   # Testing requirements
-  - pip install pytest-flask pytest-cov python-coveralls
+  - pip install -r test_requirements.txt
 
   # Setup PyAstronomy folder
   - echo -n $HOME/PyAData > $HOME/.pyaConfigWhere
   - mkdir $HOME/PyAData
+
 before_script:
   # - ./cc-test-reporter before-build
   # Pre-download the PyAData.
   - python -c "from PyAstronomy.pyasl import ExoplanetEU2; ExoplanetEU2()"
-# command to run tests
+
 script:
   - cd sweetercat
-  - pytest --cov=. --cov-report term-missing --durations 5
+  - pytest --cov=. --cov-report term-missing --durations 5 -n 2
 
 after_success:
   - coveralls -i

@@ -1,0 +1,5 @@
+pytest
+pytest-cov
+pytest-coveralls
+pytest-flask
+pytest-xdist
