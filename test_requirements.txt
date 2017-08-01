@@ -1,5 +1,5 @@
 pytest
 pytest-cov
-pytest-coveralls
+python-coveralls
 pytest-flask
 pytest-xdist
