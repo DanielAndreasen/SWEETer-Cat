@@ -39,7 +39,7 @@ install:
 
   # Remove futures for python 3
   - if [[ "$TRAVIS_PYTHON_VERSION" == 3* ]]; then
-      travis_retry pip uninstall futures;
+      travis_retry pip uninstall futures -y;
     fi
 
 before_script:
