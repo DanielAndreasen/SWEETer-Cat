@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, url_for, redirect, session, send_from_directory, after_this_request
+from flask import Flask, render_template, request, url_for, redirect, send_from_directory, after_this_request
 import os
 import json
 from plot import plot_page
@@ -30,7 +30,7 @@ def homepage(star=None):
 def stardetail(star=None):
     """Page with details on the individual system"""
     if star is not None:
-        df, columns = planetAndStar(full=True, how='left')
+        df, _ = planetAndStar(full=True, how='left')
         index = df['Star'] == star
         d = df.loc[index, :]
         show_planet = bool(~d['plName'].isnull().values[0])
