@@ -72,8 +72,8 @@ def test_planetAndStar():
     assert df1.shape[1] > df.shape[1]
 
 
-def test_short_readSC():
-    """Test the short readSC function"""
+def test_readSC_with_nrows():
+    """Test shortened readSC function."""
     for nrows in [2, 5]:
         df, plot_names = readSC(nrows=nrows)
         assert isinstance(df, pd.DataFrame)

@@ -15,9 +15,27 @@ def app():
     return sc_app
 
 
+def test_homepage(client):
+    homepage = client.get(url_for("homepage"))
+    assert homepage.status_code == 200
+    assert b"A detailed description of each field can be found" in homepage.data
+    # Link to SwEEt-Cat
+    assert b'<a href="https://www.astro.up.pt/resources/sweet-cat/">SWEET-Cat</a>' in homepage.data
+
+
+def test_parameter_description_on_homepage(client):
+    homepage = client.get(url_for("homepage"))
+    assert b"/static/table.pdf" in homepage.data
+    assert b"A detailed description of each field can be found"in homepage.data
+
+    table = client.get("/static/table.pdf")
+    assert table.status_code == 200
+    assert b"<dc:format>application/pdf</dc:format>\n" in table.data
+
+
 def test_status_codes(client):
     """Test that all pages return status code: 200 using the end_points"""
-    for end_point in ('homepage', 'plot', 'publications', 'plot_exo'):
+    for end_point in ('plot', 'publications', 'plot_exo'):
         assert client.get(url_for(end_point)).status_code == 200
 
 
