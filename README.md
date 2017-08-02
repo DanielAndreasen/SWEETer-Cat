@@ -1,5 +1,5 @@
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/da52b2a1511a4226a810d82a3fcee346)](https://www.codacy.com/app/daniel.andreasen/SWEETer-Cat?utm_source=github.com&utm_medium=referral&utm_content=DanielAndreasen/SWEETer-Cat&utm_campaign=badger)
-[![Code Issues](https://www.quantifiedcode.com/api/v1/project/fb7a0839dd5744a39d6f6c695235424b/badge.svg)](https://www.quantifiedcode.com/app/project/fb7a0839dd5744a39d6f6c695235424b)
+[![Codacy Badge](https://api.codacy.com/project/badge/Coverage/da52b2a1511a4226a810d82a3fcee346)](https://www.codacy.com/app/daniel.andreasen/SWEETer-Cat?utm_source=github.com&utm_medium=referral&utm_content=DanielAndreasen/SWEETer-Cat&utm_campaign=Badge_Coverage)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/da52b2a1511a4226a810d82a3fcee346)](https://www.codacy.com/app/daniel.andreasen/SWEETer-Cat?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=DanielAndreasen/SWEETer-Cat&amp;utm_campaign=Badge_Grade)
 [![Build Status](https://travis-ci.org/DanielAndreasen/SWEETer-Cat.svg?branch=master)](https://travis-ci.org/DanielAndreasen/SWEETer-Cat)
 [![Coverage Status](https://coveralls.io/repos/github/DanielAndreasen/SWEETer-Cat/badge.svg?branch=master)](https://coveralls.io/github/DanielAndreasen/SWEETer-Cat?branch=master)
 

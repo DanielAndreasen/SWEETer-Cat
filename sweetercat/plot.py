@@ -10,7 +10,7 @@ from bokeh.palettes import Viridis11
 from bokeh.layouts import row, column
 from bokeh.util.string import encode_utf8
 from bokeh.plotting import figure, ColumnDataSource
-from bokeh.models import HoverTool, ColorBar, LinearColorMapper, LabelSet, Spacer
+from bokeh.models import HoverTool, ColorBar, LinearColorMapper, Spacer
 
 COLORS = Viridis11
 
@@ -152,7 +152,7 @@ def plot_page(df, columns, request, page):
         color_bar = ColorBar(color_mapper=color_mapper, label_standoff=12,
                              border_line_color=None, location=(0, 0))
         fig.add_layout(color_bar, 'right')
-        cr = fig.circle('x', 'y', source=source, size=10,
+        fig.circle('x', 'y', source=source, size=10,
                         color='c', fill_alpha=0.2, line_color=None)
         z = z.name
         fig.xaxis.axis_label = x.name
@@ -160,7 +160,7 @@ def plot_page(df, columns, request, page):
         color_bar.title = z
     else:  # Simple colorbar
         source = ColumnDataSource(data=dict(x=x, y=y, star=stars))
-        cr = fig.circle('x', 'y', source=source, size=10,
+        fig.circle('x', 'y', source=source, size=10,
                         color=colors[color], fill_alpha=0.2, line_color=None)
         fig.xaxis.axis_label = x.name
         fig.yaxis.axis_label = y.name
@@ -171,7 +171,6 @@ def plot_page(df, columns, request, page):
     else:
         xh1, xh2 = np.log10(min(x)), np.log10(max(x))
         hhist, hedges = np.histogram(x, bins=np.logspace(xh1, xh2, max([5, int(num_points/50)])))
-    hzeros = np.zeros(len(hedges) - 1)
     hmax = max(hhist) * 1.1
 
     ph = figure(toolbar_location=None, plot_width=fig.plot_width, plot_height=200, x_range=fig.x_range,
@@ -189,7 +188,6 @@ def plot_page(df, columns, request, page):
     else:
         yh1, yh2 = np.log10(min(y)), np.log10(max(y))
         vhist, vedges = np.histogram(y, bins=np.logspace(yh1, yh2, max([5, int(num_points/50)])))
-    vzeros = np.zeros(len(vedges) - 1)
     vmax = max(vhist) * 1.1
 
     pv = figure(toolbar_location=None, plot_width=200, plot_height=fig.plot_height, x_range=(-vmax*0.1, vmax),
