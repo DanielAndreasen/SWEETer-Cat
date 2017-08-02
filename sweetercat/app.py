@@ -91,7 +91,10 @@ def download(fname):
         table_convert(fmt=fmt)
         @after_this_request
         def remove_file(response):
-            os.remove('data/{}'.format(fname))
+            try:
+                os.remove('data/{}'.format(fname))
+            except OSError:
+                pass
             return response
         return send_from_directory('data', fname)
     elif fmt == 'tsv':
