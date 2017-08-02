@@ -22,6 +22,18 @@ def test_status_codes(client):
         assert client.get(url_for(end_point)).status_code == 200
 
 
+def test_plot_POST_z_None(client):
+    """Test that setting z to None does not error."""
+
+    # POST request
+    for end_point in ('plot', "plot_exo"):
+        test_data = {'color': "Blue",  'x': "teff", 'y': "mass",  'z': "None", 'x1': 8000,  'x2': 2500,  'y1': 0,
+                     'y2': 5, 'xscale': "linear", 'yscale': "log", "checkboxes": ""}
+        plot = client.post(url_for(end_point), data=test_data, follow_redirects=True)
+        print(plot.data)
+        assert plot.status_code == 200
+
+
 # Need to check for 'stardetail' which also requires a star name.
 def test_stardetail_status_code(client):
     """Test stardetail will return status code: 200 when submitted with star"""
