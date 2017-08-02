@@ -5,7 +5,7 @@ import json
 from utils import readSC
 from flask import url_for
 from app import app as sc_app
-from PyAstronomy.pyaC.pyaErrors import PyADownloadError
+
 
 # app fixture required for pytest-flask client
 @pytest.fixture
@@ -26,8 +26,11 @@ def test_plot_POST_z_None(client):
 
     # POST request
     for end_point in ('plot', "plot_exo"):
-        test_data = {'color': "Blue",  'x': "teff", 'y': "mass",  'z': "None", 'x1': 8000,  'x2': 2500,  'y1': 0,
-                     'y2': 5, 'xscale': "linear", 'yscale': "log", "checkboxes": ""}
+        test_data = {'color': "Blue", 'x': "teff", 'y': "mass", 'z': "None",
+                     'xscale': "linear", 'yscale': "log",
+                     'x1': 8000, 'x2': 2500,
+                     'y1': 0, 'y2': 5,
+                     'checkboxes': ""}
         plot = client.post(url_for(end_point), data=test_data, follow_redirects=True)
         print(plot.data)
         assert plot.status_code == 200

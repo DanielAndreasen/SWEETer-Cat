@@ -72,11 +72,11 @@ def plot_page(df, columns, request, page):
                     limits[i] = max(y)
         x1, x2, y1, y2 = limits
 
-        if x.name != session['x']:
+        if x.name != session.get('x', None):
             x1 = min(x)
             x2 = max(x)
             session['x'] = x.name
-        if y.name != session['y']:
+        if y.name != session.get('y', None):
             y1 = min(y)
             y2 = max(y)
             session['y'] = y.name
