@@ -15,7 +15,6 @@ def app():
     return sc_app
 
 
-@pytest.mark.xfail(raises=PyADownloadError)
 def test_status_codes(client):
     """Test that all pages return status code: 200 using the end_points"""
     for end_point in ('homepage', 'plot', 'publications', 'plot_exo'):
