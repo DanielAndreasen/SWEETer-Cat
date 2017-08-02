@@ -35,23 +35,8 @@ def test_parameter_description_on_homepage(client):
 
 def test_status_codes(client):
     """Test that all pages return status code: 200 using the end_points"""
-    for end_point in ('plot', 'publications', 'plot_exo'):
+    for end_point in ('publications',):
         assert client.get(url_for(end_point)).status_code == 200
-
-
-def test_plot_POST_z_None(client):
-    """Test that setting z to None does not error."""
-
-    # POST request
-    for end_point in ('plot', "plot_exo"):
-        test_data = {'color': "Blue", 'x': "teff", 'y': "mass", 'z': "None",
-                     'xscale': "linear", 'yscale': "log",
-                     'x1': 8000, 'x2': 2500,
-                     'y1': 0, 'y2': 5,
-                     'checkboxes': ""}
-        plot = client.post(url_for(end_point), data=test_data, follow_redirects=True)
-        print(plot.data)
-        assert plot.status_code == 200
 
 
 # Need to check for 'stardetail' which also requires a star name.
