@@ -51,7 +51,7 @@ def test_stardetail_request_path():
 
 def test_request_paths():
     """Test the different URL paths return the right path"""
-    for path in ('/', '/plot/', '/plot-exo/', '/publications/', '/stardetail'):
+    for path in ('/', '/plot/', '/plot-exo/', '/publications/', '/stardetail', '/static/table.pdf'):
         with sc_app.test_request_context(path):
             assert flask.request.path == path
 
@@ -131,3 +131,12 @@ def test_download_status_code(client):
 
     # Invlaid format
     assert client.get(url_for('download', fname='sweet-cat.fits')).status_code == 302
+
+
+def test_error_404(client):
+    """Test the 404 response of an invalid url."""
+    error404 = client.get('/invalid_url')
+
+    assert b'This page could not be found' in error404.data
+    assert b'Our space monkeys are working on the issue...' in error404.data
+    assert b'<img src="static/spacemonkey.png" alt="">' in error404.data
