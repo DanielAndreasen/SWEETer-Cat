@@ -79,7 +79,8 @@ def planetAndStar(how='inner'):
     """
     d = cache.get('planetDB')
     c = cache.get('planetCols')
-    if (d is None) or (c is None): # or new:
+    merge = cache.get('merge')
+    if (d is None) or (c is None) or (merge != how):
         deu = pyasl.ExoplanetEU2().getAllDataPandas()
         rename = {'name': 'plName',
                   'star_name': 'stName',
@@ -108,6 +109,7 @@ def planetAndStar(how='inner'):
         c = columns + cols[1:]
         cache.set('planetDB', d, timeout=5*60)
         cache.set('planetCols', c, timeout=5*60)
+        cache.set('merge', how, timeout=5*60)
     return d, c
 
 
