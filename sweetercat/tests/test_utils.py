@@ -25,6 +25,8 @@ def test_plDensity():
     assert isinstance(plDensity(m, r), float)
     assert round(plDensity(m, r), 2) == 1.33
     assert plDensity(0, r) == 0
+    with pytest.raises(ZeroDivisionError):
+        plDensity(m, 0)
 
 
 def test_hz():
@@ -61,19 +63,14 @@ def test_readSC():
 def test_planetAndStar():
     """Test the planetAndStar function"""
     df, columns = planetAndStar()
-    df1, columns1 = planetAndStar(full=True)
     assert isinstance(df, pd.DataFrame)
-    assert isinstance(df1, pd.DataFrame)
     assert isinstance(columns, list)
     for column in columns:
         assert isinstance(column, str)
-        assert column in columns1
-
-    assert df1.shape[1] > df.shape[1]
 
 
-def test_short_readSC():
-    """Test the short readSC function"""
+def test_readSC_with_nrows():
+    """Test shortened readSC function."""
     for nrows in [2, 5]:
         df, plot_names = readSC(nrows=nrows)
         assert isinstance(df, pd.DataFrame)

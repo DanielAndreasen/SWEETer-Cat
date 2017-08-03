@@ -30,7 +30,7 @@ def homepage(star=None):
 def stardetail(star=None):
     """Page with details on the individual system"""
     if star is not None:
-        df, _ = planetAndStar(full=True, how='left')
+        df, _ = planetAndStar(how='left')
         index = df['Star'] == star
         d = df.loc[index, :]
         show_planet = bool(~d['plName'].isnull().values[0])
@@ -91,7 +91,10 @@ def download(fname):
         table_convert(fmt=fmt)
         @after_this_request
         def remove_file(response):
-            os.remove('data/{}'.format(fname))
+            try:
+                os.remove('data/{}'.format(fname))
+            except OSError:
+                pass
             return response
         return send_from_directory('data', fname)
     elif fmt == 'tsv':
