@@ -20,8 +20,6 @@ before_install:
   - conda config --set always_yes yes --set changeps1 no
   - conda update -q conda
   - conda info -a
-  # - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
-  # - chmod +x ./cc-test-reporter
 
 install:
   - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION
@@ -43,7 +41,6 @@ install:
     fi
 
 before_script:
-  # - ./cc-test-reporter before-build
   # Pre-download the PyAData.
   - python -c "from PyAstronomy.pyasl import ExoplanetEU2; ExoplanetEU2()"
   - cd sweetercat
@@ -55,5 +52,3 @@ after_success:
   - coveralls -i
   - coverage xml -i
   - python-codacy-coverage -r coverage.xml
-  # - cd ..
-  # - ./cc-test-reporter after-build
