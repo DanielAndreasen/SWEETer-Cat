@@ -77,10 +77,8 @@ def planetAndStar(how='inner'):
     c : list
       The columns that can be used for plotting
     """
-    d = cache.get('planetDB')
-    c = cache.get('planetCols')
-    merge = cache.get('merge')
-    if (d is None) or (c is None) or (merge != how):
+    deu = cache.get('exoplanetDB')
+    if deu is None:
         deu = pyasl.ExoplanetEU2().getAllDataPandas()
         rename = {'name': 'plName',
                   'star_name': 'stName',
@@ -99,17 +97,16 @@ def planetAndStar(how='inner'):
                   'mag_h': 'mag_h',
                   'mag_k': 'mag_k'}
         deu.rename(columns=rename, inplace=True)
-        deu['plDensity'] = plDensity(deu['plMass'], deu['plRadius'])  # Add planet density
-        cols = ['stName', 'plMass', 'plRadius', 'period', 'sma', 'eccentricity',
-                'inclination', 'discovered', 'dist', 'b',
-                'mag_v', 'mag_i', 'mag_j', 'mag_h', 'mag_k', 'plDensity']
         deu['stName'] = [s.decode() if isinstance(s, bytes) else s for s in deu['stName']]
-        df, columns = readSC()
-        d = pd.merge(df, deu, left_on='Star', right_on='stName', how=how)
-        c = columns + cols[1:]
-        cache.set('planetDB', d, timeout=5*60)
-        cache.set('planetCols', c, timeout=5*60)
-        cache.set('merge', how, timeout=5*60)
+        deu['plDensity'] = plDensity(deu['plMass'], deu['plRadius'])  # Add planet density
+        cache.set('exoplanetDB', deu, timeout=5*60)
+
+    cols = ['stName', 'plMass', 'plRadius', 'period', 'sma', 'eccentricity',
+            'inclination', 'discovered', 'dist', 'b',
+            'mag_v', 'mag_i', 'mag_j', 'mag_h', 'mag_k', 'plDensity']
+    df, columns = readSC()
+    d = pd.merge(df, deu, left_on='Star', right_on='stName', how=how)
+    c = columns + cols[1:]
     return d, c
 
 
