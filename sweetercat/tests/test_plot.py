@@ -2,14 +2,6 @@
 
 import pytest
 from flask import url_for
-from app import app as sc_app
-
-
-@pytest.fixture
-def app():
-    sc_app.testing = True
-    sc_app.debug = True
-    return sc_app
 
 
 def test_plot_get_requests(client):
@@ -22,9 +14,9 @@ def test_plot_get_requests(client):
 
 
 def test_plot_post_request(client):
-    test_data = {'color': "Blue", 'x': "teff", 'y': "mass", 'z': "Vmag",
-    'x1': 8000, 'x2': 2500, 'y1': 0, 'y2': 5,
-    'xscale': "linear", 'yscale': "log", "checkboxes": ""}
+    test_data = {'color': 'Blue', 'x': 'teff', 'y': 'mass', 'z': 'Vmag',
+                 'x1': 8000, 'x2': 2500, 'y1': 0, 'y2': 5,
+                 'xscale': 'linear', 'yscale': 'log', 'checkboxes': ''}
 
     for end_point in ('plot',):  # 'plot_exo'
         plot = client.post(url_for(end_point), data=test_data, follow_redirects=True)

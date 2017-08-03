@@ -7,14 +7,6 @@ from flask import url_for
 from app import app as sc_app
 
 
-# app fixture required for pytest-flask client
-@pytest.fixture
-def app():
-    sc_app.testing = True
-    sc_app.debug = True
-    return sc_app
-
-
 def test_homepage(client):
     homepage = client.get(url_for("homepage"))
     assert homepage.status_code == 200
