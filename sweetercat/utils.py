@@ -61,15 +61,12 @@ def readSC(nrows=None):
     return df, plots
 
 
-def planetAndStar(full=False, how='inner'):
+def planetAndStar(how='inner'):
     """Read the SWEET-Cat and ExoplanetEU databases, merge them and cache them
     (if it isn't already).
 
-    Inputs
-    ------
-    full : bool (default: False)
-      If True, then return the entire DataFrame, otherwise return what is needed
-      for plots
+    Input
+    -----
     how : str (default: 'inner')
       How to merge the two DataFrames. See pd.merge for documentation
 
@@ -82,11 +79,7 @@ def planetAndStar(full=False, how='inner'):
     """
     d = cache.get('planetDB')
     c = cache.get('planetCols')
-    new = False
-    if (c is not None):
-        if (full and d.shape[1] == 43) or (not full and d.shape[1] != 43):
-            new = True
-    if (d is None) or (c is None) or new:
+    if (d is None) or (c is None): # or new:
         deu = pyasl.ExoplanetEU2().getAllDataPandas()
         rename = {'name': 'plName',
                   'star_name': 'stName',
@@ -109,8 +102,6 @@ def planetAndStar(full=False, how='inner'):
         cols = ['stName', 'plMass', 'plRadius', 'period', 'sma', 'eccentricity',
                 'inclination', 'discovered', 'dist', 'b',
                 'mag_v', 'mag_i', 'mag_j', 'mag_h', 'mag_k', 'plDensity']
-        if not full:
-            deu = deu[cols]
         deu['stName'] = [s.decode() if isinstance(s, bytes) else s for s in deu['stName']]
         df, columns = readSC()
         d = pd.merge(df, deu, left_on='Star', right_on='stName', how=how)
