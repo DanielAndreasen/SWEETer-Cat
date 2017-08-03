@@ -53,5 +53,7 @@ script:
 
 after_success:
   - coveralls -i
+  - coverage xml -i
+  - python-codacy-coverage -r coverage.xml
   # - cd ..
   # - ./cc-test-reporter after-build
