@@ -4,6 +4,7 @@ venv
 
 *.csv
 *.yml
+!.travis.yml
 sweetercat/.cache
 .cache
 .coverage
