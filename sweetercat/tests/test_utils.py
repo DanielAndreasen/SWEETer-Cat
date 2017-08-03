@@ -25,6 +25,8 @@ def test_plDensity():
     assert isinstance(plDensity(m, r), float)
     assert round(plDensity(m, r), 2) == 1.33
     assert plDensity(0, r) == 0
+    with pytest.raises(ZeroDivisionError):
+        plDensity(m, 0)
 
 
 def test_hz():
