@@ -166,12 +166,7 @@ def plot_page(df, columns, request, page):
         fig.yaxis.axis_label = y.name
 
     # Horizontal historgram
-    if xscale == 'linear':
-        hhist, hedges = np.histogram(x, bins=max([5, int(num_points/50)]))
-    else:
-        xh1, xh2 = np.log10(min(x)), np.log10(max(x))
-        hhist, hedges = np.histogram(x, bins=np.logspace(xh1, xh2, max([5, int(num_points/50)])))
-    hmax = max(hhist) * 1.1
+    hhist, hedges, hmax = scaled_histogram(x, num_points, xscale)
 
     ph = figure(toolbar_location=None, plot_width=fig.plot_width, plot_height=200, x_range=fig.x_range,
                 y_range=(-hmax*0.1, hmax), min_border=10, min_border_left=50, y_axis_location="right",
@@ -182,13 +177,8 @@ def plot_page(df, columns, request, page):
 
     ph.quad(bottom=0, left=hedges[:-1], right=hedges[1:], top=hhist, color="white", line_color=colors[color])
 
-    # vertical historgram
-    if yscale == 'linear':
-        vhist, vedges = np.histogram(y, bins=max([5, int(num_points/50)]))
-    else:
-        yh1, yh2 = np.log10(min(y)), np.log10(max(y))
-        vhist, vedges = np.histogram(y, bins=np.logspace(yh1, yh2, max([5, int(num_points/50)])))
-    vmax = max(vhist) * 1.1
+    # Vertical historgram
+    vhist, vedges, vmax = scaled_histogram(y, num_points, yscale)
 
     pv = figure(toolbar_location=None, plot_width=200, plot_height=fig.plot_height, x_range=(-vmax*0.1, vmax),
                 y_range=fig.y_range, min_border=10, y_axis_location="right", y_axis_type=yscale)
@@ -219,3 +209,14 @@ def plot_page(df, columns, request, page):
         columns=columns
     )
     return encode_utf8(html)
+
+
+def scaled_histogram(data, num_points, scale):
+    if scale == 'linear':
+        hist, edges = np.histogram(data, bins=max([5, int(num_points/50)]))
+    else:
+        h1, h2 = np.log10(min(data)), np.log10(max(data))
+        hist, edges = np.histogram(data, bins=np.logspace(h1, h2, max([5, int(num_points/50)])))
+    hist_max = max(hist) * 1.1
+    return hist, edges, hist_max
+

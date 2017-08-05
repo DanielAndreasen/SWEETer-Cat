@@ -36,3 +36,19 @@ def test_post_z_none_43(client):
 
         assert plot.status_code == 200
         assert b"Select your settings:" in plot.data
+
+
+@pytest.mark.parametrize("points,expected_bins", [
+    (0, 5),
+    (299, 5),
+    (300, 6),
+    (2000, 40),
+])
+def test_scaled_histogram_bin_number(points, expected_bins):
+    for scale in ("linear", "log"):
+        data = np.random.rand(points)
+        hist, edges, hmax = scaled_histogram(data, points, scale)
+
+        assert len(hist) == expected_bins
+        assert len(hist) + 1 == len(edges)
+        assert np.all(hist <= hmax)
