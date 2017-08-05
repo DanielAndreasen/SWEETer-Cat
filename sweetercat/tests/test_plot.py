@@ -36,3 +36,25 @@ def test_post_z_none_43(client):
 
         assert plot.status_code == 200
         assert b"Select your settings:" in plot.data
+
+
+def test_title_and_axis_labels(client):
+    for xname, yname in zip(("teff", "vt", "par"), ("mass", "Vabs", "logg")):
+        # test_data = {'color': 'Blue', 'x': xname, 'y': yname, 'z': 'Vmag',
+        #          'x1':  "None", 'x2':  "None", 'y1':  "None", 'y2': "None",
+        #          'xscale': 'linear', 'yscale': 'log', 'checkboxes': ''}
+        print(xname, yname)
+        test_data = {'color': 'Blue', 'x': xname, 'y': yname, 'z': 'Vmag',
+                     'x1': "", 'x2': "", 'y1': "", 'y2': "",
+                     'xscale': 'linear', 'yscale': 'log', 'checkboxes': ''}
+
+        title = '"text":"{0} vs. {1}:'.format(xname, yname)
+        xlabel = '"axis_label":"{0}"'.format(xname)
+        ylabel = '"axis_label":"{0}"'.format(yname)
+
+        for end_point in ('plot',):  # 'plot_exo'
+            plot = client.post(url_for(end_point), data=test_data, follow_redirects=True)
+            print(plot)
+            for feature in [title, xlabel, ylabel]:
+                assert feature.encode("utf-8") in plot.data
+
