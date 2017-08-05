@@ -58,3 +58,12 @@ def test_title_and_axis_labels(client):
             for feature in [title, xlabel, ylabel]:
                 assert feature.encode("utf-8") in plot.data
 
+
+def test_feh_with_log_scale(client):
+    test_data = {'color': 'Blue', 'x': "feh", 'y': "feh", 'z': 'Vmag',
+                 'x1': "None", 'x2': "None", 'y1': "None", 'y2': "None",
+                 'xscale': 'linear', 'yscale': 'log', 'checkboxes': ''}
+
+    for end_point in ('plot',):  # 'plot_exo'
+        plot = client.post(url_for(end_point), data=test_data, follow_redirects=True)
+        assert plot.status_code == 200
