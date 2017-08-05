@@ -213,10 +213,11 @@ def plot_page(df, columns, request, page):
 
 def scaled_histogram(data, num_points, scale):
     if scale == 'linear':
-        hist, edges = np.histogram(data, bins=max([5, int(num_points/50)]))
+        hist, edges = np.histogram(data, bins=max([5, int(num_points / 50)]))
     else:
-        h1, h2 = np.log10(min(data)), np.log10(max(data))
-        hist, edges = np.histogram(data, bins=np.logspace(h1, h2, max([5, int(num_points/50)])))
+        # Conditional catches an empty data input.
+        h1, h2 = ((np.log10(min(data)), np.log10(max(data))) if len(data) > 0 else (0, 1))
+        hist, edges = np.histogram(data, bins=np.logspace(h1, h2, 1 + max([5, int(num_points / 50)])))
     hist_max = max(hist) * 1.1
     return hist, edges, hist_max
 

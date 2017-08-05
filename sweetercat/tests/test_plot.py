@@ -1,6 +1,7 @@
 """SWEETer-Cat tests regarding the plotting pages."""
 
 import pytest
+import numpy as np
 from flask import url_for
 
 
