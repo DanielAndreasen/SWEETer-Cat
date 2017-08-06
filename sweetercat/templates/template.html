@@ -13,13 +13,27 @@
     <style>
       html {
         height: auto !important;
-        padding-bottom: 700px !important;
+        padding-bottom: 100px !important;
           }
+      body{
+        margin:0;
+        font: normal 16px Arial, Helvetica, sand-serif;
+        color:#333;
+      }
+
+      #particles{
+        background:#333;
+        height: 110%;
+        width: 100%;
+        opacity: 0.5;
+        position: absolute;
+      }
+
     </style>
   </head>
 
   <header>
-    <nav class="navbar navbar-default">
+    <nav class="navbar navbar-default" style="opacity:0.7;">
       <div class="container-fluid">
         <div class="navbar-header">
           <a class="navbar-brand" href="/"><span class="glyphicon glyphicon-home"></span> SWEETer-Cat</a>
@@ -44,6 +58,10 @@
   </header>
 
   <body>
+    <div id="particles">
+    </div>
+
+
     <div class="container-fluid" style="min-hight:100%">
       {% with messages = get_flashed_messages() %}
         {% if messages %}
@@ -70,6 +88,13 @@
             "order": [[ 23, "desc" ]],
         } );
       } );
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script type="text/javascript">
+      particlesJS.load('particles', "{{ url_for('static', filename='particles.json') }}", function() {
+        console.log('callback - particles.js config loaded');
+        });
     </script>
 
   </body>
