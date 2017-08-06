@@ -56,7 +56,7 @@ def plot_page(df, columns, request, page):
         y = df[y]
 
         # Setting the limits
-        x1, x2, y1, y2 = get_limits(request, x, y)
+        x1, x2, y1, y2 = get_limits(request.form, x, y)
 
         if x.name != session.get('x', None):
             x1 = min(x)
@@ -208,7 +208,7 @@ def scaled_histogram(data, num_points, scale):
     return hist, edges, hist_max
 
 
-def get_limits(request, x, y):
+def get_limits(points, x, y):
     def default_value(x, default):
         try:
             return float(x)
@@ -216,10 +216,7 @@ def get_limits(request, x, y):
             return default
 
     defaults = [min(x), max(x), min(y), max(y)]
-    if hasattr(request, 'form'):
-        limits = [request.form['x1'], request.form['x2'], request.form['y1'], request.form['y2']]
-    else:
-        limits = [request['x1'], request['x2'], request['y1'], request['y2']]
+    limits = [points['x1'], points['x2'], points['y1'], points['y2']]
     for i, (limit, default) in enumerate(zip(limits, defaults)):
         limits[i] = default_value(limit, default)
     return limits
