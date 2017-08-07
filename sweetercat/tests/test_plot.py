@@ -3,7 +3,7 @@
 import pytest
 import numpy as np
 from flask import url_for
-from plot import get_limits, scaled_histogram
+from plot import get_limits, scaled_histogram, count
 
 
 def test_plot_get_requests(client):
@@ -58,9 +58,33 @@ def test_scaled_histogram_bin_number(points, expected_bins):
 
 def test_get_limits():
     x = range(5)
-    y = range(5,10)
-    request_form = {"x1": 1, "x2": "two", "y1" : "", "y2": [4]}
-    limits = get_limits(request_form , x, y)
+    y = range(5, 10)
+    request_form = {"x1": 1, "x2": "two", "y1": "", "y2": [4]}
+    limits = get_limits(request_form, x, y)
     assert limits == [1., 4., 5., 9.]
     for lim in limits:
         assert isinstance(lim, (float, int))
+
+
+def test_count():
+    x = np.arange(20)
+    y = np.arange(5, 25)
+    number = count(x, y, [1, 11], [10, 20])
+    assert number == 5
+    assert isinstance(number, int)
+
+
+@pytest.mark.parametrize("limit,error", [
+    ([], ValueError),
+    ([1], ValueError),
+    ([1, 2, 3], ValueError),
+    ("[1,2]", TypeError),
+    ((1, 2), TypeError)
+])
+def test_count_limit_errors(limit, error):
+    x = range(20)
+    y = range(5, 26)
+    with pytest.raises(error):
+        count(x, y, [3, 8], limit)
+    with pytest.raises(error):
+        count(x, y, limit, [10, 15])

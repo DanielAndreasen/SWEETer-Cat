@@ -116,8 +116,8 @@ def plot_page(df, columns, request, page):
         ("Star", "@star"),
     ])
 
-    minx, maxx, miny, maxy = min([x1, x2]), max([x1, x2]), min([y1, y2]), max([y1, y2])  # Incase axis is revesed
-    num_points = np.sum((minx < x) & (x < maxx) & (miny < y) & (y < maxy))
+    num_points = count(x, y, [x1, x2], [y1, y2])
+
     title = '{} vs. {}:\tNumber of objects in plot: {}'.format(x.name, y.name, num_points)
 
     tools = "resize,crosshair,pan,wheel_zoom,box_zoom,reset,box_select,lasso_select,save".split(',')
@@ -217,3 +217,24 @@ def get_limits(points, x, y):
     for i, (limit, default) in enumerate(zip(limits, defaults)):
         limits[i] = default_value(limit, default)
     return limits
+
+
+def count(x, y, xlimits, ylimits):
+    """Count number of points in x and y that lie within the given limits.
+
+    Inputs
+    x, y: array-like
+    xlimits, ylimts: lists of two numbers.
+    Returns
+    count: int
+        Number of points within the limits.
+    """
+    if not (isinstance(xlimits, list) and isinstance(ylimits, list)):
+        raise TypeError("Axis limits are not of type List.")
+    elif (len(xlimits) != 2) or (len(ylimits) != 2):
+        raise ValueError("Axis limits not of length 2.")
+    # Sort Incase axis is revesed
+    xlimits.sort()
+    ylimits.sort()
+    return int(sum((xlimits[0] < x) & (x < xlimits[1]) &
+                   (ylimits[0] < y) & (y < ylimits[1])))
