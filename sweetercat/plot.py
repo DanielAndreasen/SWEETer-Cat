@@ -73,7 +73,6 @@ def plot_page(df, columns, request, page):
         checkboxes = request.form.getlist("checkboxes")
     else:
         if page == "exo":
-            color = 'Blue'
             cols = list(set(['Star', 'discovered', 'plMass']))
             df = df.loc[:, cols].dropna()
             x = df['discovered']
@@ -81,14 +80,11 @@ def plot_page(df, columns, request, page):
             z = None
             x1, x2 = 1985, 2020
             y1, y2 = 0.0001, 200
-            xscale = 'linear'
             yscale = 'log'
             session['x'] = 'discovered'
             session['y'] = 'plMass'
             session['z'] = 'None'
-            checkboxes = []
         else:
-            color = 'Blue'
             cols = list(set(['Star', 'teff', 'Vabs', 'logg']))
             df = df.loc[:, cols].dropna()
             x = df['teff']
@@ -96,12 +92,13 @@ def plot_page(df, columns, request, page):
             z = df['logg']
             x1, x2 = 8000, 2500
             y1, y2 = 33, 10
-            xscale = 'linear'
             yscale = 'linear'
             session['x'] = 'teff'
             session['y'] = 'Vabs'
             session['z'] = 'logg'
-            checkboxes = []
+        color = 'Blue'
+        xscale = 'linear'
+        checkboxes = []
 
     stars = df['Star']
     if "homo" in checkboxes:
