@@ -42,7 +42,7 @@ install:
 
 before_script:
   # Pre-download the PyAData.
-  - python -c "from PyAstronomy.pyasl import ExoplanetEU2; ExoplanetEU2()"
+  - travis_retry python -c "from PyAstronomy.pyasl import ExoplanetEU2; ExoplanetEU2()"
   - cd sweetercat
 
 script:
