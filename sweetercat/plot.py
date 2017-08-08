@@ -1,4 +1,4 @@
-from flask import session, render_template, redirect, url_for
+from flask import session, render_template, redirect, url_for, flash
 
 import numpy as np
 import pandas as pd
@@ -207,6 +207,8 @@ def plot_page(df, columns, request, page):
     css_resources = INLINE.render_css()
 
     script, div = components(layout)
+    if error is not None:
+        flash('Scale was changed from log to linear')
     html = render_template(
         'plot.html',
         plot_script=script,
