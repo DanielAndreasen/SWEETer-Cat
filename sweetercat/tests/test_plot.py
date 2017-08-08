@@ -2,6 +2,7 @@
 
 import pytest
 from flask import url_for
+from plot import check_scale
 
 
 @pytest.fixture()
@@ -63,3 +64,16 @@ def test_feh_with_log_scale(client, form_data):
     # Just a random test so that the errors are raised at the moment.
     # Should add an assert for how the correct functionality should work.
     assert plot.status_code == 200
+
+
+@pytest.mark.parametrize("x,y,xs,ys,xs_expected,ys_expected,error", [
+    (range(5), range(5), 'linear', 'linear', 'linear', 'linear', None),
+    (range(5), range(5), 'log', 'log', 'linear', 'linear', True),
+    (range(1, 5), range(1, 5), 'log', 'log', 'log', 'log', None),
+    (range(1, 5), range(1, 5), 'linear', 'linear', 'linear', 'linear', None),
+])
+def test_check_scale(x, y, xs, ys, xs_expected, ys_expected, error):
+    xscale, yscale, err = check_scale(x, y, xs, ys)
+    assert xscale == xs_expected
+    assert yscale == ys_expected
+    assert err == error

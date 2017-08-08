@@ -117,6 +117,9 @@ def plot_page(df, columns, request, page):
             session['z'] = 'logg'
             checkboxes = []
 
+    # Check scale
+    xscale, yscale, error = check_scale(x, y, xscale, yscale)
+
     stars = df['Star']
     if "homo" in checkboxes:
         flag = df["flag"]
@@ -219,3 +222,16 @@ def plot_page(df, columns, request, page):
         columns=columns
     )
     return encode_utf8(html)
+
+
+def check_scale(x, y, xscale, yscale):
+    x = np.array(x)
+    y = np.array(y)
+    error = None
+    if (xscale == 'log') and np.any(x <= 0):
+        xscale = 'linear'
+        error = True
+    if (yscale == 'log') and np.any(y <= 0):
+        yscale = 'linear'
+        error = True
+    return xscale, yscale, error
