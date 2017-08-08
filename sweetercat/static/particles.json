@@ -1,0 +1,45 @@
+{
+  "particles":{
+    "number":{
+      "value": 500
+    },
+    "color":{
+      "value": "#FD5B03"
+    },
+    "shape":{
+      "type": "star"
+    },
+    "size":{
+      "value": 3,
+      "random": true,
+      "anim":{
+        "enable": true,
+        "speed": 10
+      }
+    },
+    "move":{
+      "enable": true,
+      "speed": 2,
+      "direction": "none",
+      "straight": false
+    }
+  },
+  "interactivity":{
+    "events":{
+      "onhover":{
+        "enable": true,
+        "mode": "bubble"
+      },
+      "onclick":{
+        "enable": true,
+        "mode": "push"
+      }
+    },
+    "modes":{
+      "bubble":{
+        "distance": 100,
+        "size": 4
+      }
+    }
+  }
+}
