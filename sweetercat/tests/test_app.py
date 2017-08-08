@@ -30,19 +30,21 @@ def test_stardetail_status_code(client, SCdata, planetStardata):
     """Test stardetail will return status code: 200 when submitted with star"""
     # Passing in planetStardata moves the setup time (~4.8s) of the caching etc into the fixture, which can be shared between tests.
     df, _ = SCdata
-    df = df[:5]
+    df = df.sample(5)
     # All stars are a slow test
     stars = df.Star.values
     for star in stars:
+        print(star)   # Catch star name if test fails.
         assert client.get(url_for("stardetail", star=star)).status_code == 200
 
 
 def test_stardetail_request_path(SCdata):
     """Test that the stardetail renders properly"""
     df, _ = SCdata
-    df = df[:50]
+    df = df.sample(50)
     stars = df.Star.values
     for star in stars:
+        print(star)
         # BD+ stars have replaced it with a space. Not a problem in app since
         # the stardetail show up with planets
         star = star.replace('+', ' ')
@@ -103,10 +105,10 @@ def test_stardetail_template_text(client, SCdata):
     #           "Orbital parameters", "Period:", "days", "Semi-major axis:", "AU",
     #           "Inner habitable zone limit:", "Density", "Outer habitable zone limit:"]
     df, __ = SCdata
-    df = df[:5]
-    stars = df.Star.values
+    df = df.sample(5)
+    stars = df.Star
 
-    for i, star in enumerate(stars):
+    for i, star in stars.iteritems():
         star_detail = client.get(url_for("stardetail", star=star))
 
         if df["flag"][i]:
