@@ -3,6 +3,7 @@
 import pytest
 import numpy as np
 from flask import url_for
+from plot import scaled_histogram
 
 
 def test_plot_get_requests(client):
