@@ -1,8 +1,9 @@
 """SWEETer-Cat tests regarding the plotting pages."""
 
 import pytest
+import numpy as np
 from flask import url_for
-from plot import check_scale
+from plot import check_scale, scaled_histogram
 
 
 @pytest.fixture()
@@ -77,3 +78,19 @@ def test_check_scale(x, y, xs, ys, xs_expected, ys_expected, error):
     assert xscale == xs_expected
     assert yscale == ys_expected
     assert err == error
+
+
+@pytest.mark.parametrize("points,expected_bins", [
+    (0, 5),
+    (299, 5),
+    (300, 6),
+    (2000, 40),
+])
+def test_scaled_histogram_bin_number(points, expected_bins):
+    for scale in ("linear", "log"):
+        data = np.random.rand(points)
+        hist, edges, hmax = scaled_histogram(data, points, scale)
+
+        assert len(hist) == expected_bins
+        assert len(hist) + 1 == len(edges)
+        assert np.all(hist <= hmax)
