@@ -1,9 +1,10 @@
 """SWEETer-Cat tests regarding the plotting pages."""
 
-import pytest
 import numpy as np
+import pytest
 from flask import url_for
-from plot import get_limits, scaled_histogram, count
+
+from plot import count, get_limits, scaled_histogram
 
 
 def test_plot_get_requests(client):

@@ -1,16 +1,15 @@
-from flask import session, render_template, redirect, url_for
-
 import numpy as np
 import pandas as pd
-from utils import colors
-
 from bokeh.embed import components
-from bokeh.resources import INLINE
+from bokeh.layouts import column, row
+from bokeh.models import ColorBar, HoverTool, LinearColorMapper, Spacer
 from bokeh.palettes import Viridis11
-from bokeh.layouts import row, column
+from bokeh.plotting import ColumnDataSource, figure
+from bokeh.resources import INLINE
 from bokeh.util.string import encode_utf8
-from bokeh.plotting import figure, ColumnDataSource
-from bokeh.models import HoverTool, ColorBar, LinearColorMapper, Spacer
+from flask import redirect, render_template, session, url_for
+
+from utils import colors
 
 COLORS = Viridis11
 
