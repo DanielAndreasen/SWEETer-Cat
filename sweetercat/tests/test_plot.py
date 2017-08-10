@@ -72,7 +72,7 @@ def test_feh_with_log_scale(client, form_data):
     (range(5), range(5), 'log', 'log', 'linear', 'linear', True),
     (range(1, 5), range(1, 5), 'log', 'log', 'log', 'log', None),
     (range(1, 5), range(1, 5), 'linear', 'linear', 'linear', 'linear', None),
-    (-range(-5, -1), range(-5, -1), 'linear', 'log', 'linear', 'linear', True),
+    (range(-5, -1), range(-5, -1), 'linear', 'log', 'linear', 'linear', True),
 ])
 def test_check_scale(x, y, xs, ys, xs_expected, ys_expected, error):
     xscale, yscale, err = check_scale(x, y, xs, ys)
