@@ -19,10 +19,10 @@ def homepage(star=None):
         idx = dfs[col].isnull()
         dfs[col] = dfs[col].astype(str)
         dfs.loc[~idx, col] = [s[:-2] for s in dfs.loc[~idx, col]]
-    for col in ('Vmag', 'Vmagerr', 'par', 'parerr', 'logg', 'loggerr',
-                'logglc', 'logglcerr', 'vt', 'vterr', 'feh', 'feherr',
-                'mass', 'masserr'):
-        dfs[col] = df[col].round(decimals=2)
+    decimals = dict.fromkeys(['Vmag', 'Vmagerr', 'par', 'parerr', 'logg',
+                              'loggerr', 'logglc', 'logglcerr', 'vterr', 'feh',
+                              'feherr', 'mass', 'masserr'], 2)
+    dfs = dfs.round(decimals=decimals)
     dfs.fillna('...', inplace=True)
     columns = dfs.columns
     dfs = dfs.loc[:, columns]
