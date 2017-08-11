@@ -44,15 +44,11 @@ def plot_page(df, columns, request, page):
         if (z is not None) and (z not in columns):
             return redirect(url_for('plot'))
 
-        if z is not None:
-            cols = list(set(['Star', x, y, z, "flag"]))
-            df = df.loc[:, cols].dropna()
-            z = df[z]
-        else:
-            cols = list(set(['Star', x, y, "flag"]))
-            df = df.loc[:, cols].dropna()
+        cols = filter(None, set(['Star', x, y, z, "flag"]))
+        df = df.loc[:, cols].dropna()
         x = df[x]
         y = df[y]
+        z = None if z is None else df[z]
 
         # Setting the limits
         x1, x2, y1, y2 = get_limits(request.form, x, y)
