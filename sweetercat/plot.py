@@ -44,11 +44,7 @@ def plot_page(df, columns, request, page):
         if (z is not None) and (z not in columns):
             return redirect(url_for('plot'))
 
-        cols = filter(None, set(['Star', x, y, z, "flag"]))
-        df = df.loc[:, cols].dropna()
-        x = df[x]
-        y = df[y]
-        z = None if z is None else df[z]
+        df, x, y, z = extract(df, x, y, z)
 
         # Setting the limits
         x1, x2, y1, y2 = get_limits(request.form, x, y)
@@ -68,10 +64,8 @@ def plot_page(df, columns, request, page):
         checkboxes = request.form.getlist("checkboxes")
     else:
         if page == "exo":
-            cols = list(set(['Star', 'discovered', 'plMass']))
-            df = df.loc[:, cols].dropna()
-            x = df['discovered']
-            y = df['plMass']
+            x = 'discovered'
+            y = 'plMass'
             z = None
             x1, x2 = 1985, 2020
             y1, y2 = 0.0001, 200
@@ -80,11 +74,9 @@ def plot_page(df, columns, request, page):
             session['y'] = 'plMass'
             session['z'] = 'None'
         else:
-            cols = list(set(['Star', 'teff', 'Vabs', 'logg']))
-            df = df.loc[:, cols].dropna()
-            x = df['teff']
-            y = df['Vabs']
-            z = df['logg']
+            x = 'teff'
+            y = 'Vabs'
+            z = 'logg'
             x1, x2 = 8000, 2500
             y1, y2 = 33, 10
             yscale = 'linear'
@@ -94,6 +86,7 @@ def plot_page(df, columns, request, page):
         color = 'Blue'
         xscale = 'linear'
         checkboxes = []
+        df, x, y, z = extract(df, x, y, z)
 
     stars = df['Star']
     if "homo" in checkboxes:
@@ -233,3 +226,16 @@ def count(x, y, xlimits, ylimits):
     ylimits.sort()
     return int(sum((xlimits[0] < x) & (x < xlimits[1]) &
                    (ylimits[0] < y) & (y < ylimits[1])))
+
+
+def extract(df, x, y, z):
+    """Extract non-NaN data columns.
+
+    Handles z=None case.
+    """
+    cols = filter(None, set(['Star', x, y, z, "flag"]))
+    df = df.loc[:, cols].dropna()
+    x = df[x]
+    y = df[y]
+    z = None if z is None else df[z]
+    return df, x, y, z
