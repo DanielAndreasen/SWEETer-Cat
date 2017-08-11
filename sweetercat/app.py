@@ -13,7 +13,7 @@ app.config['SECRET_KEY'] = os.environ['SC_secret']
 @app.before_first_request
 def cache_data():
     # This will cache the databases when the app starts
-    _ = planetAndStar(full=True)
+    _ = planetAndStar()
 
 
 @app.route('/')
