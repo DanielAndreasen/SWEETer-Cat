@@ -1,18 +1,26 @@
-import pytest
-import flask
 import os
 import json
+import flask
 from flask import url_for
 from app import app as sc_app
 
 
-def test_homepage(client):
+def test_homepage(client, SCdata):
     homepage = client.get(url_for("homepage"))
     assert homepage.status_code == 200
-    assert b"A detailed description of each field can be found" in homepage.data
 
     # Link to SwEEt-Cat
     assert b'<a href="https://www.astro.up.pt/resources/sweet-cat/">SWEET-Cat</a>' in homepage.data
+
+    # Table column names
+    __, cols = SCdata
+    for col in cols:
+        header = "<th>{0}</th>".format(col)
+        print(header)
+        if col in ["Vabs"]:
+            assert header.encode('utf-8') not in homepage.data
+        else:
+            assert header.encode('utf-8') in homepage.data
 
 
 def test_parameter_description_on_homepage(client):
@@ -27,22 +35,24 @@ def test_parameter_description_on_homepage(client):
 
 # Need to check for 'stardetail' which also requires a star name.
 def test_stardetail_status_code(client, SCdata, planetStardata):
-    """Test stardetail will return status code: 200 when submitted with star"""
+    """Test stardetail will return status code: 200 when submitted with star."""
     # Passing in planetStardata moves the setup time (~4.8s) of the caching etc into the fixture, which can be shared between tests.
     df, _ = SCdata
     df = df.sample(5)
     # All stars are a slow test
     stars = df.Star.values
     for star in stars:
+        print(star)   # Catch star name if test fails.
         assert client.get(url_for("stardetail", star=star)).status_code == 200
 
 
 def test_stardetail_request_path(SCdata):
-    """Test that the stardetail renders properly"""
+    """Test that the stardetail renders properly."""
     df, _ = SCdata
     df = df.sample(50)
     stars = df.Star.values
     for star in stars:
+        print(star)
         # BD+ stars have replaced it with a space. Not a problem in app since
         # the stardetail show up with planets
         star = star.replace('+', ' ')
@@ -59,7 +69,7 @@ def test_request_paths():
 
 
 def test_publication_headings(client):
-    """ Test for the labels Abstact:, Authors: etc."""
+    """Test for the labels Abstact:, Authors: etc."""
     publications = client.get(url_for("publications"))
     for heading in [b"Main papers", b"Derived papers", b"Authors:", b"Abstract:", b"read more"]:
         assert heading in publications.data
@@ -102,11 +112,11 @@ def test_stardetail_template_text(client, SCdata):
     # pltext = ["Planetary information", "Mass", "MJup", "Radius", "RJup", "Density",
     #           "Orbital parameters", "Period:", "days", "Semi-major axis:", "AU",
     #           "Inner habitable zone limit:", "Density", "Outer habitable zone limit:"]
-    df, __ = SCdata
+    df, _ = SCdata
     df = df.sample(5)
-    stars = df.Star.values
+    stars = df.Star
 
-    for i, star in zip(df.index, df.Star):
+    for i, star in stars.iteritems():
         star_detail = client.get(url_for("stardetail", star=star))
 
         if df["flag"][i]:
