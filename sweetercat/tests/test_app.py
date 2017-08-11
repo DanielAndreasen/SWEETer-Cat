@@ -12,7 +12,7 @@ def test_homepage(client):
     assert homepage.status_code == 200
     assert b"A detailed description of each field can be found" in homepage.data
 
-    # Link to SwEEt-Cat
+    # Link to SWEEt-Cat
     assert b'<a href="https://www.astro.up.pt/resources/sweet-cat/">SWEET-Cat</a>' in homepage.data
 
 
@@ -34,6 +34,7 @@ def test_stardetail_status_code(client):
     stars = df.Star.values
     for star in stars:
         assert client.get(url_for("stardetail", star=star)).status_code == 200
+    assert client.get(url_for("stardetail", star="Not a star", follow_redirects=True)).status_code == 302
 
 
 def test_stardetail_request_path():

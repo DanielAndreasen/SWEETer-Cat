@@ -29,12 +29,12 @@ def homepage(star=None):
 @app.route('/star/<string:star>/')
 def stardetail(star=None):
     """Page with details on the individual system"""
-    if star is not None:
+    if star:
         df, _ = planetAndStar(how='left')
         index = df['Star'] == star
         d = df.loc[index, :]
-        show_planet = bool(~d['plName'].isnull().values[0])
         if len(d):
+            show_planet = bool(~d['plName'].isnull().values[0])
             df.fillna('...', inplace=True)
             if show_planet:
                 s = df.loc[index, 'plName'].values[0]
@@ -52,7 +52,8 @@ def stardetail(star=None):
                                             model=4), 5)
             info = df.loc[index, :].to_dict('records')
             return render_template('detail.html', info=info, show_planet=show_planet)
-    return redirect(url_for('homepage'))
+        else:
+            return redirect(url_for('homepage'))
 
 
 @app.route("/plot/", methods=['GET', 'POST'])
