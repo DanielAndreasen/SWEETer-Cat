@@ -14,37 +14,54 @@
     <style>
       html {
         height: auto !important;
-        padding-bottom: 700px !important;
+        padding-bottom: 100px !important;
           }
+      body{
+        margin:0;
+        font: normal 16px Arial, Helvetica, sand-serif;
+        color:#333;
+      }
+
+      #particles{
+        background: #f8f8f8;
+        height: 60px;
+        width: 100%;
+        opacity: 0.9;
+      }
+
+      #pnavbar{
+        position:absolute;
+      }
+
+      a.ptext{
+        color: #333333;
+      }
+
+      hr {
+        margin-top: 0em;
+        margin-bottom: 0.5em;
+        border-style: solid;
+        border-width: 2px;
+        color: #e7e7e7;
+      }
+
     </style>
   </head>
 
   <header>
-    <nav class="navbar navbar-default">
-      <div class="container-fluid">
-        <div class="navbar-header">
-          <a class="navbar-brand" href="/"><span class="glyphicon glyphicon-home"></span> SWEETer-Cat</a>
-          <a class="navbar-text" href="/plot/"><span class="glyphicon glyphicon-stats" aria-hidden="true"></span> SC Plot</a>
-          <a class="navbar-text" href="/plot-exo/"><span class="glyphicon glyphicon-stats" aria-hidden="true"></span> SC+exoplanet plot</a>
-          <a class="navbar-text" href="/publications/"><span class="glyphicon glyphicon-book" aria-hidden="true"></span> Publications</a>
-        </div>
-
-        <div class="collapse navbar-collapse">
-          <ul class="navbar-right">
-            {% if session.logged_in %}
-              <a class="navbar-text" href="#"><span class="glyphicon glyphicon-heart"></span> Favourites</a>
-              <a class="navbar-text" href="#"><span class="glyphicon glyphicon-user"></span> {{ session.username }}</a>
-              <a class="navbar-text" href="#"><span class="glyphicon glyphicon-log-out"></span> Logout</a></h5>
-            {% else %}
-              <a class="navbar-text" href="#"><span class="glyphicon glyphicon-log-in"></span> Login</a>
-            {% endif %}
-          </ul>
-        </div>
+    <div id="particles">
+      <div id="pnavbar">
+        <a class="ptext navbar-brand" href="/"><span class="glyphicon glyphicon-home"></span> SWEETer-Cat</a>
+        <a class="ptext navbar-text" href="/plot/"><span class="glyphicon glyphicon-stats" aria-hidden="true"></span> SC Plot</a>
+        <a class="ptext navbar-text" href="/plot-exo/"><span class="glyphicon glyphicon-stats" aria-hidden="true"></span> SC+exoplanet plot</a>
+        <a class="ptext navbar-text" href="/publications/"><span class="glyphicon glyphicon-book" aria-hidden="true"></span> Publications</a>
       </div>
-    </nav>
+    </div>
+    <hr>
   </header>
 
   <body>
+
     <div class="container-fluid" style="min-hight:100%">
       {% with messages = get_flashed_messages() %}
         {% if messages %}
@@ -79,6 +96,13 @@
             // scrollY: 300
         } );
       } );
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script type="text/javascript">
+      particlesJS.load('particles', "{{ url_for('static', filename='particles.json') }}", function() {
+        console.log('callback - particles.js config loaded');
+        });
     </script>
 
   </body>

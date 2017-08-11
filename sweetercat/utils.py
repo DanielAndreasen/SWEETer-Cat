@@ -50,6 +50,7 @@ def readSC(nrows=None):
         df.drop('tmp', axis=1, inplace=True)
         df['flag'] = df['flag'] == 1  # Turn to bool
         df['Vabs'] = [absolute_magnitude(p, m) for p, m in df[['par', 'Vmag']].values]
+        df['Star'] = [st.strip() for st in df['Star']]
 
         plots = ['Vmag', 'Vmagerr', 'Vabs', 'par', 'parerr', 'teff', 'tefferr',
                  'logg', 'loggerr', 'logglc', 'logglcerr', 'vt', 'vterr',
