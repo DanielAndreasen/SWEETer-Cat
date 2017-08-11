@@ -1,8 +1,7 @@
-import json
 import os
+import json
 import flask
 from flask import url_for
-import pytest
 from app import app as sc_app
 
 
