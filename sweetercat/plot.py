@@ -56,21 +56,7 @@ def plot_page(df, columns, request, page):
         y = df[y]
 
         # Setting the limits
-        limits = [request.form['x1'], request.form['x2'],
-                  request.form['y1'], request.form['y2']]
-        for i, lim in enumerate(limits):
-            try:
-                limits[i] = float(lim)
-            except ValueError:
-                if i == 0:
-                    limits[i] = min(x)
-                elif i == 1:
-                    limits[i] = max(x)
-                elif i == 2:
-                    limits[i] = min(y)
-                elif i == 3:
-                    limits[i] = max(y)
-        x1, x2, y1, y2 = limits
+        x1, x2, y1, y2 = get_limits(request.form, x, y)
 
         if x.name != session.get('x', None):
             x1 = min(x)
@@ -87,7 +73,6 @@ def plot_page(df, columns, request, page):
         checkboxes = request.form.getlist("checkboxes")
     else:
         if page == "exo":
-            color = 'Blue'
             cols = list(set(['Star', 'discovered', 'plMass']))
             df = df.loc[:, cols].dropna()
             x = df['discovered']
@@ -95,14 +80,11 @@ def plot_page(df, columns, request, page):
             z = None
             x1, x2 = 1985, 2020
             y1, y2 = 0.0001, 200
-            xscale = 'linear'
             yscale = 'log'
             session['x'] = 'discovered'
             session['y'] = 'plMass'
             session['z'] = 'None'
-            checkboxes = []
         else:
-            color = 'Blue'
             cols = list(set(['Star', 'teff', 'Vabs', 'logg']))
             df = df.loc[:, cols].dropna()
             x = df['teff']
@@ -110,12 +92,13 @@ def plot_page(df, columns, request, page):
             z = df['logg']
             x1, x2 = 8000, 2500
             y1, y2 = 33, 10
-            xscale = 'linear'
             yscale = 'linear'
             session['x'] = 'teff'
             session['y'] = 'Vabs'
             session['z'] = 'logg'
-            checkboxes = []
+        color = 'Blue'
+        xscale = 'linear'
+        checkboxes = []
 
     stars = df['Star']
     if "homo" in checkboxes:
@@ -133,8 +116,8 @@ def plot_page(df, columns, request, page):
         ("Star", "@star"),
     ])
 
-    minx, maxx, miny, maxy = min([x1, x2]), max([x1, x2]), min([y1, y2]), max([y1, y2])  # Incase axis is revesed
-    num_points = np.sum((minx < x) & (x < maxx) & (miny < y) & (y < maxy))
+    num_points = count(x, y, [x1, x2], [y1, y2])
+
     title = '{} vs. {}:\tNumber of objects in plot: {}'.format(x.name, y.name, num_points)
 
     tools = "resize,crosshair,pan,wheel_zoom,box_zoom,reset,box_select,lasso_select,save".split(',')
@@ -166,12 +149,7 @@ def plot_page(df, columns, request, page):
         fig.yaxis.axis_label = y.name
 
     # Horizontal historgram
-    if xscale == 'linear':
-        hhist, hedges = np.histogram(x, bins=max([5, int(num_points/50)]))
-    else:
-        xh1, xh2 = np.log10(min(x)), np.log10(max(x))
-        hhist, hedges = np.histogram(x, bins=np.logspace(xh1, xh2, max([5, int(num_points/50)])))
-    hmax = max(hhist) * 1.1
+    hhist, hedges, hmax = scaled_histogram(x, num_points, xscale)
 
     ph = figure(toolbar_location=None, plot_width=fig.plot_width, plot_height=200, x_range=fig.x_range,
                 y_range=(-hmax*0.1, hmax), min_border=10, min_border_left=50, y_axis_location="right",
@@ -182,13 +160,8 @@ def plot_page(df, columns, request, page):
 
     ph.quad(bottom=0, left=hedges[:-1], right=hedges[1:], top=hhist, color="white", line_color=colors[color])
 
-    # vertical historgram
-    if yscale == 'linear':
-        vhist, vedges = np.histogram(y, bins=max([5, int(num_points/50)]))
-    else:
-        yh1, yh2 = np.log10(min(y)), np.log10(max(y))
-        vhist, vedges = np.histogram(y, bins=np.logspace(yh1, yh2, max([5, int(num_points/50)])))
-    vmax = max(vhist) * 1.1
+    # Vertical historgram
+    vhist, vedges, vmax = scaled_histogram(y, num_points, yscale)
 
     pv = figure(toolbar_location=None, plot_width=200, plot_height=fig.plot_height, x_range=(-vmax*0.1, vmax),
                 y_range=fig.y_range, min_border=10, y_axis_location="right", y_axis_type=yscale)
@@ -219,3 +192,49 @@ def plot_page(df, columns, request, page):
         columns=columns
     )
     return encode_utf8(html)
+
+
+def scaled_histogram(data, num_points, scale):
+    if scale == 'linear':
+        hist, edges = np.histogram(data, bins=max([5, int(num_points / 50)]))
+    else:
+        # Conditional catches an empty data input.
+        h1, h2 = ((np.log10(min(data)), np.log10(max(data))) if len(data) > 0 else (0, 1))
+        hist, edges = np.histogram(data, bins=np.logspace(h1, h2, 1 + max([5, int(num_points / 50)])))
+    hist_max = max(hist) * 1.1
+    return hist, edges, hist_max
+
+
+def get_limits(points, x, y):
+    def default_value(x, default):
+        try:
+            return float(x)
+        except (ValueError, TypeError):
+            return default
+
+    defaults = [min(x), max(x), min(y), max(y)]
+    limits = [points['x1'], points['x2'], points['y1'], points['y2']]
+    for i, (limit, default) in enumerate(zip(limits, defaults)):
+        limits[i] = default_value(limit, default)
+    return limits
+
+
+def count(x, y, xlimits, ylimits):
+    """Count number of points in x and y that lie within the given limits.
+
+    Inputs
+    x, y: array-like
+    xlimits, ylimts: lists of two numbers.
+    Returns
+    count: int
+        Number of points within the limits.
+    """
+    if not (isinstance(xlimits, list) and isinstance(ylimits, list)):
+        raise TypeError("Axis limits are not of type List.")
+    elif (len(xlimits) != 2) or (len(ylimits) != 2):
+        raise ValueError("Axis limits not of length 2.")
+    # Sort Incase axis is revesed
+    xlimits.sort()
+    ylimits.sort()
+    return int(sum((xlimits[0] < x) & (x < xlimits[1]) &
+                   (ylimits[0] < y) & (y < ylimits[1])))

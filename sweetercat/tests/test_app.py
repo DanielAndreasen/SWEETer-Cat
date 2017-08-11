@@ -2,7 +2,6 @@ import pytest
 import flask
 import os
 import json
-from utils import readSC
 from flask import url_for
 from app import app as sc_app
 
@@ -27,18 +26,21 @@ def test_parameter_description_on_homepage(client):
 
 
 # Need to check for 'stardetail' which also requires a star name.
-def test_stardetail_status_code(client):
+def test_stardetail_status_code(client, SCdata, planetStardata):
     """Test stardetail will return status code: 200 when submitted with star"""
-    df, _ = readSC(nrows=5)
+    # Passing in planetStardata moves the setup time (~4.8s) of the caching etc into the fixture, which can be shared between tests.
+    df, _ = SCdata
+    df = df.sample(5)
     # All stars are a slow test
     stars = df.Star.values
     for star in stars:
         assert client.get(url_for("stardetail", star=star)).status_code == 200
 
 
-def test_stardetail_request_path():
+def test_stardetail_request_path(SCdata):
     """Test that the stardetail renders properly"""
-    df, _ = readSC(nrows=50)
+    df, _ = SCdata
+    df = df.sample(50)
     stars = df.Star.values
     for star in stars:
         # BD+ stars have replaced it with a space. Not a problem in app since
@@ -89,21 +91,22 @@ def test_publication_response_data(client):
                     assert value in publications.data
 
 
-def test_stardetail_template_text(client):
+def test_stardetail_template_text(client, SCdata):
     """Test that that text on the stardetails are returned.
 
     (Maybe a bit overboard)
     """
     sttext = ["General info", "Reference article:", "Right ascension:", "Declination:",
-                "Magnitude:", "Parallax:", "mas", "Atmospheric parameters", "Teff:", "K",
-                "logg:", "[Fe/H]:", "dex", "vt:", "km/s", "Other info", "Mass:"]
+              "Magnitude:", "Parallax:", "mas", "Atmospheric parameters", "Teff:", "K",
+              "logg:", "[Fe/H]:", "dex", "vt:", "km/s", "Other info", "Mass:"]
     # pltext = ["Planetary information", "Mass", "MJup", "Radius", "RJup", "Density",
-    #              "Orbital parameters", "Period:", "days", "Semi-major axis:", "AU",
-    #              "Inner habitable zone limit:", "Density", "Outer habitable zone limit:"]
-    df, __ = readSC(nrows=10)
+    #           "Orbital parameters", "Period:", "days", "Semi-major axis:", "AU",
+    #           "Inner habitable zone limit:", "Density", "Outer habitable zone limit:"]
+    df, __ = SCdata
+    df = df.sample(5)
     stars = df.Star.values
 
-    for i, star in enumerate(stars):
+    for i, star in zip(df.index, df.Star):
         star_detail = client.get(url_for("stardetail", star=star))
 
         if df["flag"][i]:
