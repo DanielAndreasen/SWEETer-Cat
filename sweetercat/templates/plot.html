@@ -8,53 +8,94 @@
 
     {{ plot_script|indent(4)|safe }}
     <!-- A simple form for changing the graph -->
-    <p> Select your settings: </p>
-    <form name="color_button" method='POST'>
-        Color:
-        <select name="color">
-            {% for color in colors %}
-              <option {{ "selected" if color|indent(4)|safe == "{{ color }}" }} value="{{ color }}">{{ color }}</option>
-            {% endfor %}
-            <option selected="selected">{{ color }}</option>
+    <div class="col-lg-3">
+    <h3>Select your settings: </h3>
+      <form class="form-inline" name="color_button" method='POST'>
+
+        <div class="input-group">
+          <span class="input-group-addon"><label>x</label></span>
+          <select name="x">
+          {% for column in columns %}
+            {% if column == x %}
+              <option selected="selected">{{ x }}</option>
+            {% else %}
+              <option value="{{ column }}">{{ column }}</option>
+            {% endif %}
+          {% endfor %}
         </select>
-        xmin: <input type="text" name="x1" value="{{ x1 }}">
-        xmax: <input type="text" name="x2" value="{{ x2 }}">
-        ymin: <input type="text" name="y1" value="{{ y1 }}">
-        ymax: <input type="text" name="y2" value="{{ y2 }}">
+        </div>
         <br>
-        x:
-        <select name="x">
+
+        <div class="input-group">
+          <span class="input-group-addon"><label>y</label></span>
+          <select name="y">
           {% for column in columns %}
-            <option value="{{ column }}">{{ column }}</option>
+            {% if column == y %}
+              <option selected="selected">{{ y }}</option>
+            {% else %}
+              <option value="{{ column }}">{{ column }}</option>
+            {% endif %}
           {% endfor %}
-          <option selected="selected">{{ x }}</option>
         </select>
-        y:
-        <select name="y">
-          {% for column in columns %}
-            <option value="{{ column }}">{{ column }}</option>
-          {% endfor %}
-          <option selected="selected">{{ y }}</option>
-        </select>
-        Color:
-        <select name="z">
+        </div>
+        <br>
+
+        <div class="input-group">
+          <span class="input-group-addon"><label>z</label></span>
+          <select name="z">
           <option value="None">None</option>
           {% for column in columns %}
-            <option value="{{ column }}">{{ column }}</option>
+            {% if column == z %}
+              <option selected="selected">{{ z }}</option>
+            {% else %}
+              <option value="{{ column }}">{{ column }}</option>
+            {% endif %}
           {% endfor %}
-          <option selected="selected">{{ z }}</option>
         </select>
-        x scale:
-        <select name="xscale">
-          <option value="linear">Linear</option>
-          <option value="log">Log</option>
-          <option selected="selected">{{ xscale }}</option>
+        </div>
+        <br>
+
+        <div class="input-group">
+          <span class="input-group-addon"><label>x scale</label></span>
+          <select name="xscale">
+            {% for scale in ['linear', 'log'] %}
+              {% if scale == xscale %}
+                <option selected="selected" value="{{ scale }}">{{ scale }}</option>
+              {% else %}
+                <option value="{{ scale }}">{{ scale }}</option>
+              {% endif %}
+            {% endfor %}
         </select>
-        y scale:
-        <select name="yscale">
-          <option value="linear">Linear</option>
-          <option value="log">Log</option>
-          <option selected="selected">{{ yscale }}</option>
+        </div>
+        <br>
+
+        <div class="input-group">
+          <span class="input-group-addon"><label>y scale</label></span>
+          <select name="yscale">
+            {% for scale in ['linear', 'log'] %}
+              {% if scale == yscale %}
+                <option selected="selected" value="{{ scale }}">{{ scale }}</option>
+              {% else %}
+                <option value="{{ scale }}">{{ scale }}</option>
+              {% endif %}
+            {% endfor %}
+        </select>
+        </div>
+        <br>
+
+        <div class="input-group">
+          <span style="width:50%" class="input-group-addon"><label>Color</label></span>
+          <select name="color">
+            {% for col in colors %}
+              {% if col == color %}
+                <option selected="selected" value="{{ col }}">{{ col }}</option>
+              {% else %}
+                <option value="{{ col }}">{{ col }}</option>
+              {% endif %}
+            {% endfor %}
+        </select>
+        </div>
+        <br>
 
         <div class="input-group">
           <span style="width:50%" class="input-group-addon"><label>Colorscheme</label></span>
@@ -67,13 +108,35 @@
               {% endif %}
             {% endfor %}
         </select>
-        Homogeneous parameters: <input type="checkbox" name="checkboxes" value="homo" {{'checked="checked"' if "homo" in checkboxes else ""}}/>
-        <button type="submit">Submit</button>
-    </form>
+        </div>
+        <br>
 
-    <br><br><br>
-    <center>
-      {{ plot_div|indent(4)|safe }}
-    </center>
+        <div class="input-group">
+          <span style="width:33%" class="input-group-addon"><label>xmin</label></span>
+          <input style="width:66%" type="text" class="form-control" name="x1" value="{{ x1 }}">
+        </div>
+        <div class="input-group">
+          <span style="width:33%" class="input-group-addon"><label>xmax</label></span>
+          <input style="width:66%" type="text" class="form-control" name="x2" value="{{ x2 }}">
+        </div>
+        <div class="input-group">
+          <span style="width:33%" class="input-group-addon"><label>ymin</label></span>
+          <input style="width:66%" type="text" class="form-control" name="y1" value="{{ y1 }}">
+        </div>
+        <div class="input-group">
+          <span style="width:33%" class="input-group-addon"><label>ymax</label></span>
+          <input style="width:66%" type="text" class="form-control" name="y2" value="{{ y2 }}">
+        </div>
+
+        <label>Homogeneous parameters:</label> <input type="checkbox" name="checkboxes" value="homo" {{ 'checked="checked"' if "homo" in checkboxes else ""}}/>
+
+        <br>
+        <button class="btn btn-info" type="submit">Submit</button>
+    </form>
+  </div>
+  <div class="col-lg-offset-1 col-lg-8">
+    <br>
+    {{ plot_div|indent(4)|safe }}
+  </div>
 
 {% endblock %}
