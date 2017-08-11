@@ -16,6 +16,7 @@ colorschemes = {'Viridis': [Viridis11, 'Viridis256'],
                 'Inferno': [Inferno11, 'Inferno256'],
                 'Plasma':  [Plasma11,  'Plasma256']}
 
+
 def plot_page(df, columns, request, page):
     """Render the Bokeh plot.
 
@@ -34,7 +35,7 @@ def plot_page(df, columns, request, page):
     ------
     The rendered page with the plot
     """
-    colorscheme='Plasma'
+    colorscheme = 'Plasma'
     if request.method == 'POST':  # Something is being submitted
         color = request.form['color']
         x = str(request.form['x'])
@@ -51,7 +52,7 @@ def plot_page(df, columns, request, page):
             cols = list(set(['Star', x, y, z, "flag"]))
             df = df.loc[:, cols].dropna()
             z = df[z]
-            colorscheme = str(request.form.get('colorscheme', 'Viridis'))
+            colorscheme = str(request.form.get('colorscheme', colorscheme))
             COLORS, pallete = colorschemes[colorscheme]
         else:
             cols = list(set(['Star', x, y, "flag"]))
