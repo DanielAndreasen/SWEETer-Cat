@@ -95,3 +95,18 @@ def test_scaled_histogram_bin_number(points, expected_bins):
         assert len(hist) == expected_bins
         assert len(hist) + 1 == len(edges)
         assert np.all(hist <= hmax)
+
+
+def test_redirect_on_wrong_xy(client, form_data):
+    for dimension in ('z', 'y', 'x'):
+        form_data[dimension] = 'wrong'
+        plot = client.post(url_for('plot'), data=form_data, follow_redirects=True)
+        assert plot.status_code == 200
+        assert b"Select your settings:" in plot.data
+
+
+def test_homogeneous_flag(client, form_data):
+    form_data['checkboxes'] = 'homo'
+    plot = client.post(url_for('plot'), data=form_data, follow_redirects=True)
+    assert plot.status_code == 200
+    assert b"Select your settings:" in plot.data
