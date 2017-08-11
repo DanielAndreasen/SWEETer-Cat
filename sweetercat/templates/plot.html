@@ -55,6 +55,17 @@
           <option value="linear">Linear</option>
           <option value="log">Log</option>
           <option selected="selected">{{ yscale }}</option>
+
+        <div class="input-group">
+          <span style="width:50%" class="input-group-addon"><label>Colorscheme</label></span>
+          <select name="colorscheme">
+            {% for color in colorschemes.keys() %}
+              {% if color == colorscheme %}
+                <option selected="selected" value="{{ color }}">{{ color }}</option>
+              {% else %}
+                <option value="{{ color }}">{{ color }}</option>
+              {% endif %}
+            {% endfor %}
         </select>
         Homogeneous parameters: <input type="checkbox" name="checkboxes" value="homo" {{'checked="checked"' if "homo" in checkboxes else ""}}/>
         <button type="submit">Submit</button>

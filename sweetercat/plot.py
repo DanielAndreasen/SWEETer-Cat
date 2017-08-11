@@ -6,14 +6,15 @@ from utils import colors
 
 from bokeh.embed import components
 from bokeh.resources import INLINE
-from bokeh.palettes import Viridis11
+from bokeh.palettes import Viridis11, Inferno11, Plasma11
 from bokeh.layouts import row, column
 from bokeh.util.string import encode_utf8
 from bokeh.plotting import figure, ColumnDataSource
 from bokeh.models import HoverTool, ColorBar, LinearColorMapper, Spacer
 
-COLORS = Viridis11
-
+colorschemes = {'Viridis': [Viridis11, 'Viridis256'],
+                'Inferno': [Inferno11, 'Inferno256'],
+                'Plasma':  [Plasma11,  'Plasma256']}
 
 def plot_page(df, columns, request, page):
     """Render the Bokeh plot.
@@ -33,6 +34,7 @@ def plot_page(df, columns, request, page):
     ------
     The rendered page with the plot
     """
+    colorscheme='Plasma'
     if request.method == 'POST':  # Something is being submitted
         color = request.form['color']
         x = str(request.form['x'])
@@ -49,6 +51,8 @@ def plot_page(df, columns, request, page):
             cols = list(set(['Star', x, y, z, "flag"]))
             df = df.loc[:, cols].dropna()
             z = df[z]
+            colorscheme = str(request.form.get('colorscheme', 'Viridis'))
+            COLORS, pallete = colorschemes[colorscheme]
         else:
             cols = list(set(['Star', x, y, "flag"]))
             df = df.loc[:, cols].dropna()
@@ -116,6 +120,7 @@ def plot_page(df, columns, request, page):
             session['y'] = 'Vabs'
             session['z'] = 'logg'
             checkboxes = []
+            COLORS, pallete = colorschemes[colorscheme]
 
     stars = df['Star']
     if "homo" in checkboxes:
@@ -148,7 +153,7 @@ def plot_page(df, columns, request, page):
         c = [COLORS[xx] for xx in groups.codes]
         source = ColumnDataSource(data=dict(x=x, y=y, c=c, star=stars))
 
-        color_mapper = LinearColorMapper(palette="Viridis256", low=z.min(), high=z.max())
+        color_mapper = LinearColorMapper(palette=pallete, low=z.min(), high=z.max())
         color_bar = ColorBar(color_mapper=color_mapper, label_standoff=12,
                              border_line_color=None, location=(0, 0))
         fig.add_layout(color_bar, 'right')
@@ -206,7 +211,9 @@ def plot_page(df, columns, request, page):
         x1=x1, x2=x2, y1=y1, y2=y2,
         xscale=xscale, yscale=yscale,
         checkboxes=checkboxes,
-        columns=columns
+        columns=columns,
+        colorschemes=colorschemes,
+        colorscheme=colorscheme
     )
     return encode_utf8(html)
 
@@ -220,4 +227,3 @@ def scaled_histogram(data, num_points, scale):
         hist, edges = np.histogram(data, bins=np.logspace(h1, h2, 1 + max([5, int(num_points / 50)])))
     hist_max = max(hist) * 1.1
     return hist, edges, hist_max
-
