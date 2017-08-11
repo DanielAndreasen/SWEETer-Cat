@@ -106,7 +106,7 @@ def test_stardetail_template_text(client, SCdata):
     df = df.sample(5)
     stars = df.Star.values
 
-    for i, star in enumerate(stars):
+    for i, star in zip(df.index, df.Star):
         star_detail = client.get(url_for("stardetail", star=star))
 
         if df["flag"][i]:
