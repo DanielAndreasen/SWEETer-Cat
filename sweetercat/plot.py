@@ -1,16 +1,15 @@
-from flask import session, render_template, redirect, url_for
-
 import numpy as np
 import pandas as pd
-from utils import colors
-
 from bokeh.embed import components
-from bokeh.resources import INLINE
+from bokeh.layouts import column, row
+from bokeh.models import ColorBar, HoverTool, LinearColorMapper, Spacer
 from bokeh.palettes import Viridis11
-from bokeh.layouts import row, column
+from bokeh.plotting import ColumnDataSource, figure
+from bokeh.resources import INLINE
 from bokeh.util.string import encode_utf8
-from bokeh.plotting import figure, ColumnDataSource
-from bokeh.models import HoverTool, ColorBar, LinearColorMapper, Spacer
+from flask import redirect, render_template, session, url_for
+
+from utils import colors
 
 COLORS = Viridis11
 
@@ -45,15 +44,9 @@ def plot_page(df, columns, request, page):
         if (z is not None) and (z not in columns):
             return redirect(url_for('plot'))
 
-        if z is not None:
-            cols = list(set(['Star', x, y, z, "flag"]))
-            df = df.loc[:, cols].dropna()
-            z = df[z]
-        else:
-            cols = list(set(['Star', x, y, "flag"]))
-            df = df.loc[:, cols].dropna()
-        x = df[x]
-        y = df[y]
+        checkboxes = request.form.getlist("checkboxes")
+
+        df, x, y, z = extract(df, x, y, z, checkboxes)
 
         # Setting the limits
         x1, x2, y1, y2 = get_limits(request.form, x, y)
@@ -70,13 +63,10 @@ def plot_page(df, columns, request, page):
         xscale = str(request.form['xscale'])
         yscale = str(request.form['yscale'])
 
-        checkboxes = request.form.getlist("checkboxes")
     else:
         if page == "exo":
-            cols = list(set(['Star', 'discovered', 'plMass']))
-            df = df.loc[:, cols].dropna()
-            x = df['discovered']
-            y = df['plMass']
+            x = 'discovered'
+            y = 'plMass'
             z = None
             x1, x2 = 1985, 2020
             y1, y2 = 0.0001, 200
@@ -85,11 +75,9 @@ def plot_page(df, columns, request, page):
             session['y'] = 'plMass'
             session['z'] = 'None'
         else:
-            cols = list(set(['Star', 'teff', 'Vabs', 'logg']))
-            df = df.loc[:, cols].dropna()
-            x = df['teff']
-            y = df['Vabs']
-            z = df['logg']
+            x = 'teff'
+            y = 'Vabs'
+            z = 'logg'
             x1, x2 = 8000, 2500
             y1, y2 = 33, 10
             yscale = 'linear'
@@ -99,16 +87,9 @@ def plot_page(df, columns, request, page):
         color = 'Blue'
         xscale = 'linear'
         checkboxes = []
+        df, x, y, z = extract(df, x, y, z, checkboxes)
 
     stars = df['Star']
-    if "homo" in checkboxes:
-        flag = df["flag"]
-        stars = stars[flag]
-        x = x[flag]
-        y = y[flag]
-        if z is not None:
-            z = z[flag]
-
     stars = list(stars.values)  # Turn series into list.
     hover = HoverTool(tooltips=[
         ("{}".format(x.name), "$x"),
@@ -238,3 +219,25 @@ def count(x, y, xlimits, ylimits):
     ylimits.sort()
     return int(sum((xlimits[0] < x) & (x < xlimits[1]) &
                    (ylimits[0] < y) & (y < ylimits[1])))
+
+
+def extract(df, x, y, z, checkboxes):
+    """Extract columns from dataframe.
+
+    Handles z=None case and homogenous masking with 'flag'.
+    Input Types
+    df: DataFrame
+    x: str
+    y: str
+    z: str or None
+    checkboxes: list
+    """
+    if "homo" in checkboxes:  # Homogenous filtering
+        df = df[df["flag"]]
+
+    cols = filter(None, set(['Star', x, y, z, "flag"]))
+    df = df.loc[:, cols].dropna()
+    x = df[x]
+    y = df[y]
+    z = None if z is None else df[z]
+    return df, x, y, z
