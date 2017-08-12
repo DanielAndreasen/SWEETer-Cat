@@ -26,8 +26,8 @@ def plot_page(df, columns, request, page):
       Which columns to use for choices in the plot
     request : flask
       The request object from flask
-    page : str ('exo', 'star')
-      Which page to render (for combined [exo] or just stars [star])
+    page : str ('plot', 'plot_exo')
+      Which page to render (for combined ['plot_exo'] or just SWEET-Cat ['plot'])
 
     Output
     ------
@@ -41,15 +41,9 @@ def plot_page(df, columns, request, page):
         z = None if z == 'None' else z
 
         if (x not in columns) or (y not in columns):
-            if page == "exo":
-                return redirect(url_for('plot_exo'))
-            else:
-                return redirect(url_for('plot'))
+            return redirect(url_for(page))
         if (z is not None) and (z not in columns):
-                if page == "exo":
-                    return redirect(url_for('plot_exo'))
-                else:
-                    return redirect(url_for('plot'))
+            return redirect(url_for(page))
 
         if z is not None:
             cols = list(set(['Star', x, y, z, "flag"]))
@@ -92,7 +86,7 @@ def plot_page(df, columns, request, page):
 
         checkboxes = request.form.getlist("checkboxes")
     else:
-        if page == "exo":
+        if page == "plot_exo":
             color = 'Blue'
             cols = list(set(['Star', 'discovered', 'plMass']))
             df = df.loc[:, cols].dropna()

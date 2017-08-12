@@ -60,14 +60,14 @@ def stardetail(star=None):
 def plot():
     """Plot stellar parameters"""
     df, columns = readSC()
-    return plot_page(df, columns, request, page="sc")
+    return plot_page(df, columns, request, page="plot")
 
 
 @app.route("/plot-exo/", methods=['GET', 'POST'])
 def plot_exo():
     """Plot stellar and planetary parameters"""
     df, columns = planetAndStar()
-    return plot_page(df, columns, request, page="exo")
+    return plot_page(df, columns, request, page="plot_exo")
 
 
 @app.route("/publications/")
