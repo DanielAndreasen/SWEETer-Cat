@@ -110,3 +110,18 @@ def test_homogeneous_flag(client, form_data):
     plot = client.post(url_for('plot'), data=form_data, follow_redirects=True)
     assert plot.status_code == 200
     assert b"Select your settings:" in plot.data
+
+
+@pytest.mark.parametrize("url,column", [
+    ("/plot/", "x"),
+    ("/plot/", "y"),
+    ("/plot-exo/", "z")
+])
+def test_plot_invalid_column_redirect(client, form_data, url, column):
+    form_data[column] = "invalid_name"
+    redirect_link = '<a href="{0}">{0}</a>'.format(url)
+
+    plot = client.post(url, data=form_data, follow_redirects=False)
+    assert plot.status_code == 302   # Redirection code
+    assert b'Redirecting...' in plot.data
+    assert redirect_link.encode("utf-8") in plot.data
