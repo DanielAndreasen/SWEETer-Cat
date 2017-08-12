@@ -91,12 +91,19 @@ def test_count_limit_errors(limit, error):
         count(x, y, limit, [10, 15])
 
 
-@pytest.mark.parametrize("x,y,z", [
-    ("par", "feh", None),
-    ("Vabs", "mass", "teff"),
+@pytest.mark.parametrize("endpoint,x,y,z", [
+    ("plot", "par", "feh", None),
+    ("plot", "Vabs", "mass", "teff"),
+    ("plot_exo", "plMass", "plDensity", None),
+    ("plot_exo", "mag_v", "b", "teff"),
 ])
-def test_plot_extraction(SCdata, x, y, z):
-    df, _ = SCdata
+def test_plot_extraction(SCdata, planetStardata, endpoint, x, y, z):
+
+    if endpoint == 'plot_exo':
+        df, _ = planetStardata
+    else:
+        df, _ = SCdata
+
     df1, x1, y1, z1 = extract(df, x, y, z, [])
     df2, x2, y2, z2 = extract(df, x, y, z, ["homo"])
 
@@ -107,32 +114,10 @@ def test_plot_extraction(SCdata, x, y, z):
     assert not all(df1["flag"])
     assert all(df2["flag"])
 
-    assert len(x1) > len(x2)
-    assert len(y1) > len(y2)
-
-    assert all([name in df1.columns for name in ["Star", x, y, z, "flag"]
-                if name is not None])
-    assert all([name in df2.columns for name in ["Star", x, y, z, "flag"]
-                if name is not None])
-
-
-@pytest.mark.parametrize("x,y,z", [
-    ("plMass", "plDensity", None),
-    ("mag_v", "b", "teff"),
-])
-def test_plot_exo_extraction(planetStardata, x, y, z):
-    df, _ = planetStardata
-    df1, x1, y1, z1 = extract(df, x, y, z, [])
-    df2, x2, y2, z2 = extract(df, x, y, z, ["homo"])
-
-    assert len(df.columns) > 5
-    assert len(df1.columns) <= 5
-    assert len(df2.columns) <= 5
-
-    print(df1["flag"])
-    assert not all(df1["flag"])
-    assert all(df2["flag"])
-
+    if z is None:
+        assert z1 is None and z2 is None
+    else:
+        assert len(z1) > len(z2)
     assert len(x1) > len(x2)
     assert len(y1) > len(y2)
 
