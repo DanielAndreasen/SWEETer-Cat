@@ -44,7 +44,9 @@ def plot_page(df, columns, request, page):
         if (z is not None) and (z not in columns):
             return redirect(url_for('plot'))
 
-        df, x, y, z = extract(df, x, y, z)
+        checkboxes = request.form.getlist("checkboxes")
+
+        df, x, y, z = extract(df, x, y, z, checkboxes)
 
         # Setting the limits
         x1, x2, y1, y2 = get_limits(request.form, x, y)
@@ -61,7 +63,6 @@ def plot_page(df, columns, request, page):
         xscale = str(request.form['xscale'])
         yscale = str(request.form['yscale'])
 
-        checkboxes = request.form.getlist("checkboxes")
     else:
         if page == "exo":
             x = 'discovered'
@@ -86,17 +87,9 @@ def plot_page(df, columns, request, page):
         color = 'Blue'
         xscale = 'linear'
         checkboxes = []
-        df, x, y, z = extract(df, x, y, z)
+        df, x, y, z = extract(df, x, y, z, checkboxes)
 
     stars = df['Star']
-    if "homo" in checkboxes:
-        flag = df["flag"]
-        stars = stars[flag]
-        x = x[flag]
-        y = y[flag]
-        if z is not None:
-            z = z[flag]
-
     stars = list(stars.values)  # Turn series into list.
     hover = HoverTool(tooltips=[
         ("{}".format(x.name), "$x"),
@@ -228,11 +221,20 @@ def count(x, y, xlimits, ylimits):
                    (ylimits[0] < y) & (y < ylimits[1])))
 
 
-def extract(df, x, y, z):
-    """Extract non-NaN data columns.
+def extract(df, x, y, z, checkboxes):
+    """Extract columns from dataframe.
 
-    Handles z=None case.
+    Handles z=None case and homogenous masking with 'flag'.
+    Input Types
+    df: DataFrame
+    x: str
+    y: str
+    z: str or None
+    checkboxes: list
     """
+    if "homo" in checkboxes:  # Homogenous filtering
+        df = df[df["flag"]]
+
     cols = filter(None, set(['Star', x, y, z, "flag"]))
     df = df.loc[:, cols].dropna()
     x = df[x]
