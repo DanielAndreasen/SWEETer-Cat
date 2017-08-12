@@ -15,46 +15,44 @@ def form_data():
     return form
 
 
-def test_plot_get_requests(client):
+@pytest.mark.parametrize("end_point", ["plot", "plot_exo"])
+def test_plot_get_requests(client, end_point):
     """Test that all pages return status code: 200 using the end_points"""
-    for end_point in ('plot', 'plot_exo'):
-        plot = client.get(url_for(end_point))
+    plot = client.get(url_for(end_point))
 
-        assert plot.status_code == 200
-        assert b"Select your settings:" in plot.data
-
-
-def test_plot_post_request(client, form_data):
-    for end_point in ('plot',):  # 'plot_exo'
-        plot = client.post(url_for(end_point), data=form_data, follow_redirects=True)
-
-        assert plot.status_code == 200
-        assert b"Select your settings:" in plot.data
+    assert plot.status_code == 200
+    assert b"Select your settings:" in plot.data
 
 
-def test_post_z_none_43(client, form_data):
+@pytest.mark.parametrize("end_point", ["plot", "plot_exo"])
+def test_plot_post_request(client, form_data, end_point):
+    plot = client.post(url_for(end_point), data=form_data, follow_redirects=False)
+    assert plot.status_code == 200
+    assert b"Select your settings:" in plot.data
+
+
+@pytest.mark.parametrize("end_point", ["plot", "plot_exo"])
+def test_post_z_none_43(client, form_data, end_point):
     """Test that setting z to None does not produce an error."""
     form_data["z"] = "None"
 
-    for end_point in ("plot", "plot_exo"):
-        plot = client.post(url_for(end_point), data=form_data, follow_redirects=True)
-
-        assert plot.status_code == 200
-        assert b"Select your settings:" in plot.data
+    plot = client.post(url_for(end_point), data=form_data, follow_redirects=False)
+    assert plot.status_code == 200
+    assert b"Select your settings:" in plot.data
 
 
-def test_title_and_axis_labels(client, form_data):
+@pytest.mark.parametrize("end_point", ["plot", "plot_exo"])
+def test_title_and_axis_labels(client, form_data, end_point):
     for xname, yname in zip(("teff", "vt", "par"), ("mass", "Vabs", "logg")):
         form_data["x"], form_data["y"], form_data["yscale"] = xname, yname, "log"
         title = '"text":"{0} vs. {1}:'.format(xname, yname)
         xlabel = '"axis_label":"{0}"'.format(xname)
         ylabel = '"axis_label":"{0}"'.format(yname)
 
-        for end_point in ('plot',):  # 'plot_exo'
-            plot = client.post(url_for(end_point), data=form_data, follow_redirects=True)
+        plot = client.post(url_for(end_point), data=form_data, follow_redirects=True)
 
-            for feature in [title, xlabel, ylabel]:
-                assert feature.encode("utf-8") in plot.data
+        for feature in [title, xlabel, ylabel]:
+            assert feature.encode("utf-8") in plot.data
 
 
 def test_feh_with_log_scale(client, form_data):
