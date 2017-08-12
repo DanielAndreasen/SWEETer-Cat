@@ -153,3 +153,10 @@ def test_error_404(client):
     assert b'This page could not be found' in error404.data
     assert b'Our space monkeys are working on the issue...' in error404.data
     assert b'<img src="static/spacemonkey.png" alt="">' in error404.data
+
+
+def test_issue54_rounding(client):
+    """Check that the troublesome values are removed."""
+    homepage = client.get(url_for("homepage"))
+    for number in ['4.34399999999999', '14.386']:
+        assert number.encode('utf-8') not in homepage.data

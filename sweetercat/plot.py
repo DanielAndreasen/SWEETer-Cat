@@ -1,17 +1,19 @@
-import numpy as np
-import pandas as pd
 from bokeh.embed import components
 from bokeh.layouts import column, row
 from bokeh.models import ColorBar, HoverTool, LinearColorMapper, Spacer
-from bokeh.palettes import Viridis11
+from bokeh.palettes import Viridis11, Inferno11, Plasma11
 from bokeh.plotting import ColumnDataSource, figure
 from bokeh.resources import INLINE
 from bokeh.util.string import encode_utf8
 from flask import redirect, render_template, session, url_for
+import numpy as np
+import pandas as pd
 
 from utils import colors
 
-COLORS = Viridis11
+colorschemes = {'Viridis': [Viridis11, 'Viridis256'],
+                'Inferno': [Inferno11, 'Inferno256'],
+                'Plasma':  [Plasma11,  'Plasma256']}
 
 
 def plot_page(df, columns, request, page):
@@ -32,6 +34,7 @@ def plot_page(df, columns, request, page):
     ------
     The rendered page with the plot
     """
+    colorscheme = 'Plasma'
     if request.method == 'POST':  # Something is being submitted
         color = request.form['color']
         x = str(request.form['x'])
@@ -44,6 +47,7 @@ def plot_page(df, columns, request, page):
         if (z is not None) and (z not in columns):
             return redirect(url_for('plot'))
 
+        colorscheme = str(request.form.get('colorscheme', colorscheme))
         checkboxes = request.form.getlist("checkboxes")
 
         df, x, y, z = extract(df, x, y, z, checkboxes)
@@ -108,11 +112,12 @@ def plot_page(df, columns, request, page):
                  x_axis_type=xscale, y_axis_type=yscale)
 
     if z is not None:  # Add colours and a colorbar
+        COLORS, pallete = colorschemes[colorscheme]
         groups = pd.qcut(z.values, len(COLORS), duplicates="drop")
         c = [COLORS[xx] for xx in groups.codes]
         source = ColumnDataSource(data=dict(x=x, y=y, c=c, star=stars))
 
-        color_mapper = LinearColorMapper(palette="Viridis256", low=z.min(), high=z.max())
+        color_mapper = LinearColorMapper(palette=pallete, low=z.min(), high=z.max())
         color_bar = ColorBar(color_mapper=color_mapper, label_standoff=12,
                              border_line_color=None, location=(0, 0))
         fig.add_layout(color_bar, 'right')
@@ -170,7 +175,9 @@ def plot_page(df, columns, request, page):
         x1=x1, x2=x2, y1=y1, y2=y2,
         xscale=xscale, yscale=yscale,
         checkboxes=checkboxes,
-        columns=columns
+        columns=columns,
+        colorschemes=colorschemes,
+        colorscheme=colorscheme
     )
     return encode_utf8(html)
 
