@@ -95,31 +95,27 @@ def test_scaled_histogram_bin_number(points, expected_bins):
         assert np.all(hist <= hmax)
 
 
-def test_redirect_on_wrong_xy(client, form_data):
-    for dimension in ('z', 'y', 'x'):
-        form_data[dimension] = 'wrong'
+def test_homogeneous_flag(client, form_data):
+        form_data['checkboxes'] = 'homo'
         plot = client.post(url_for('plot'), data=form_data, follow_redirects=True)
         assert plot.status_code == 200
         assert b"Select your settings:" in plot.data
 
 
-def test_homogeneous_flag(client, form_data):
-    form_data['checkboxes'] = 'homo'
-    plot = client.post(url_for('plot'), data=form_data, follow_redirects=True)
-    assert plot.status_code == 200
-    assert b"Select your settings:" in plot.data
-
-
-@pytest.mark.parametrize("url,column", [
+@pytest.mark.parametrize("url,dimension", [
     ("/plot/", "x"),
     ("/plot/", "y"),
     ("/plot-exo/", "z")
 ])
-def test_plot_invalid_column_redirect(client, form_data, url, column):
-    form_data[column] = "invalid_name"
+def test_redirect_on_wrong_xyz(client, form_data, url, dimension):
+    form_data[dimension] = "wrong"
     redirect_link = '<a href="{0}">{0}</a>'.format(url)
 
     plot = client.post(url, data=form_data, follow_redirects=False)
+    redirected_plot = client.post(url, data=form_data, follow_redirects=True)
+
     assert plot.status_code == 302   # Redirection code
     assert b'Redirecting...' in plot.data
     assert redirect_link.encode("utf-8") in plot.data
+    assert redirected_plot.status_code == 200
+    assert b"Select your settings:" in redirected_plot.data
