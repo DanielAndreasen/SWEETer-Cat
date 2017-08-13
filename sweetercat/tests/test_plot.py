@@ -59,14 +59,14 @@ def test_title_and_axis_labels(client, form_data, end_point):
             assert feature.encode("utf-8") in plot.data
 
 
-def test_feh_with_log_scale(client, form_data):
-    form_data["x"] = "feh"
-    form_data["xscale"] = "log"
+@pytest.mark.parametrize("dimension", ["x", "y"])
+def test_feh_with_log_scale(client, form_data, dimension):
+    form_data[dimension] = "feh"
+    form_data["{}scale".format(dimension)] = "log"
 
-    plot = client.post(url_for('plot'), data=form_data, follow_redirects=True)
-    # Just a random test so that the errors are raised at the moment.
-    # Should add an assert for how the correct functionality should work.
-    assert plot.status_code == 200
+    plot = client.post(url_for('plot'), data=form_data, follow_redirects=False)
+
+    assert b'Scale was changed from log to linear' in plot.data
 
 
 @pytest.mark.parametrize("x,y,xs,ys,xs_expected,ys_expected,error", [
