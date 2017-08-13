@@ -6,6 +6,11 @@ from utils import readSC
 from flask import url_for
 from app import app as sc_app
 
+try:
+    from urllib.parse import urlparse
+except ImportError:
+     from urlparse import urlparse
+
 
 def test_homepage(client):
     homepage = client.get(url_for("homepage"))
@@ -34,7 +39,11 @@ def test_stardetail_status_code(client):
     stars = df.Star.values
     for star in stars:
         assert client.get(url_for("stardetail", star=star)).status_code == 200
-    assert client.get(url_for("stardetail", star="Not a star", follow_redirects=True)).status_code == 302
+
+    bad_star = client.get(url_for("stardetail", star="Not a star"), follow_redirects=False)
+    assert bad_star.status_code == 302
+    assert urlparse(bad_star.location).path == url_for("homepage")
+    assert client.get(url_for("stardetail", star="Not a star"), follow_redirects=True).status_code == 200
 
 
 def test_stardetail_request_path():

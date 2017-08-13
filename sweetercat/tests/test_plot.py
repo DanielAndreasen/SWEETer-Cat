@@ -5,6 +5,10 @@ import numpy as np
 from flask import url_for
 from plot import check_scale, scaled_histogram
 
+try:
+    from urllib.parse import urlparse
+except ImportError:
+     from urlparse import urlparse
 
 @pytest.fixture()
 def form_data():
@@ -49,7 +53,7 @@ def test_title_and_axis_labels(client, form_data, end_point):
         xlabel = '"axis_label":"{0}"'.format(xname)
         ylabel = '"axis_label":"{0}"'.format(yname)
 
-        plot = client.post(url_for(end_point), data=form_data, follow_redirects=True)
+        plot = client.post(url_for(end_point), data=form_data, follow_redirects=False)
 
         for feature in [title, xlabel, ylabel]:
             assert feature.encode("utf-8") in plot.data
@@ -97,25 +101,25 @@ def test_scaled_histogram_bin_number(points, expected_bins):
 
 def test_homogeneous_flag(client, form_data):
         form_data['checkboxes'] = 'homo'
-        plot = client.post(url_for('plot'), data=form_data, follow_redirects=True)
+        plot = client.post(url_for('plot'), data=form_data, follow_redirects=False)
         assert plot.status_code == 200
         assert b"Select your settings:" in plot.data
 
 
-@pytest.mark.parametrize("url,dimension", [
-    ("/plot/", "x"),
-    ("/plot/", "y"),
-    ("/plot-exo/", "z")
+@pytest.mark.parametrize("endpoint,dimension", [
+    ("plot", "x"),
+    ("plot", "y"),
+    ("plot_exo", "z")
 ])
-def test_redirect_on_wrong_xyz(client, form_data, url, dimension):
+def test_redirect_on_wrong_xyz(client, form_data, endpoint, dimension):
     form_data[dimension] = "wrong"
-    redirect_link = '<a href="{0}">{0}</a>'.format(url)
 
-    plot = client.post(url, data=form_data, follow_redirects=False)
-    redirected_plot = client.post(url, data=form_data, follow_redirects=True)
+    plot = client.post(url_for(endpoint), data=form_data, follow_redirects=False)
+    redirected_plot = client.post(url_for(endpoint), data=form_data, follow_redirects=True)
 
     assert plot.status_code == 302   # Redirection code
     assert b'Redirecting...' in plot.data
-    assert redirect_link.encode("utf-8") in plot.data
+    assert urlparse(plot.location).path == url_for(endpoint)  # redirect location
+
     assert redirected_plot.status_code == 200
     assert b"Select your settings:" in redirected_plot.data
