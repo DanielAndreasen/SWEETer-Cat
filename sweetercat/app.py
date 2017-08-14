@@ -43,16 +43,9 @@ def stardetail(star=None):
     if star:
         df, _ = planetAndStar(how='left')
         index = df['Star'] == star
-<<<<<<< HEAD
         d = df[index].copy()
-        show_planet = bool(~d['plName'].isnull().values[0])
-        if len(d):
-=======
-        d = df.loc[index, :]
         if len(d):
             show_planet = bool(~d['plName'].isnull().values[0])
-            df.fillna('...', inplace=True)
->>>>>>> master
             if show_planet:
                 s = d['plName'].values[0]
                 s = s.decode() if isinstance(s, bytes) else s
