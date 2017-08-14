@@ -3,3 +3,4 @@ pytest-cov
 python-coveralls
 pytest-flask
 pytest-xdist
+codacy-coverage

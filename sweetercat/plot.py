@@ -1,4 +1,4 @@
-from flask import session, render_template, redirect, url_for
+from flask import session, render_template, redirect, url_for, flash
 
 import numpy as np
 import pandas as pd
@@ -6,13 +6,15 @@ from utils import colors
 
 from bokeh.embed import components
 from bokeh.resources import INLINE
-from bokeh.palettes import Viridis11
+from bokeh.palettes import Viridis11, Inferno11, Plasma11
 from bokeh.layouts import row, column
 from bokeh.util.string import encode_utf8
 from bokeh.plotting import figure, ColumnDataSource
 from bokeh.models import HoverTool, ColorBar, LinearColorMapper, Spacer
 
-COLORS = Viridis11
+colorschemes = {'Viridis': [Viridis11, 'Viridis256'],
+                'Inferno': [Inferno11, 'Inferno256'],
+                'Plasma':  [Plasma11,  'Plasma256']}
 
 
 def plot_page(df, columns, request, page):
@@ -26,13 +28,14 @@ def plot_page(df, columns, request, page):
       Which columns to use for choices in the plot
     request : flask
       The request object from flask
-    page : str ('exo', 'star')
-      Which page to render (for combined [exo] or just stars [star])
+    page : str ('plot', 'plot_exo')
+      Which page to render (for combined ['plot_exo'] or just SWEET-Cat ['plot'])
 
     Output
     ------
     The rendered page with the plot
     """
+    colorscheme = 'Plasma'
     if request.method == 'POST':  # Something is being submitted
         color = request.form['color']
         x = str(request.form['x'])
@@ -41,14 +44,16 @@ def plot_page(df, columns, request, page):
         z = None if z == 'None' else z
 
         if (x not in columns) or (y not in columns):
-            return redirect(url_for('plot'))
+            return redirect(url_for(page))
         if (z is not None) and (z not in columns):
-            return redirect(url_for('plot'))
+            return redirect(url_for(page))
 
         if z is not None:
             cols = list(set(['Star', x, y, z, "flag"]))
             df = df.loc[:, cols].dropna()
             z = df[z]
+            colorscheme = str(request.form.get('colorscheme', colorscheme))
+            COLORS, pallete = colorschemes[colorscheme]
         else:
             cols = list(set(['Star', x, y, "flag"]))
             df = df.loc[:, cols].dropna()
@@ -72,7 +77,12 @@ def plot_page(df, columns, request, page):
 
         checkboxes = request.form.getlist("checkboxes")
     else:
+<<<<<<< HEAD
         if page == "exo":
+=======
+        if page == "plot_exo":
+            color = 'Blue'
+>>>>>>> master
             cols = list(set(['Star', 'discovered', 'plMass']))
             df = df.loc[:, cols].dropna()
             x = df['discovered']
@@ -96,9 +106,17 @@ def plot_page(df, columns, request, page):
             session['x'] = 'teff'
             session['y'] = 'Vabs'
             session['z'] = 'logg'
+<<<<<<< HEAD
         color = 'Blue'
         xscale = 'linear'
         checkboxes = []
+=======
+            checkboxes = []
+            COLORS, pallete = colorschemes[colorscheme]
+
+    # Check scale
+    xscale, yscale, error = check_scale(x, y, xscale, yscale)
+>>>>>>> master
 
     stars = df['Star']
     if "homo" in checkboxes:
@@ -131,7 +149,7 @@ def plot_page(df, columns, request, page):
         c = [COLORS[xx] for xx in groups.codes]
         source = ColumnDataSource(data=dict(x=x, y=y, c=c, star=stars))
 
-        color_mapper = LinearColorMapper(palette="Viridis256", low=z.min(), high=z.max())
+        color_mapper = LinearColorMapper(palette=pallete, low=z.min(), high=z.max())
         color_bar = ColorBar(color_mapper=color_mapper, label_standoff=12,
                              border_line_color=None, location=(0, 0))
         fig.add_layout(color_bar, 'right')
@@ -177,6 +195,8 @@ def plot_page(df, columns, request, page):
     css_resources = INLINE.render_css()
 
     script, div = components(layout)
+    if error is not None:
+        flash('Scale was changed from log to linear')
     html = render_template(
         'plot.html',
         plot_script=script,
@@ -189,9 +209,24 @@ def plot_page(df, columns, request, page):
         x1=x1, x2=x2, y1=y1, y2=y2,
         xscale=xscale, yscale=yscale,
         checkboxes=checkboxes,
-        columns=columns
+        columns=columns,
+        colorschemes=colorschemes,
+        colorscheme=colorscheme
     )
     return encode_utf8(html)
+
+
+def check_scale(x, y, xscale, yscale):
+    x = np.array(x)
+    y = np.array(y)
+    error = None
+    if (xscale == 'log') and np.any(x <= 0):
+        xscale = 'linear'
+        error = True
+    if (yscale == 'log') and np.any(y <= 0):
+        yscale = 'linear'
+        error = True
+    return xscale, yscale, error
 
 
 def scaled_histogram(data, num_points, scale):
@@ -203,6 +238,7 @@ def scaled_histogram(data, num_points, scale):
         hist, edges = np.histogram(data, bins=np.logspace(h1, h2, 1 + max([5, int(num_points / 50)])))
     hist_max = max(hist) * 1.1
     return hist, edges, hist_max
+<<<<<<< HEAD
 
 
 def get_limits(points, x, y):
@@ -238,3 +274,5 @@ def count(x, y, xlimits, ylimits):
     ylimits.sort()
     return int(sum((xlimits[0] < x) & (x < xlimits[1]) &
                    (ylimits[0] < y) & (y < ylimits[1])))
+=======
+>>>>>>> master

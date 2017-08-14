@@ -1,9 +1,20 @@
-import pytest
-import flask
-import os
 import json
+<<<<<<< HEAD
+=======
+import os
+
+import flask
+import pytest
+>>>>>>> master
 from flask import url_for
+
 from app import app as sc_app
+from utils import readSC
+
+try:
+    from urllib.parse import urlparse
+except ImportError:
+    from urlparse import urlparse
 
 
 def test_homepage(client):
@@ -11,7 +22,7 @@ def test_homepage(client):
     assert homepage.status_code == 200
     assert b"A detailed description of each field can be found" in homepage.data
 
-    # Link to SwEEt-Cat
+    # Link to SWEEt-Cat
     assert b'<a href="https://www.astro.up.pt/resources/sweet-cat/">SWEET-Cat</a>' in homepage.data
 
 
@@ -26,21 +37,38 @@ def test_parameter_description_on_homepage(client):
 
 
 # Need to check for 'stardetail' which also requires a star name.
+<<<<<<< HEAD
 def test_stardetail_status_code(client, SCdata, planetStardata):
     """Test stardetail will return status code: 200 when submitted with star"""
     # Passing in planetStardata moves the setup time (~4.8s) of the caching etc into the fixture, which can be shared between tests.
     df, _ = SCdata
     df = df.sample(5)
+=======
+def test_stardetail_status_code(client):
+    """Test stardetail will return status code: 200 when submitted with star."""
+    df, _ = readSC(nrows=5)
+>>>>>>> master
     # All stars are a slow test
     stars = df.Star.values
     for star in stars:
         assert client.get(url_for("stardetail", star=star)).status_code == 200
 
+    bad_star = client.get(url_for("stardetail", star="Not a star"), follow_redirects=False)
+    assert bad_star.status_code == 302
+    assert urlparse(bad_star.location).path == url_for("homepage")
+    assert client.get(url_for("stardetail", star="Not a star"), follow_redirects=True).status_code == 200
 
+
+<<<<<<< HEAD
 def test_stardetail_request_path(SCdata):
     """Test that the stardetail renders properly"""
     df, _ = SCdata
     df = df.sample(50)
+=======
+def test_stardetail_request_path():
+    """Test that the stardetail renders properly."""
+    df, _ = readSC(nrows=50)
+>>>>>>> master
     stars = df.Star.values
     for star in stars:
         # BD+ stars have replaced it with a space. Not a problem in app since
@@ -52,14 +80,14 @@ def test_stardetail_request_path(SCdata):
 
 
 def test_request_paths():
-    """Test the different URL paths return the right path"""
+    """Test the different URL paths return the right path."""
     for path in ('/', '/plot/', '/plot-exo/', '/publications/', '/stardetail', '/static/table.pdf'):
         with sc_app.test_request_context(path):
             assert flask.request.path == path
 
 
 def test_publication_headings(client):
-    """ Test for the labels Abstact:, Authors: etc."""
+    """Test for the labels Abstact:, Authors: etc."""
     publications = client.get(url_for("publications"))
     for heading in [b"Main papers", b"Derived papers", b"Authors:", b"Abstract:", b"read more"]:
         assert heading in publications.data
@@ -100,10 +128,16 @@ def test_stardetail_template_text(client, SCdata):
               "Magnitude:", "Parallax:", "mas", "Atmospheric parameters", "Teff:", "K",
               "logg:", "[Fe/H]:", "dex", "vt:", "km/s", "Other info", "Mass:"]
     # pltext = ["Planetary information", "Mass", "MJup", "Radius", "RJup", "Density",
+<<<<<<< HEAD
     #           "Orbital parameters", "Period:", "days", "Semi-major axis:", "AU",
     #           "Inner habitable zone limit:", "Density", "Outer habitable zone limit:"]
     df, __ = SCdata
     df = df.sample(5)
+=======
+    #              "Orbital parameters", "Period:", "days", "Semi-major axis:", "AU",
+    #              "Inner habitable zone limit:", "Density", "Outer habitable zone limit:"]
+    df, _ = readSC(nrows=10)
+>>>>>>> master
     stars = df.Star.values
 
     for i, star in zip(df.index, df.Star):

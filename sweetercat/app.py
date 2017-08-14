@@ -40,12 +40,19 @@ def homepage(star=None):
 @app.route('/star/<string:star>/')
 def stardetail(star=None):
     """Page with details on the individual system"""
-    if star is not None:
+    if star:
         df, _ = planetAndStar(how='left')
         index = df['Star'] == star
+<<<<<<< HEAD
         d = df[index].copy()
         show_planet = bool(~d['plName'].isnull().values[0])
         if len(d):
+=======
+        d = df.loc[index, :]
+        if len(d):
+            show_planet = bool(~d['plName'].isnull().values[0])
+            df.fillna('...', inplace=True)
+>>>>>>> master
             if show_planet:
                 s = d['plName'].values[0]
                 s = s.decode() if isinstance(s, bytes) else s
@@ -57,21 +64,22 @@ def stardetail(star=None):
             d = d.fillna('...')
             info = d.to_dict('records')
             return render_template('detail.html', info=info, show_planet=show_planet)
-    return redirect(url_for('homepage'))
+        else:
+            return redirect(url_for('homepage'))
 
 
 @app.route("/plot/", methods=['GET', 'POST'])
 def plot():
     """Plot stellar parameters"""
     df, columns = readSC()
-    return plot_page(df, columns, request, page="sc")
+    return plot_page(df, columns, request, page="plot")
 
 
 @app.route("/plot-exo/", methods=['GET', 'POST'])
 def plot_exo():
     """Plot stellar and planetary parameters"""
     df, columns = planetAndStar()
-    return plot_page(df, columns, request, page="exo")
+    return plot_page(df, columns, request, page="plot_exo")
 
 
 @app.route("/publications/")
