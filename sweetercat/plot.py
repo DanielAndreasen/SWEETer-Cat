@@ -1,4 +1,4 @@
-from flask import session, render_template, redirect, url_for
+from flask import session, render_template, redirect, url_for, flash
 
 import numpy as np
 import pandas as pd
@@ -28,8 +28,8 @@ def plot_page(df, columns, request, page):
       Which columns to use for choices in the plot
     request : flask
       The request object from flask
-    page : str ('exo', 'star')
-      Which page to render (for combined [exo] or just stars [star])
+    page : str ('plot', 'plot_exo')
+      Which page to render (for combined ['plot_exo'] or just SWEET-Cat ['plot'])
 
     Output
     ------
@@ -44,9 +44,9 @@ def plot_page(df, columns, request, page):
         z = None if z == 'None' else z
 
         if (x not in columns) or (y not in columns):
-            return redirect(url_for('plot'))
+            return redirect(url_for(page))
         if (z is not None) and (z not in columns):
-            return redirect(url_for('plot'))
+            return redirect(url_for(page))
 
         if z is not None:
             cols = list(set(['Star', x, y, z, "flag"]))
@@ -91,7 +91,7 @@ def plot_page(df, columns, request, page):
 
         checkboxes = request.form.getlist("checkboxes")
     else:
-        if page == "exo":
+        if page == "plot_exo":
             color = 'Blue'
             cols = list(set(['Star', 'discovered', 'plMass']))
             df = df.loc[:, cols].dropna()
@@ -122,6 +122,9 @@ def plot_page(df, columns, request, page):
             session['z'] = 'logg'
             checkboxes = []
             COLORS, pallete = colorschemes[colorscheme]
+
+    # Check scale
+    xscale, yscale, error = check_scale(x, y, xscale, yscale)
 
     stars = df['Star']
     if "homo" in checkboxes:
@@ -200,6 +203,8 @@ def plot_page(df, columns, request, page):
     css_resources = INLINE.render_css()
 
     script, div = components(layout)
+    if error is not None:
+        flash('Scale was changed from log to linear')
     html = render_template(
         'plot.html',
         plot_script=script,
@@ -217,6 +222,19 @@ def plot_page(df, columns, request, page):
         colorscheme=colorscheme
     )
     return encode_utf8(html)
+
+
+def check_scale(x, y, xscale, yscale):
+    x = np.array(x)
+    y = np.array(y)
+    error = None
+    if (xscale == 'log') and np.any(x <= 0):
+        xscale = 'linear'
+        error = True
+    if (yscale == 'log') and np.any(y <= 0):
+        yscale = 'linear'
+        error = True
+    return xscale, yscale, error
 
 
 def scaled_histogram(data, num_points, scale):
