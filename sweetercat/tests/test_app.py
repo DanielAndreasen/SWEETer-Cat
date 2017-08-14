@@ -1,15 +1,17 @@
-import pytest
-import flask
-import os
 import json
-from utils import readSC
+import os
+
+import flask
+import pytest
 from flask import url_for
+
 from app import app as sc_app
+from utils import readSC
 
 try:
     from urllib.parse import urlparse
 except ImportError:
-     from urlparse import urlparse
+    from urlparse import urlparse
 
 
 def test_homepage(client):
@@ -33,7 +35,7 @@ def test_parameter_description_on_homepage(client):
 
 # Need to check for 'stardetail' which also requires a star name.
 def test_stardetail_status_code(client):
-    """Test stardetail will return status code: 200 when submitted with star"""
+    """Test stardetail will return status code: 200 when submitted with star."""
     df, _ = readSC(nrows=5)
     # All stars are a slow test
     stars = df.Star.values
@@ -47,7 +49,7 @@ def test_stardetail_status_code(client):
 
 
 def test_stardetail_request_path():
-    """Test that the stardetail renders properly"""
+    """Test that the stardetail renders properly."""
     df, _ = readSC(nrows=50)
     stars = df.Star.values
     for star in stars:
@@ -60,14 +62,14 @@ def test_stardetail_request_path():
 
 
 def test_request_paths():
-    """Test the different URL paths return the right path"""
+    """Test the different URL paths return the right path."""
     for path in ('/', '/plot/', '/plot-exo/', '/publications/', '/stardetail', '/static/table.pdf'):
         with sc_app.test_request_context(path):
             assert flask.request.path == path
 
 
 def test_publication_headings(client):
-    """ Test for the labels Abstact:, Authors: etc."""
+    """Test for the labels Abstact:, Authors: etc."""
     publications = client.get(url_for("publications"))
     for heading in [b"Main papers", b"Derived papers", b"Authors:", b"Abstract:", b"read more"]:
         assert heading in publications.data
@@ -105,12 +107,12 @@ def test_stardetail_template_text(client):
     (Maybe a bit overboard)
     """
     sttext = ["General info", "Reference article:", "Right ascension:", "Declination:",
-                "Magnitude:", "Parallax:", "mas", "Atmospheric parameters", "Teff:", "K",
-                "logg:", "[Fe/H]:", "dex", "vt:", "km/s", "Other info", "Mass:"]
+              "Magnitude:", "Parallax:", "mas", "Atmospheric parameters", "Teff:", "K",
+              "logg:", "[Fe/H]:", "dex", "vt:", "km/s", "Other info", "Mass:"]
     # pltext = ["Planetary information", "Mass", "MJup", "Radius", "RJup", "Density",
     #              "Orbital parameters", "Period:", "days", "Semi-major axis:", "AU",
     #              "Inner habitable zone limit:", "Density", "Outer habitable zone limit:"]
-    df, __ = readSC(nrows=10)
+    df, _ = readSC(nrows=10)
     stars = df.Star.values
 
     for i, star in enumerate(stars):

@@ -1,14 +1,16 @@
 """SWEETer-Cat tests regarding the plotting pages."""
 
-import pytest
 import numpy as np
+import pytest
 from flask import url_for
+
 from plot import check_scale, scaled_histogram
 
 try:
     from urllib.parse import urlparse
 except ImportError:
-     from urlparse import urlparse
+    from urlparse import urlparse
+
 
 @pytest.fixture()
 def form_data():
@@ -21,7 +23,7 @@ def form_data():
 
 @pytest.mark.parametrize("end_point", ["plot", "plot_exo"])
 def test_plot_get_requests(client, end_point):
-    """Test that all pages return status code: 200 using the end_points"""
+    """Test that all pages return status code: 200 using the end_points."""
     plot = client.get(url_for(end_point))
 
     assert plot.status_code == 200
@@ -100,10 +102,10 @@ def test_scaled_histogram_bin_number(points, expected_bins):
 
 
 def test_homogeneous_flag(client, form_data):
-        form_data['checkboxes'] = 'homo'
-        plot = client.post(url_for('plot'), data=form_data, follow_redirects=False)
-        assert plot.status_code == 200
-        assert b"Select your settings:" in plot.data
+    form_data['checkboxes'] = 'homo'
+    plot = client.post(url_for('plot'), data=form_data, follow_redirects=False)
+    assert plot.status_code == 200
+    assert b"Select your settings:" in plot.data
 
 
 @pytest.mark.parametrize("endpoint,dimension", [

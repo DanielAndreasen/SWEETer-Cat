@@ -1,39 +1,43 @@
 from __future__ import division
+
 import os
-import pytest
+
 import numpy as np
 import pandas as pd
-from utils import absolute_magnitude, plDensity, hz, readSC, planetAndStar, table_convert
+import pytest
+
+from utils import (absolute_magnitude, hz, planetAndStar, plDensity, readSC,
+                   table_convert)
 
 
 def test_absolute_magnitude():
-    """Test the absolute_magnitude function"""
+    """Test the absolute_magnitude function."""
     m = 10
     assert isinstance(absolute_magnitude(1, 1), float)
     assert absolute_magnitude(1, m) > m
     assert absolute_magnitude(1, m) == 15
     assert absolute_magnitude(0.1, m) == m
     assert absolute_magnitude(0.01, m) < m
-    assert absolute_magnitude(1/10, m) == m
+    assert absolute_magnitude(1 / 10, m) == m
     with pytest.raises(ZeroDivisionError):
         absolute_magnitude(0, m)
 
 
 def test_plDensity():
-    """Test the plDensity function"""
-    m, r = 1, 1
-    assert isinstance(plDensity(m, r), float)
-    assert round(plDensity(m, r), 2) == 1.33
-    assert plDensity(0, r) == 0
+    """Test the plDensity function."""
+    mass, radius = 1, 1
+    assert isinstance(plDensity(mass, radius), float)
+    assert round(plDensity(mass, radius), 2) == 1.33
+    assert plDensity(0, radius) == 0
     with pytest.raises(ZeroDivisionError):
-        plDensity(m, 0)
+        plDensity(mass, 0)
 
 
 def test_hz():
-    """Test the hz function"""
+    """Test the hz function."""
     df, _ = readSC()
     for (teff, logg, mass) in df.loc[:, ['teff', 'logg', 'mass']].values:
-        lum = (teff/5777)**4 * (mass/((10**logg)/(10**4.44)))**2
+        lum = (teff / 5777)**4 * (mass / ((10**logg) / (10**4.44)))**2
         assert isinstance(hz(teff, lum, model=2), float)
         assert isinstance(hz(teff, lum, model=4), float)
 
@@ -52,7 +56,7 @@ def test_hz():
 
 
 def test_readSC():
-    """Test the readSC function"""
+    """Test the readSC function."""
     df, plot_names = readSC()
     assert isinstance(df, pd.DataFrame)
     assert isinstance(plot_names, list)
@@ -61,7 +65,7 @@ def test_readSC():
 
 
 def test_planetAndStar():
-    """Test the planetAndStar function"""
+    """Test the planetAndStar function."""
     df, columns = planetAndStar()
     assert isinstance(df, pd.DataFrame)
     assert isinstance(columns, list)
@@ -81,7 +85,7 @@ def test_readSC_with_nrows():
 
 
 def test_table_convert():
-    """Test the table_convert function"""
+    """Test the table_convert function."""
     for fmt in ['tsv', 'csv', 'hdf']:
         table_convert(fmt=fmt)
         fname = 'data/sweet-cat.{}'.format(fmt)
