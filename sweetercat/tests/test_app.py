@@ -174,3 +174,10 @@ def test_issue54_rounding(client):
     homepage = client.get(url_for("homepage"))
     for number in ['4.34399999999999', '14.386']:
         assert number.encode('utf-8') not in homepage.data
+
+
+def test_table_is_clean(client):
+    homepage = client.get(url_for("homepage"))
+    assert b'nan' not in homepage.data
+    # "..." is not null so "..."[:-2] -> .
+    assert b'<td style="white-space:nowrap;">.</td>' not in homepage.data

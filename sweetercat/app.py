@@ -15,14 +15,15 @@ def homepage(star=None):
     """Home page for SWEETer-Cat with updated table"""
     df, columns = readSC()
     dfs = df.sort_values('updated', ascending=False)[:50]  # TODO: Remove the slicing!
-    for col in ('teff', 'tefferr'):  # These should be integers
-        idx = dfs[col].isnull()
-        dfs[col] = dfs[col].astype(str)
-        dfs.loc[~idx, col] = [s[:-2] for s in dfs.loc[~idx, col]]
     decimals = dict.fromkeys(['Vmag', 'Vmagerr', 'par', 'parerr', 'logg',
                               'loggerr', 'logglc', 'logglcerr', 'vterr', 'feh',
                               'feherr', 'mass', 'masserr'], 2)
     dfs = dfs.round(decimals=decimals)
+    for col in ('teff', 'tefferr'):  # These should be integers
+        idx = dfs[col].isnull()
+        dfs[col] = dfs[col].astype(str)
+        dfs.loc[~idx, col] = [s[:-2] for s in dfs.loc[~idx, col]]
+        dfs.loc[idx, col] = '...'
     dfs.fillna('...', inplace=True)
     columns = dfs.columns
     dfs = dfs.loc[:, columns]
