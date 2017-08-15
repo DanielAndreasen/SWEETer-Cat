@@ -1,16 +1,15 @@
-from flask import session, render_template, redirect, url_for, flash
-
+from bokeh.embed import components
+from bokeh.layouts import column, row
+from bokeh.models import ColorBar, HoverTool, LinearColorMapper, Spacer
+from bokeh.palettes import Viridis11, Inferno11, Plasma11
+from bokeh.plotting import ColumnDataSource, figure
+from bokeh.resources import INLINE
+from bokeh.util.string import encode_utf8
+from flask import flash, redirect, render_template, session, url_for
 import numpy as np
 import pandas as pd
-from utils import colors
 
-from bokeh.embed import components
-from bokeh.resources import INLINE
-from bokeh.palettes import Viridis11, Inferno11, Plasma11
-from bokeh.layouts import row, column
-from bokeh.util.string import encode_utf8
-from bokeh.plotting import figure, ColumnDataSource
-from bokeh.models import HoverTool, ColorBar, LinearColorMapper, Spacer
+from utils import colors
 
 colorschemes = {'Viridis': [Viridis11, 'Viridis256'],
                 'Inferno': [Inferno11, 'Inferno256'],
@@ -48,34 +47,13 @@ def plot_page(df, columns, request, page):
         if (z is not None) and (z not in columns):
             return redirect(url_for(page))
 
-        if z is not None:
-            cols = list(set(['Star', x, y, z, "flag"]))
-            df = df.loc[:, cols].dropna()
-            z = df[z]
-            colorscheme = str(request.form.get('colorscheme', colorscheme))
-            COLORS, pallete = colorschemes[colorscheme]
-        else:
-            cols = list(set(['Star', x, y, "flag"]))
-            df = df.loc[:, cols].dropna()
-        x = df[x]
-        y = df[y]
+        colorscheme = str(request.form.get('colorscheme', colorscheme))
+        checkboxes = request.form.getlist("checkboxes")
+
+        df, x, y, z = extract(df, x, y, z, checkboxes)
 
         # Setting the limits
-        limits = [request.form['x1'], request.form['x2'],
-                  request.form['y1'], request.form['y2']]
-        for i, lim in enumerate(limits):
-            try:
-                limits[i] = float(lim)
-            except ValueError:
-                if i == 0:
-                    limits[i] = min(x)
-                elif i == 1:
-                    limits[i] = max(x)
-                elif i == 2:
-                    limits[i] = min(y)
-                elif i == 3:
-                    limits[i] = max(y)
-        x1, x2, y1, y2 = limits
+        x1, x2, y1, y2 = get_limits(request.form, x, y)
 
         if x.name != session.get('x', None):
             x1 = min(x)
@@ -89,52 +67,36 @@ def plot_page(df, columns, request, page):
         xscale = str(request.form['xscale'])
         yscale = str(request.form['yscale'])
 
-        checkboxes = request.form.getlist("checkboxes")
     else:
         if page == "plot_exo":
-            color = 'Blue'
-            cols = list(set(['Star', 'discovered', 'plMass']))
-            df = df.loc[:, cols].dropna()
-            x = df['discovered']
-            y = df['plMass']
+            x = 'discovered'
+            y = 'plMass'
             z = None
             x1, x2 = 1985, 2020
             y1, y2 = 0.0001, 200
-            xscale = 'linear'
             yscale = 'log'
             session['x'] = 'discovered'
             session['y'] = 'plMass'
             session['z'] = 'None'
-            checkboxes = []
         else:
-            color = 'Blue'
-            cols = list(set(['Star', 'teff', 'Vabs', 'logg']))
-            df = df.loc[:, cols].dropna()
-            x = df['teff']
-            y = df['Vabs']
-            z = df['logg']
+            x = 'teff'
+            y = 'Vabs'
+            z = 'logg'
             x1, x2 = 8000, 2500
             y1, y2 = 33, 10
-            xscale = 'linear'
             yscale = 'linear'
             session['x'] = 'teff'
             session['y'] = 'Vabs'
             session['z'] = 'logg'
-            checkboxes = []
-            COLORS, pallete = colorschemes[colorscheme]
+        color = 'Blue'
+        xscale = 'linear'
+        checkboxes = []
+        df, x, y, z = extract(df, x, y, z, checkboxes)
 
     # Check scale
     xscale, yscale, error = check_scale(x, y, xscale, yscale)
 
     stars = df['Star']
-    if "homo" in checkboxes:
-        flag = df["flag"]
-        stars = stars[flag]
-        x = x[flag]
-        y = y[flag]
-        if z is not None:
-            z = z[flag]
-
     stars = list(stars.values)  # Turn series into list.
     hover = HoverTool(tooltips=[
         ("{}".format(x.name), "$x"),
@@ -142,8 +104,8 @@ def plot_page(df, columns, request, page):
         ("Star", "@star"),
     ])
 
-    minx, maxx, miny, maxy = min([x1, x2]), max([x1, x2]), min([y1, y2]), max([y1, y2])  # Incase axis is revesed
-    num_points = np.sum((minx < x) & (x < maxx) & (miny < y) & (y < maxy))
+    num_points = count(x, y, [x1, x2], [y1, y2])
+
     title = '{} vs. {}:\tNumber of objects in plot: {}'.format(x.name, y.name, num_points)
 
     tools = "resize,crosshair,pan,wheel_zoom,box_zoom,reset,box_select,lasso_select,save".split(',')
@@ -153,6 +115,7 @@ def plot_page(df, columns, request, page):
                  x_axis_type=xscale, y_axis_type=yscale)
 
     if z is not None:  # Add colours and a colorbar
+        COLORS, pallete = colorschemes[colorscheme]
         groups = pd.qcut(z.values, len(COLORS), duplicates="drop")
         c = [COLORS[xx] for xx in groups.codes]
         source = ColumnDataSource(data=dict(x=x, y=y, c=c, star=stars))
@@ -246,3 +209,60 @@ def scaled_histogram(data, num_points, scale):
         hist, edges = np.histogram(data, bins=np.logspace(h1, h2, 1 + max([5, int(num_points / 50)])))
     hist_max = max(hist) * 1.1
     return hist, edges, hist_max
+
+
+def get_limits(points, x, y):
+    def default_value(x, default):
+        try:
+            return float(x)
+        except (ValueError, TypeError):
+            return default
+
+    defaults = [min(x), max(x), min(y), max(y)]
+    limits = [points['x1'], points['x2'], points['y1'], points['y2']]
+    for i, (limit, default) in enumerate(zip(limits, defaults)):
+        limits[i] = default_value(limit, default)
+    return limits
+
+
+def count(x, y, xlimits, ylimits):
+    """Count number of points in x and y that lie within the given limits.
+
+    Inputs
+    x, y: array-like
+    xlimits, ylimts: lists of two numbers.
+    Returns
+    count: int
+        Number of points within the limits.
+    """
+    if not (isinstance(xlimits, list) and isinstance(ylimits, list)):
+        raise TypeError("Axis limits are not of type List.")
+    elif (len(xlimits) != 2) or (len(ylimits) != 2):
+        raise ValueError("Axis limits not of length 2.")
+    # Sort Incase axis is revesed
+    xlimits.sort()
+    ylimits.sort()
+    return int(sum((xlimits[0] < x) & (x < xlimits[1]) &
+                   (ylimits[0] < y) & (y < ylimits[1])))
+
+
+def extract(df, x, y, z, checkboxes):
+    """Extract columns from dataframe.
+
+    Handles z=None case and homogenous masking with 'flag'.
+    Input Types
+    df: DataFrame
+    x: str
+    y: str
+    z: str or None
+    checkboxes: list
+    """
+    if "homo" in checkboxes:  # Homogenous filtering
+        df = df[df["flag"]]
+
+    cols = filter(None, set(['Star', x, y, z, "flag"]))
+    df = df.loc[:, cols].dropna()
+    x = df[x]
+    y = df[y]
+    z = None if z is None else df[z]
+    return df, x, y, z
