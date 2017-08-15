@@ -1,8 +1,10 @@
-import os
 import json
+import os
+
 import flask
-from flask import url_for
 import pytest
+from flask import url_for
+
 from app import app as sc_app
 from utils import readSC
 
