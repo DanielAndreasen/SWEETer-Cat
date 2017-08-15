@@ -1,15 +1,24 @@
-import os
 import json
+import os
+
 import flask
+import pytest
 from flask import url_for
+
 from app import app as sc_app
+from utils import readSC
+
+try:
+    from urllib.parse import urlparse
+except ImportError:
+    from urlparse import urlparse
 
 
 def test_homepage(client, SCdata):
     homepage = client.get(url_for("homepage"))
     assert homepage.status_code == 200
 
-    # Link to SwEEt-Cat
+    # Link to SWEEt-Cat
     assert b'<a href="https://www.astro.up.pt/resources/sweet-cat/">SWEET-Cat</a>' in homepage.data
 
     # Table column names
@@ -45,6 +54,11 @@ def test_stardetail_status_code(client, SCdata, planetStardata):
         print(star)   # Catch star name if test fails.
         assert client.get(url_for("stardetail", star=star)).status_code == 200
 
+    bad_star = client.get(url_for("stardetail", star="Not a star"), follow_redirects=False)
+    assert bad_star.status_code == 302
+    assert urlparse(bad_star.location).path == url_for("homepage")
+    assert client.get(url_for("stardetail", star="Not a star"), follow_redirects=True).status_code == 200
+
 
 def test_stardetail_request_path(SCdata):
     """Test that the stardetail renders properly."""
@@ -62,7 +76,7 @@ def test_stardetail_request_path(SCdata):
 
 
 def test_request_paths():
-    """Test the different URL paths return the right path"""
+    """Test the different URL paths return the right path."""
     for path in ('/', '/plot/', '/plot-exo/', '/publications/', '/stardetail', '/static/table.pdf'):
         with sc_app.test_request_context(path):
             assert flask.request.path == path

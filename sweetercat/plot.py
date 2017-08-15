@@ -5,7 +5,7 @@ from bokeh.palettes import Viridis11, Inferno11, Plasma11
 from bokeh.plotting import ColumnDataSource, figure
 from bokeh.resources import INLINE
 from bokeh.util.string import encode_utf8
-from flask import redirect, render_template, session, url_for
+from flask import flash, redirect, render_template, session, url_for
 import numpy as np
 import pandas as pd
 
@@ -27,8 +27,8 @@ def plot_page(df, columns, request, page):
       Which columns to use for choices in the plot
     request : flask
       The request object from flask
-    page : str ('exo', 'star')
-      Which page to render (for combined [exo] or just stars [star])
+    page : str ('plot', 'plot_exo')
+      Which page to render (for combined ['plot_exo'] or just SWEET-Cat ['plot'])
 
     Output
     ------
@@ -43,9 +43,9 @@ def plot_page(df, columns, request, page):
         z = None if z == 'None' else z
 
         if (x not in columns) or (y not in columns):
-            return redirect(url_for('plot'))
+            return redirect(url_for(page))
         if (z is not None) and (z not in columns):
-            return redirect(url_for('plot'))
+            return redirect(url_for(page))
 
         colorscheme = str(request.form.get('colorscheme', colorscheme))
         checkboxes = request.form.getlist("checkboxes")
@@ -68,7 +68,7 @@ def plot_page(df, columns, request, page):
         yscale = str(request.form['yscale'])
 
     else:
-        if page == "exo":
+        if page == "plot_exo":
             x = 'discovered'
             y = 'plMass'
             z = None
@@ -92,6 +92,9 @@ def plot_page(df, columns, request, page):
         xscale = 'linear'
         checkboxes = []
         df, x, y, z = extract(df, x, y, z, checkboxes)
+
+    # Check scale
+    xscale, yscale, error = check_scale(x, y, xscale, yscale)
 
     stars = df['Star']
     stars = list(stars.values)  # Turn series into list.
@@ -163,6 +166,8 @@ def plot_page(df, columns, request, page):
     css_resources = INLINE.render_css()
 
     script, div = components(layout)
+    if error is not None:
+        flash('Scale was changed from log to linear')
     html = render_template(
         'plot.html',
         plot_script=script,
@@ -180,6 +185,19 @@ def plot_page(df, columns, request, page):
         colorscheme=colorscheme
     )
     return encode_utf8(html)
+
+
+def check_scale(x, y, xscale, yscale):
+    x = np.array(x)
+    y = np.array(y)
+    error = None
+    if (xscale == 'log') and np.any(x <= 0):
+        xscale = 'linear'
+        error = True
+    if (yscale == 'log') and np.any(y <= 0):
+        yscale = 'linear'
+        error = True
+    return xscale, yscale, error
 
 
 def scaled_histogram(data, num_points, scale):
