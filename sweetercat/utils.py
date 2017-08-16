@@ -49,7 +49,7 @@ def readSC(nrows=None):
         df = pd.read_table('data/sweet-cat.tsv')
         df.drop('tmp', axis=1, inplace=True)
         df['flag'] = df['flag'] == 1  # Turn to bool
-        df['Vabs'] = [absolute_magnitude(p, m) for p, m in df[['par', 'Vmag']].values]
+        df['Vabs'] = absolute_magnitude(df['par'], df['Vmag'])
         df['Star'] = df['Star'].str.strip()
 
         plots = ['Vmag', 'Vmagerr', 'Vabs', 'par', 'parerr', 'teff', 'tefferr',
