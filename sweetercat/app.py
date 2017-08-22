@@ -10,6 +10,12 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ['SC_secret']
 
 
+@app.before_first_request
+def cache_data():
+    # This will cache the databases when the app starts
+    _ = planetAndStar()
+
+
 @app.route('/')
 def homepage(star=None):
     """Home page for SWEETer-Cat with updated table"""
@@ -37,25 +43,19 @@ def stardetail(star=None):
     if star:
         df, _ = planetAndStar(how='left')
         index = df['Star'] == star
-        d = df.loc[index, :]
+        d = df[index].copy()
         if len(d):
             show_planet = bool(~d['plName'].isnull().values[0])
-            df.fillna('...', inplace=True)
             if show_planet:
-                s = df.loc[index, 'plName'].values[0]
-                df.loc[index, 'plName'] = s.decode() if isinstance(s, bytes) else s
-                s = df.loc[index, 'plName'].values[0]
-                df.loc[index, 'plName'] = '{} {}'.format(s[:-2], s[-1].lower())
-                s = df.loc[index, 'plName'].values[0]
-                df.loc[index, 'exolink'] = 'http://exoplanet.eu/catalog/{}/'.format(s.lower().replace(' ', '_'))
-            df.loc[index, 'lum'] = (d.teff/5777)**4 * (d.mass/((10**d.logg)/(10**4.44)))**2
-            df.loc[index, 'hz1'] = round(hz(df.loc[index, 'teff'].values[0],
-                                            df.loc[index,  'lum'].values[0],
-                                            model=2), 5)
-            df.loc[index, 'hz2'] = round(hz(df.loc[index, 'teff'].values[0],
-                                            df.loc[index,  'lum'].values[0],
-                                            model=4), 5)
-            info = df.loc[index, :].to_dict('records')
+                s = d['plName'].values[0]
+                s = s.decode() if isinstance(s, bytes) else s
+                s = '{} {}'.format(s[:-2], s[-1].lower())
+                d['exolink'] = 'http://exoplanet.eu/catalog/{}/'.format(s.lower().replace(' ', '_'))
+            d['lum'] = (d.teff.values[0]/5777)**4 * (d.mass.values[0]/((10**d.logg.values[0])/(10**4.44)))**2
+            d['hz1'] = round(hz(d['teff'].values[0], d['lum'].values[0], model=2), 5)
+            d['hz2'] = round(hz(d['teff'].values[0], d['lum'].values[0], model=4), 5)
+            d = d.fillna('...')
+            info = d.to_dict('records')
             return render_template('detail.html', info=info, show_planet=show_planet)
         else:
             return redirect(url_for('homepage'))
