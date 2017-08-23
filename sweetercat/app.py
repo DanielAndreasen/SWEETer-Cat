@@ -3,11 +3,17 @@ import os
 import json
 from plot import plot_page, plot_page_mpld3
 from utils import readSC, planetAndStar, hz, table_convert
-
+from plot2 import plot2
 
 # Setup Flask
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ['SC_secret']
+
+
+@app.route('/system/')
+def system():
+    df, columns = planetAndStar()
+    return plot2(df)
 
 
 @app.route('/mpld3/', methods=['GET', 'POST'])
