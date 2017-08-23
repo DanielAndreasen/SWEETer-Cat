@@ -1,13 +1,19 @@
 from flask import Flask, render_template, request, url_for, redirect, send_from_directory, after_this_request
 import os
 import json
-from plot import plot_page
+from plot import plot_page, plot_page_mpld3
 from utils import readSC, planetAndStar, hz, table_convert
 
 
 # Setup Flask
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ['SC_secret']
+
+
+@app.route('/mpld3/', methods=['GET', 'POST'])
+def mpld3_plot():
+    df, columns = readSC()
+    return plot_page_mpld3(df, columns, request)
 
 
 @app.route('/')
