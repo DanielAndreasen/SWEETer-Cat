@@ -23,3 +23,5 @@ pandas==0.20.2
 PyAstronomy==0.11.0
 scipy==0.19.1
 astropy==2.0
+matplotlib==2.0.2
+mpld3==0.3
