@@ -87,7 +87,6 @@ def detail_plot(df):
 
 
 def plot_page_mpld3(df, columns, request):
-    print(request.method)
     if request.method == 'POST':  # Something is being submitted
         x1 = str(request.form['x1'])
         x2 = str(request.form['x2'])
