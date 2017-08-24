@@ -8,12 +8,15 @@ from bokeh.util.string import encode_utf8
 from flask import flash, redirect, render_template, session, url_for
 import numpy as np
 import pandas as pd
+from utils import colors
 
 import matplotlib.cm as cm
 import matplotlib.pyplot as plt
 from mpld3 import fig_to_html, plugins
-
-from utils import colors
+import os
+if os.environ.get('DISPLAY', '') == '':
+    import matplotlib
+    matplotlib.use('Agg')
 
 colorschemes = {'Viridis': [Viridis11, 'Viridis256'],
                 'Inferno': [Inferno11, 'Inferno256'],
@@ -27,7 +30,6 @@ def detail_plot(df):
         except TypeError:
             return 1
         return R
-
 
     if '...' in df['sma'].values:
         return None
