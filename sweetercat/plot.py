@@ -9,6 +9,10 @@ from flask import flash, redirect, render_template, session, url_for
 import numpy as np
 import pandas as pd
 
+import matplotlib.cm as cm
+import matplotlib.pyplot as plt
+from mpld3 import fig_to_html, plugins
+
 from utils import colors
 
 colorschemes = {'Viridis': [Viridis11, 'Viridis256'],
@@ -16,8 +20,39 @@ colorschemes = {'Viridis': [Viridis11, 'Viridis256'],
                 'Plasma':  [Plasma11,  'Plasma256']}
 
 
-import matplotlib.pyplot as plt
-from mpld3 import fig_to_html, plugins
+def detail_plot(df):
+    def stellar_radius(M, logg):
+        try:
+            R = M/((10**logg)/(10**4.44))
+        except TypeError:
+            return 1
+        return R
+
+
+    if '...' in df['sma'].values:
+        return None
+    hz1 = df['hz1'].values[0]
+    hz2 = df['hz2'].values[0]
+    M = df['mass'].values[0]
+    logg = df['logg'].values[0]
+    R = stellar_radius(M, logg)
+    fig, ax = plt.subplots(1, figsize=(18, 2))
+    ax.scatter([0], [1], s=150*R, c='r')
+    ax.scatter(df['sma'], [1]*len(df['sma']), s=40, c='b')
+
+    if 0 < hz1 < hz2:
+        x = np.linspace(hz1, hz2, 10)
+        y = np.linspace(0.9, 1.1, 10)
+        z = np.array([[xi]*10 for xi in x[::-1]]).T
+        plt.contourf(x, y, z, 300, alpha=0.8, cmap=cm.summer)
+
+    # ax.fill_between([hz1, hz2], 0.5, 1.5, color='g', alpha=0.5)
+    ax.set_xlim(0.0, max(df['sma'])*1.2)
+    ax.set_ylim(0.9, 1.1)
+    for axis in [ax.xaxis, ax.yaxis]:
+        axis.set_major_formatter(plt.NullFormatter())
+
+    return fig_to_html(fig)
 
 
 def plot_page_mpld3(df, columns, request):

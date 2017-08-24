@@ -1,19 +1,12 @@
 from flask import Flask, render_template, request, url_for, redirect, send_from_directory, after_this_request
 import os
 import json
-from plot import plot_page, plot_page_mpld3
+from plot import plot_page, plot_page_mpld3, detail_plot
 from utils import readSC, planetAndStar, hz, table_convert
-from plot2 import plot2
 
 # Setup Flask
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ['SC_secret']
-
-
-@app.route('/system/')
-def system():
-    df, columns = planetAndStar()
-    return plot2(df)
 
 
 @app.route('/mpld3/', methods=['GET', 'POST'])
@@ -68,7 +61,9 @@ def stardetail(star=None):
                                             df.loc[index,  'lum'].values[0],
                                             model=4), 5)
             info = df.loc[index, :].to_dict('records')
-            return render_template('detail.html', info=info, show_planet=show_planet)
+
+            plot = detail_plot(df[index])
+            return render_template('detail.html', info=info, show_planet=show_planet, plot=plot)
         else:
             return redirect(url_for('homepage'))
 
