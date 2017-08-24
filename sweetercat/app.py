@@ -41,6 +41,7 @@ def stardetail(star=None):
     """Page with details on the individual system"""
     if star:
         df, _ = planetAndStar(how='left')
+        t1, t2 = min(df['teff']), max(df['teff'])
         index = df['Star'] == star
         d = df.loc[index, :]
         if len(d):
@@ -62,7 +63,7 @@ def stardetail(star=None):
                                             model=4), 5)
             info = df.loc[index, :].to_dict('records')
 
-            plot = detail_plot(df[index])
+            plot = detail_plot(df[index], t1, t2)
             return render_template('detail.html', info=info, show_planet=show_planet, plot=plot)
         else:
             return redirect(url_for('homepage'))

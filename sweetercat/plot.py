@@ -24,7 +24,7 @@ colorschemes = {'Viridis': [Viridis11, 'Viridis256'],
                 'Plasma':  [Plasma11,  'Plasma256']}
 
 
-def detail_plot(df):
+def detail_plot(df, tlow, thigh):
     def stellar_radius(M, logg):
         try:
             R = M/((10**logg)/(10**4.44))
@@ -63,13 +63,29 @@ def detail_plot(df):
     hz2 = df['hz2'].values[0]
     M = df['mass'].values[0]
     logg = df['logg'].values[0]
+    color = df['teff'].values[0]
+    tlow = max(2500, tlow)
+    thigh = min(8500, thigh)
+
+    hzmid = (hz1+hz2)/2
+    plColor = df['sma'].values-hzmid
+
     R = stellar_radius(M, logg)
     r = planetary_radius(df)
     Rs = max(500, 500*R)
     rs = [max(80, 30*ri) for ri in r]
     fig, ax = plt.subplots(1, figsize=(18, 2))
-    ax.scatter([0], [1], s=Rs, c='r')
-    ax.scatter(df['sma'], [1]*len(df['sma']), s=rs, c='b')
+    ax.scatter([0], [1], s=Rs, c=color, vmin=tlow, vmax=thigh, cmap=cm.Spectral)
+    for i, sma in enumerate(df['sma'].values):
+        if sma < hz1:
+            dist = hz1-sma
+            ax.scatter(sma, [1], s=rs[i], c=dist, vmin=0, vmax=hz1, cmap=cm.Reds)
+        elif hz1 <= sma <= hz2:
+            ax.scatter(sma, [1], s=rs[i], c='k')
+        else:
+            dist = sma-hz2
+            ax.scatter(sma, [1], s=rs[i], c=dist, vmin=0, vmax=max(df['sma']), cmap=cm.GnBu)
+        ax.scatter(sma, [0.95], s=40, c='k')
 
     if 0 < hz1 < hz2:
         x = np.linspace(hz1, hz2, 10)
