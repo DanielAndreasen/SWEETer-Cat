@@ -3,9 +3,11 @@
 {% block body %}
 
 {% if show_planet %}
-  <div class="col-lg-12">
-    {{ plot|safe }}
-  </div>
+  {% if plot != None %}
+    <div class="col-lg-12">
+      {{ plot|safe }}
+    </div>
+  {% endif %}
 {% endif %}
 
 <h1><a target="_blank" href="http://simbad.u-strasbg.fr/simbad/sim-basic?Ident={{ info[0]['Star'] }}">{{ info[0]['Star'] }}</a></h1>
