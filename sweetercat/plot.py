@@ -9,6 +9,7 @@ from flask import flash, redirect, render_template, session, url_for
 import numpy as np
 import pandas as pd
 from utils import colors
+from astropy import constants as c
 
 import matplotlib.cm as cm
 import matplotlib.pyplot as plt
@@ -31,6 +32,31 @@ def detail_plot(df):
             return 1
         return R
 
+    def planetary_radius(df):
+        R = np.zeros(len(df))
+        G = c.G.value
+        Mj = c.M_jup.value
+        Rj = c.R_jup.value
+        for i, (m, r) in enumerate(df.loc[:, ['plMass', 'plRadius']].values):
+            if r == '...':
+                try:
+                    if m < 0.01:  # Earth density
+                        rho = 5.51
+                    elif 0.01 <= m <= 0.5:
+                        rho = 1.64
+                    else:
+                        rho = 1.33
+                    R[i] = ((m*Mj)/(4./3*np.pi*rho))**(1./3)  # Neptune density
+                    R[i] /= Rj
+                except TypeError:
+                    R[i] = 1
+            else:
+                R[i] = r
+        return R
+
+
+    # TODO: For GJ 849 one planet has NaN sma, but the other is fine. Show the
+    # "good" planet
     if '...' in df['sma'].values:
         return None
     hz1 = df['hz1'].values[0]
@@ -38,9 +64,12 @@ def detail_plot(df):
     M = df['mass'].values[0]
     logg = df['logg'].values[0]
     R = stellar_radius(M, logg)
+    r = planetary_radius(df)
+    Rs = max(500, 500*R)
+    rs = [max(80, 30*ri) for ri in r]
     fig, ax = plt.subplots(1, figsize=(18, 2))
-    ax.scatter([0], [1], s=150*R, c='r')
-    ax.scatter(df['sma'], [1]*len(df['sma']), s=40, c='b')
+    ax.scatter([0], [1], s=Rs, c='r')
+    ax.scatter(df['sma'], [1]*len(df['sma']), s=rs, c='b')
 
     if 0 < hz1 < hz2:
         x = np.linspace(hz1, hz2, 10)
