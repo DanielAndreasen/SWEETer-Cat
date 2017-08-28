@@ -170,3 +170,10 @@ def table_convert(fmt="csv"):
             df.to_hdf(name, key="sweetcat", mode="w", format='table')
         elif fmt == "csv":
             df.to_csv(name, sep=",", index=False)
+
+
+def get_default(value, default, dtype, na_value='...'):
+    if isinstance(value, dtype) and (value != na_value):
+        return value
+    else:
+        return default

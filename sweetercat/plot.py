@@ -8,7 +8,7 @@ from bokeh.util.string import encode_utf8
 from flask import flash, redirect, render_template, session, url_for
 import numpy as np
 import pandas as pd
-from utils import colors
+from utils import colors, get_default
 from astropy import constants as c
 
 import matplotlib.cm as cm
@@ -59,16 +59,14 @@ def detail_plot(df, tlow, thigh):
     # "good" planet
     if '...' in df['sma'].values:
         return None
-    hz1 = df['hz1'].values[0]
-    hz2 = df['hz2'].values[0]
-    M = df['mass'].values[0]
-    logg = df['logg'].values[0]
-    color = df['teff'].values[0]
-    tlow = max(2500, tlow)
-    thigh = min(8500, thigh)
 
-    hzmid = (hz1+hz2)/2
-    plColor = df['sma'].values-hzmid
+    hz1 = get_default(df['hz1'].values[0], -2, float)
+    hz2 = get_default(df['hz2'].values[0], -1, float)
+    M = get_default(df['mass'].values[0], 1, float)
+    logg = get_default(df['logg'].values[0], 4.44, float)
+    color = get_default(df['teff'].values[0], 5777, float)
+    tlow = get_default(max(2500, tlow), 2500, int)
+    thigh = get_default(min(8500, thigh), 8500, int)
 
     R = stellar_radius(M, logg)
     r = planetary_radius(df)
