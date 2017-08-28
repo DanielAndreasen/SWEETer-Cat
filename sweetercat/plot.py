@@ -55,9 +55,7 @@ def detail_plot(df, tlow, thigh):
         return R
 
 
-    # TODO: For GJ 849 one planet has NaN sma, but the other is fine. Show the
-    # "good" planet
-    if '...' in df['sma'].values:
+    if len(df) == sum(df['sma'] == '...'):
         return None
 
     hz1 = get_default(df['hz1'].values[0], -2, float)
