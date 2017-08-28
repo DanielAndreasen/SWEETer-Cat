@@ -61,6 +61,7 @@ def stardetail(star=None):
             df.loc[index, 'hz2'] = round(hz(df.loc[index, 'teff'].values[0],
                                             df.loc[index,  'lum'].values[0],
                                             model=4), 5)
+            df.fillna('...', inplace=True)
             info = df.loc[index, :].to_dict('records')
 
             plot = detail_plot(df[index], t1, t2)
