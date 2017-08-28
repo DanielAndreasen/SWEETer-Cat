@@ -98,7 +98,14 @@ def planetAndStar(how='inner'):
                   'mag_h': 'mag_h',
                   'mag_k': 'mag_k'}
         deu.rename(columns=rename, inplace=True)
-        deu['stName'] = [s.decode() if isinstance(s, bytes) else s for s in deu['stName']]
+        idx = np.zeros(len(deu), dtype=bool)
+        for i, planet in enumerate(deu['plName']):
+            for pl in 'abcdefgh':
+                if planet.endswith(' {}'.format(pl)):
+                    idx[i] = True
+                    continue
+        deu.loc[idx, 'stName'] = deu.loc[idx, 'plName'].str[:-2]
+        deu.loc[~idx, 'stName'] = deu.loc[~idx, 'plName']
         deu['plDensity'] = plDensity(deu['plMass'], deu['plRadius'])  # Add planet density
         cache.set('exoplanetDB', deu, timeout=5*60)
 
