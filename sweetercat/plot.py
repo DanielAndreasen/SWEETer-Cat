@@ -68,11 +68,15 @@ def detail_plot(df, tlow, thigh):
 
     R = stellar_radius(M, logg)
     r = planetary_radius(df)
+    smas = df['sma'].values
     Rs = max(500, 500*R)
     rs = [max(80, 30*ri) for ri in r]
+
     fig, ax = plt.subplots(1, figsize=(18, 2))
     ax.scatter([0], [1], s=Rs, c=color, vmin=tlow, vmax=thigh, cmap=cm.Spectral)
-    for i, sma in enumerate(df['sma'].values):
+    for i, sma in enumerate(smas):
+        if sma == '...':
+            continue
         if sma < hz1:
             dist = hz1-sma
             ax.scatter(sma, [1], s=rs[i], c=dist, vmin=0, vmax=hz1, cmap=cm.Reds)
@@ -89,11 +93,10 @@ def detail_plot(df, tlow, thigh):
         z = np.array([[xi]*10 for xi in x[::-1]]).T
         plt.contourf(x, y, z, 300, alpha=0.8, cmap=cm.summer)
 
-    # ax.fill_between([hz1, hz2], 0.5, 1.5, color='g', alpha=0.5)
-    ax.set_xlim(0.0, max(df['sma'])*1.2)
+    ax.set_xlim(0.0, max(smas[~(smas == '...')])*1.2)
     ax.set_ylim(0.9, 1.1)
-    for axis in [ax.xaxis, ax.yaxis]:
-        axis.set_major_formatter(plt.NullFormatter())
+    ax.set_xlabel('Semi-major axis')
+    ax.yaxis.set_major_formatter(plt.NullFormatter())
 
     return fig_to_html(fig)
 
