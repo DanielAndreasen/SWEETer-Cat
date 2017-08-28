@@ -98,7 +98,10 @@ def detail_plot(df, tlow, thigh):
     ax.set_xlabel('Semi-major axis')
     ax.yaxis.set_major_formatter(plt.NullFormatter())
 
-    return fig_to_html(fig)
+    try:
+        return fig_to_html(fig)
+    except TypeError:
+        return None
 
 
 def plot_page_mpld3(df, columns, request):
