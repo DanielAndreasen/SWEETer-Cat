@@ -27,14 +27,13 @@ colorschemes = {'Viridis': [Viridis11, 'Viridis256'],
 def detail_plot(df, tlow, thigh):
     def stellar_radius(M, logg):
         try:
-            R = M/((10**logg)/(10**4.44))
+            R = M/(10**(logg-4.44))
         except TypeError:
             return 1
         return R
 
     def planetary_radius(df):
         R = np.zeros(len(df))
-        G = c.G.value
         Mj = c.M_jup.value
         Rj = c.R_jup.value
         for i, (m, r) in enumerate(df.loc[:, ['plMass', 'plRadius']].values):
@@ -74,19 +73,18 @@ def detail_plot(df, tlow, thigh):
     rs = [max(80, 30*ri) for ri in r]
 
     fig, ax = plt.subplots(1, figsize=(18, 2))
-    ax.scatter([0], [1], s=Rs, c=color, vmin=tlow, vmax=thigh, cmap=cm.Spectral)
+    ax.scatter([0], [1], s=Rs, c=color, vmin=tlow, vmax=thigh, cmap=cm.autumn)
     for i, sma in enumerate(smas):
         if sma == '...':
             continue
         if sma < hz1:
             dist = hz1-sma
-            ax.scatter(sma, [1], s=rs[i], c=dist, vmin=0, vmax=hz1, cmap=cm.Reds)
+            ax.scatter(sma, [1], s=rs[i], c=dist, vmin=0, vmax=hz1, cmap=cm.autumn)
         elif hz1 <= sma <= hz2:
             ax.scatter(sma, [1], s=rs[i], c='k')
         else:
             dist = sma-hz2
-            ax.scatter(sma, [1], s=rs[i], c=dist, vmin=0, vmax=max_smas, cmap=cm.GnBu)
-        ax.scatter(sma, [0.95], s=40, c='k')
+            ax.scatter(sma, [1], s=rs[i], c=dist, vmin=hz2, vmax=max_smas, cmap=cm.winter_r)
 
     if 0 < hz1 < hz2:
         x = np.linspace(hz1, hz2, 10)
@@ -94,7 +92,7 @@ def detail_plot(df, tlow, thigh):
         z = np.array([[xi]*10 for xi in x[::-1]]).T
         plt.contourf(x, y, z, 300, alpha=0.8, cmap=cm.summer)
 
-    ax.set_xlim(0.0, max(smas[~(smas == '...')])*1.2)
+    ax.set_xlim(0.0, max_smas*1.2)
     ax.set_ylim(0.9, 1.1)
     ax.set_xlabel('Semi-major axis')
     ax.yaxis.set_major_formatter(plt.NullFormatter())
