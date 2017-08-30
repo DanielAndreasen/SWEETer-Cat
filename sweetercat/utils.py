@@ -99,6 +99,7 @@ def planetAndStar(how='inner'):
                   'mag_k': 'mag_k'}
         deu.rename(columns=rename, inplace=True)
         idx = np.zeros(len(deu), dtype=bool)
+        deu['plName'] = [s.decode() if isinstance(s, bytes) else s for s in deu['plName']]
         for i, planet in enumerate(deu['plName']):
             for pl in 'abcdefgh':
                 if planet.endswith(' {}'.format(pl)):
