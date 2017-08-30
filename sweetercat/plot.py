@@ -69,6 +69,7 @@ def detail_plot(df, tlow, thigh):
     R = stellar_radius(M, logg)
     r = planetary_radius(df)
     smas = df['sma'].values
+    max_smas = max([smai for smai in smas if isinstance(smai, (int, float))])
     Rs = max(500, 500*R)
     rs = [max(80, 30*ri) for ri in r]
 
@@ -84,7 +85,7 @@ def detail_plot(df, tlow, thigh):
             ax.scatter(sma, [1], s=rs[i], c='k')
         else:
             dist = sma-hz2
-            ax.scatter(sma, [1], s=rs[i], c=dist, vmin=0, vmax=max(df['sma']), cmap=cm.GnBu)
+            ax.scatter(sma, [1], s=rs[i], c=dist, vmin=0, vmax=max_smas, cmap=cm.GnBu)
         ax.scatter(sma, [0.95], s=40, c='k')
 
     if 0 < hz1 < hz2:
