@@ -94,7 +94,7 @@ def detail_plot(df, tlow, thigh):
 
     ax.set_xlim(0.0, max_smas*1.2)
     ax.set_ylim(0.9, 1.1)
-    ax.set_xlabel('Semi-major axis')
+    ax.set_xlabel('Semi-major axis [AU]')
     ax.yaxis.set_major_formatter(plt.NullFormatter())
 
     try:
