@@ -71,8 +71,10 @@ def detail_plot(df, tlow, thigh):
 
     fig, ax = plt.subplots(1, figsize=(18, 2))
     ax.scatter([0], [1], s=Rs, c=color, vmin=tlow, vmax=thigh, cmap=cm.autumn)
+    no_sma = []
     for i, sma in enumerate(smas):
         if sma == '...':
+            no_sma.append('{} does not have a SMA'.format(df['plName'].values[i]))
             continue
         if sma < hz1:
             dist = hz1-sma
@@ -94,6 +96,12 @@ def detail_plot(df, tlow, thigh):
     ax.set_xlabel('Semi-major axis [AU]')
     ax.yaxis.set_major_formatter(plt.NullFormatter())
     ax.set_facecolor('black')  # Use "#f8f8f8" for same color as bg in navbar
+
+    if len(no_sma):
+        _, x2 = ax.get_xlim()
+        _, y2 = ax.get_ylim()
+        for text in no_sma:
+            ax.text(max_smas*0.8, 1.05, text, color='white')
 
     try:
         return fig_to_html(fig)
