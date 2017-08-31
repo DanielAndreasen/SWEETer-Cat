@@ -74,7 +74,7 @@ def detail_plot(df, tlow, thigh):
     no_sma = []
     for i, sma in enumerate(smas):
         if sma == '...':
-            no_sma.append('{} does not has a SMA'.format(df['plName'].values[i]))
+            no_sma.append('{} has no SMA'.format(df['plName'].values[i]))
             continue
         if sma < hz1:
             dist = hz1-sma
