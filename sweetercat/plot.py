@@ -15,9 +15,6 @@ import matplotlib.cm as cm
 import matplotlib.pyplot as plt
 from mpld3 import fig_to_html, plugins
 import os
-if os.environ.get('DISPLAY', '') == '':
-    import matplotlib
-    matplotlib.use('Agg')
 
 colorschemes = {'Viridis': [Viridis11, 'Viridis256'],
                 'Inferno': [Inferno11, 'Inferno256'],
