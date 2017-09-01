@@ -48,12 +48,12 @@ def stardetail(star=None):
             show_planet = bool(~d['plName'].isnull().values[0])
             df.fillna('...', inplace=True)
             if show_planet:
-                s = df.loc[index, 'plName'].values[0]
-                df.loc[index, 'plName'] = s.decode() if isinstance(s, bytes) else s
-                s = df.loc[index, 'plName'].values[0]
-                df.loc[index, 'plName'] = '{} {}'.format(s[:-2], s[-1].lower())
-                s = df.loc[index, 'plName'].values[0]
-                df.loc[index, 'exolink'] = 'http://exoplanet.eu/catalog/{}/'.format(s.lower().replace(' ', '_'))
+                s = df.loc[index, 'plName'].values
+                df.loc[index, 'plName'] = [si.decode() if isinstance(si, bytes) else si for si in s]
+                s = df.loc[index, 'plName'].values
+                df.loc[index, 'plName'] = ['{} {}'.format(si[:-2], si[-1].lower()) for si in s]
+                s = df.loc[index, 'plName'].values
+                df.loc[index, 'exolink'] = ['http://exoplanet.eu/catalog/{}/'.format(si.lower().replace(' ', '_')) for si in s]
             df.loc[index, 'lum'] = (d.teff/5777)**4 * (d.mass/((10**d.logg)/(10**4.44)))**2
             df.loc[index, 'hz1'] = round(hz(df.loc[index, 'teff'].values[0],
                                             df.loc[index,  'lum'].values[0],

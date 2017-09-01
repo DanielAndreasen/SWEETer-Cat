@@ -15,9 +15,6 @@ import matplotlib.cm as cm
 import matplotlib.pyplot as plt
 from mpld3 import fig_to_html, plugins
 import os
-if os.environ.get('DISPLAY', '') == '':
-    import matplotlib
-    matplotlib.use('Agg')
 
 colorschemes = {'Viridis': [Viridis11, 'Viridis256'],
                 'Inferno': [Inferno11, 'Inferno256'],
@@ -74,8 +71,10 @@ def detail_plot(df, tlow, thigh):
 
     fig, ax = plt.subplots(1, figsize=(18, 2))
     ax.scatter([0], [1], s=Rs, c=color, vmin=tlow, vmax=thigh, cmap=cm.autumn)
+    no_sma = []
     for i, sma in enumerate(smas):
         if sma == '...':
+            no_sma.append('{} has no SMA'.format(df['plName'].values[i]))
             continue
         if sma < hz1:
             dist = hz1-sma
@@ -94,8 +93,12 @@ def detail_plot(df, tlow, thigh):
 
     ax.set_xlim(0.0, max_smas*1.2)
     ax.set_ylim(0.9, 1.1)
-    ax.set_xlabel('Semi-major axis')
+    ax.set_xlabel('Semi-major axis [AU]')
     ax.yaxis.set_major_formatter(plt.NullFormatter())
+    ax.set_facecolor('black')  # Use "#f8f8f8" for same color as bg in navbar
+
+    for i, text in enumerate(no_sma):
+        ax.text(max_smas*0.8, 1.05-i*0.02, text, color='white')
 
     try:
         return fig_to_html(fig)
