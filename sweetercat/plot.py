@@ -1,3 +1,6 @@
+import matplotlib
+matplotlib.use('Agg')
+
 from bokeh.embed import components
 from bokeh.layouts import column, row
 from bokeh.models import ColorBar, HoverTool, LinearColorMapper, Spacer
