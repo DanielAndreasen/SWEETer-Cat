@@ -19,7 +19,7 @@
 #
 import os
 port = int(os.environ.get('PORT', 5000))
-bind = '127.0.0.1:{}'.format(port)
+bind = '0.0.0.0:{}'.format(port)
 backlog = 2048
 reload = True
 
