@@ -11,7 +11,7 @@ app.config['SECRET_KEY'] = os.environ['SC_secret']
 
 @app.route('/mpld3/', methods=['GET', 'POST'])
 def mpld3_plot():
-    df, columns = readSC()
+    df, columns = planetAndStar()
     return plot_page_mpld3(df, columns, request)
 
 
