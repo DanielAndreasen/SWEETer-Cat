@@ -29,7 +29,6 @@ before_install:
 install:
   - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION
   - source activate test-environment
-  - travis_retry conda install -c conda-forge pytables --yes
   # - python setup.py install
   - travis_retry pip install -r requirements.txt
 

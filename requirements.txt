@@ -26,3 +26,4 @@ scipy==0.19.1
 astropy==2.0
 matplotlib==2.0.2
 mpld3==0.3
+tables===3.4.2
