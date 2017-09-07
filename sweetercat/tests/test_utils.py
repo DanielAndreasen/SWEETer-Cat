@@ -102,9 +102,9 @@ def test_stellar_radius():
     assert stellar_radius(mass, logg) == 1
     assert stellar_radius(0, logg) == 0
     with pytest.raises(TypeError):
-        stellar_radius('...', logg) == 1
+        stellar_radius('...', logg)
     with pytest.raises(TypeError):
-        stellar_radius(mass, '...') == 1
+        stellar_radius(mass, '...')
     with pytest.raises(ValueError):
         stellar_radius(-1, logg)
 
