@@ -22,6 +22,19 @@ colorschemes = {'Viridis': [Viridis11, 'Viridis256'],
                 'Inferno': [Inferno11, 'Inferno256'],
                 'Plasma':  [Plasma11,  'Plasma256']}
 
+# Name: [distance (AU), diameter (km)]
+# From http://www.enchantedlearning.com/subjects/astronomy/planets/
+ss_planets = {
+    'Mercury': [0.39, 4878],
+    'Venus': [0.723, 12104],
+    'Earth': [1, 12756],
+    'Mars': [1.524, 6787],
+    'Jupiter': [5.203, 142796],
+    'Saturn': [9.539, 120660],
+    'Uranus': [19.18, 51118],
+    'Neptune': [30.06, 48600],
+    'Pluto': [39.53, 2274]
+}
 
 def detail_plot(df, tlow, thigh):
 
@@ -64,6 +77,14 @@ def detail_plot(df, tlow, thigh):
         y = np.linspace(0.9, 1.1, 10)
         z = np.array([[xi]*10 for xi in x[::-1]]).T
         plt.contourf(x, y, z, 300, alpha=0.8, cmap=cm.summer)
+
+    for planet in ss_planets.keys():
+        s = ss_planets[planet][0]
+        r = 30*ss_planets[planet][1]/2.
+        r /= float(ss_planets['Jupiter'][1])
+        ax.scatter(s, [0.95], s=r*10, c='g')
+        ax.text(s-0.01, 0.97, planet, color='white')
+
 
     ax.set_xlim(0.0, max_smas*1.2)
     ax.set_ylim(0.9, 1.1)
