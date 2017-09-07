@@ -16,7 +16,6 @@ from utils import colors, get_default, stellar_radius, planetary_radius
 import matplotlib.cm as cm
 import matplotlib.pyplot as plt
 from mpld3 import fig_to_html, plugins
-import os
 
 colorschemes = {'Viridis': [Viridis11, 'Viridis256'],
                 'Inferno': [Inferno11, 'Inferno256'],
