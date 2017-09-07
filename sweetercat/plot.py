@@ -11,8 +11,7 @@ from bokeh.util.string import encode_utf8
 from flask import flash, redirect, render_template, session, url_for
 import numpy as np
 import pandas as pd
-from utils import colors, get_default
-from astropy import constants as c
+from utils import colors, get_default, stellar_radius, planetary_radius
 
 import matplotlib.cm as cm
 import matplotlib.pyplot as plt
@@ -25,34 +24,6 @@ colorschemes = {'Viridis': [Viridis11, 'Viridis256'],
 
 
 def detail_plot(df, tlow, thigh):
-    def stellar_radius(M, logg):
-        try:
-            R = M/(10**(logg-4.44))
-        except TypeError:
-            return 1
-        return R
-
-    def planetary_radius(df):
-        R = np.zeros(len(df))
-        Mj = c.M_jup.value
-        Rj = c.R_jup.value
-        for i, (m, r) in enumerate(df.loc[:, ['plMass', 'plRadius']].values):
-            if r == '...':
-                try:
-                    if m < 0.01:  # Earth density
-                        rho = 5.51
-                    elif 0.01 <= m <= 0.5:
-                        rho = 1.64
-                    else:
-                        rho = 1.33
-                    R[i] = ((m*Mj)/(4./3*np.pi*rho))**(1./3)  # Neptune density
-                    R[i] /= Rj
-                except TypeError:
-                    R[i] = 1
-            else:
-                R[i] = r
-        return R
-
 
     if len(df) == sum(df['sma'] == '...'):
         return None
@@ -66,7 +37,7 @@ def detail_plot(df, tlow, thigh):
     thigh = get_default(min(8500, thigh), 8500, int)
 
     R = stellar_radius(M, logg)
-    r = planetary_radius(df)
+    r = [planetary_radius(mi, ri) for mi, ri in df.loc[:, ['plMass', 'plRadius']].values]
     smas = df['sma'].values
     max_smas = max([smai for smai in smas if isinstance(smai, (int, float))])
     Rs = max(500, 500*R)

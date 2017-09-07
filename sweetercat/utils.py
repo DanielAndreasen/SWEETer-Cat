@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 from PyAstronomy import pyasl
+from astropy import constants as c
 from werkzeug.contrib.cache import SimpleCache
 cache = SimpleCache()
 
@@ -126,6 +127,42 @@ def plDensity(mass, radius):
     mjup_cgs = 1.8986e30     # Jupiter mass in g
     rjup_cgs = 6.9911e9      # Jupiter radius in cm
     return 3 * mjup_cgs * mass / (4 * np.pi * (rjup_cgs * radius)**3)   # g/cm^3
+
+
+def stellar_radius(M, logg):
+    """Calculate stellar radius given mass and logg"""
+    if M < 0:
+        raise ValueError('Only positive stellar masses allowed.')
+    try:
+        R = M/(10**(logg-4.44))
+    except TypeError:
+        return 1
+    return R
+
+
+def planetary_radius(mass, radius):
+    """Calculate planetary radius if not given assuming a density dependent on
+    mass"""
+    if mass < 0:
+        raise ValueError('Only positive planetary masses allowed.')
+    Mj = c.M_jup
+    Rj = c.R_jup
+
+    if radius == '...' and isinstance(mass, (int, float)):
+        if mass < 0.01:  # Earth density
+            rho = 5.51
+        elif 0.01 <= mass <= 0.5:
+            rho = 1.64  # Neptune density
+        else:
+            rho = Mj/(4./3*np.pi*Rj**3)  # Jupiter density
+        R = ((mass*Mj)/(4./3*np.pi*rho))**(1./3)  # Neptune density
+        R /= Rj
+    elif (radius == '...') and (mass == '...'):
+        return '...'
+    else:
+        return radius
+    return R.value
+
 
 
 def hz(teff, lum, model=1):
