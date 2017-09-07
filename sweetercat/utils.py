@@ -143,11 +143,16 @@ def stellar_radius(M, logg):
 def planetary_radius(mass, radius):
     """Calculate planetary radius if not given assuming a density dependent on
     mass"""
+    if not isinstance(mass, (int, float)):
+        if isinstance(radius, (int, float)):
+            return radius
+        else:
+            return '...'
     if mass < 0:
         raise ValueError('Only positive planetary masses allowed.')
+
     Mj = c.M_jup
     Rj = c.R_jup
-
     if radius == '...' and isinstance(mass, (int, float)):
         if mass < 0.01:  # Earth density
             rho = 5.51
@@ -157,12 +162,9 @@ def planetary_radius(mass, radius):
             rho = Mj/(4./3*np.pi*Rj**3)  # Jupiter density
         R = ((mass*Mj)/(4./3*np.pi*rho))**(1./3)  # Neptune density
         R /= Rj
-    elif (radius == '...') and (mass == '...'):
-        return '...'
     else:
         return radius
     return R.value
-
 
 
 def hz(teff, lum, model=1):
