@@ -101,7 +101,10 @@ def test_stellar_radius():
     assert isinstance(stellar_radius(mass, logg), float)
     assert stellar_radius(mass, logg) == 1
     assert stellar_radius(0, logg) == 0
-    assert stellar_radius('...', logg) == 1
+    with pytest.raises(TypeError):
+        stellar_radius('...', logg) == 1
+    with pytest.raises(TypeError):
+        stellar_radius(mass, '...') == 1
     with pytest.raises(ValueError):
         stellar_radius(-1, logg)
 

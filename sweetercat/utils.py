@@ -131,12 +131,14 @@ def plDensity(mass, radius):
 
 def stellar_radius(M, logg):
     """Calculate stellar radius given mass and logg"""
+    if not isinstance(M, (int, float)):
+        raise TypeError('Mass must be int or float. {} type given'.format(type(M)))
+    if not isinstance(logg, (int, float)):
+        raise TypeError('logg must be int or float. {} type given'.format(type(logg)))
     if M < 0:
         raise ValueError('Only positive stellar masses allowed.')
-    try:
-        R = M/(10**(logg-4.44))
-    except TypeError:
-        return 1
+
+    R = M/(10**(logg-4.44))
     return R
 
 
