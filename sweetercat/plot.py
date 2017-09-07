@@ -33,8 +33,8 @@ ss_planets = {
     'Saturn': [9.539, 120660],
     'Uranus': [19.18, 51118],
     'Neptune': [30.06, 48600],
-    'Pluto': [39.53, 2274]
-}
+    'Pluto': [39.53, 2274]}
+
 
 def detail_plot(df, tlow, thigh):
 
@@ -84,7 +84,6 @@ def detail_plot(df, tlow, thigh):
         r /= float(ss_planets['Jupiter'][1])
         ax.scatter(s, [0.95], s=r*10, c='g')
         ax.text(s-0.01, 0.97, planet, color='white')
-
 
     ax.set_xlim(0.0, max_smas*1.2)
     ax.set_ylim(0.9, 1.1)

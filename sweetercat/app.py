@@ -104,6 +104,7 @@ def download(fname):
     fmt = fname.split('.')[-1]
     if fmt in ['csv', 'hdf']:
         table_convert(fmt=fmt)
+
         @after_this_request
         def remove_file(response):
             try:
