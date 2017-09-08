@@ -19,7 +19,7 @@ def mpld3_plot():
 def homepage(star=None):
     """Home page for SWEETer-Cat with updated table"""
     df, columns = readSC()
-    dfs = df.sort_values('updated', ascending=False)[:50]  # TODO: Remove the slicing!
+    dfs = df.sort_values('updated', ascending=False)#[:50]  # TODO: Remove the slicing!
     decimals = dict.fromkeys(['Vmag', 'Vmagerr', 'par', 'parerr', 'logg',
                               'loggerr', 'logglc', 'logglcerr', 'vterr', 'feh',
                               'feherr', 'mass', 'masserr'], 2)
