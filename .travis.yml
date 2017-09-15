@@ -26,6 +26,10 @@ before_install:
   - "sh -e /etc/init.d/xvfb start"  # xvfb = Virtual frame buffer
   - sleep 3                         # give xvfb some time to start
 
+cache:
+  directories:
+    - $HOME/.cache/pip
+
 install:
   - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION
   - source activate test-environment
