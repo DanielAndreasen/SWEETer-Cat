@@ -16,6 +16,9 @@ colors = {
 
 
 def readExoplanetEU():
+    """Read the exoplanet.eu database from the 'data' folder and store as
+    pandas DataFrame
+    """
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
         vot = votable.parse('data/exoplanetEU.vo.gz', invalid='mask')
