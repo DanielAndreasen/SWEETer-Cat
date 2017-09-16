@@ -1,6 +1,7 @@
+import warnings
 import numpy as np
 import pandas as pd
-from PyAstronomy import pyasl
+from astropy.io import votable
 from astropy import constants as c
 from werkzeug.contrib.cache import SimpleCache
 cache = SimpleCache()
@@ -12,6 +13,15 @@ colors = {
     'Red': '#d62728',
     'Purple': '#9467bd',
 }
+
+
+def readExoplanetEU():
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        vot = votable.parse('data/exoplanetEU.vo.gz', invalid='mask')
+    vot = vot.get_first_table().to_table(use_names_over_ids=True)
+    df = vot.to_pandas()
+    return df
 
 
 def absolute_magnitude(parallax, m):
@@ -81,7 +91,7 @@ def planetAndStar(how='inner'):
     """
     deu = cache.get('exoplanetDB')
     if deu is None:
-        deu = pyasl.ExoplanetEU2().getAllDataPandas()
+        deu = readExoplanetEU()
         rename = {'name': 'plName',
                   'star_name': 'stName',
                   'mass': 'plMass',
