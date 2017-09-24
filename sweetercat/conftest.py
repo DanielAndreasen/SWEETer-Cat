@@ -1,8 +1,11 @@
 """Conftest is for fixtures that will run in all test files."""
 import json
+
 import pytest
+from flask import url_for
+
 from app import app as sc_app
-from utils import readSC, planetAndStar
+from utils import planetAndStar, readSC
 
 
 @pytest.fixture
@@ -24,7 +27,12 @@ def planetStardata():
     return planetAndStar()
 
 
-@pytest.fixture()
+@pytest.fixture
+def publication_response(client):
+    return client.get(url_for("publications"))
+
+
+@pytest.fixture
 def publication_data():
     """Load publication data file."""
     with open('data/publications.json') as pubs:
