@@ -93,29 +93,43 @@ def test_publication_page_headings(publication_response, heading):
     assert heading in publication_response.data
 
 
-def test_publication_response_data(client, publication_data):
-    """Test all the plublication data is present.
+@pytest.mark.parametrize("category", ["main", "other"])
+def test_publication_titles(publication_response, publication_data, category):
+    """Test all the plublication titles are present."""
+    for paper in publication_data[category]:
+        title = escape(paper["title"]).encode('utf-8')
+        assert title in publication_response.data
+
+
+@pytest.mark.parametrize("category", ["main", "other"])
+def test_publication_links(publication_response, publication_data, category):
+    """Test all the plublication adsabs links are present.
 
     Test that links are inserted for the title and "read more" sections.
     """
-    publications = client.get(url_for("publications"))
-    assert publications.status_code == 200
+    for paper in publication_data[category]:
+        url = escape(paper["adsabs"])
+        read_more = '...<a href="{0}" target="_blank"> read more</a>'.format(url)
+        title_link = '<a href="{0}" target="_blank">{1}</a>'.format(url, paper["title"])
+        assert read_more.encode('utf-8') in publication_response.data
+        assert title_link.encode('utf-8') in publication_response.data
 
-    for paper_key in publication_data:
-        for paper in publication_data[paper_key]:
-            for key, value in paper.items():
-                value = value.encode('utf-8')
-                if "adsabs" in key:
-                    url = paper["adsabs"].replace("&", "&amp;")
-                    read_more = '...<a href="{0}" target="_blank"> read more</a>'.format(url).encode('utf-8')
-                    title_link = '<a href="{0}" target="_blank">{1}</a>'.format(url, paper["title"]).encode('utf-8')
-                    assert title_link in publications.data
-                    assert read_more in publications.data
-                elif "abstract" in key:
-                    assert value[:480] in publications.data
-                else:
-                    assert value in publications.data
 
+@pytest.mark.parametrize("category", ["main", "other"])
+def test_publication_authors(publication_response, publication_data, category):
+    """Test all the plublication authors are present."""
+    for paper in publication_data[category]:
+        authors = escape(paper["authors"]).encode('utf-8')
+        assert authors in publication_response.data
+
+
+@pytest.mark.parametrize("category", ["main", "other"])
+def test_publication_abstracts(publication_response, publication_data, category):
+    """Test all the plublication abstracts are present."""
+    abstract_limit = 480   # characters to compare
+    for paper in publication_data[category]:
+        abstract = escape(paper["abstract"])[:abstract_limit].encode('utf-8')
+        assert abstract in publication_response.data
 
 
 def test_stardetail_template_text(client, SCdata):
