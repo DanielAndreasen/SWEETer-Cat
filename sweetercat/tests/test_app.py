@@ -1,12 +1,10 @@
-import json
 import os
 
 import flask
 import pytest
-from flask import url_for
+from flask import escape, url_for
 
 from app import app as sc_app
-from utils import readSC
 
 try:
     from urllib.parse import urlparse
@@ -22,7 +20,7 @@ def test_homepage(client, SCdata):
     assert b'<a href="https://www.astro.up.pt/resources/sweet-cat/">SWEET-Cat</a>' in homepage.data
 
     # Table column names
-    __, cols = SCdata
+    _, cols = SCdata
     for col in cols:
         header = "<th>{0}</th>".format(col)
         print(header)
@@ -45,7 +43,8 @@ def test_parameter_description_on_homepage(client):
 # Need to check for 'stardetail' which also requires a star name.
 def test_stardetail_status_code(client, SCdata, planetStardata):
     """Test stardetail will return status code: 200 when submitted with star."""
-    # Passing in planetStardata moves the setup time (~4.8s) of the caching etc into the fixture, which can be shared between tests.
+    # Passing in planetStardata moves the setup time (~4.8s) of the
+    # caching etc into the fixture, which can be shared between tests
     df, _ = SCdata
     df = df.sample(5)
     # All stars are a slow test
@@ -57,7 +56,8 @@ def test_stardetail_status_code(client, SCdata, planetStardata):
     bad_star = client.get(url_for("stardetail", star="Not a star"), follow_redirects=False)
     assert bad_star.status_code == 302
     assert urlparse(bad_star.location).path == url_for("homepage")
-    assert client.get(url_for("stardetail", star="Not a star"), follow_redirects=True).status_code == 200
+    assert client.get(url_for("stardetail", star="Not a star"),
+                      follow_redirects=True).status_code == 200
 
 
 def test_stardetail_request_path(SCdata):
@@ -80,6 +80,10 @@ def test_request_paths():
     for path in ('/', '/plot/', '/plot-exo/', '/publications/', '/stardetail', '/static/table.pdf'):
         with sc_app.test_request_context(path):
             assert flask.request.path == path
+
+
+def test_publication_response_status_code(publication_response):
+    assert publication_response.status_code == 200
 
 
 @pytest.mark.parametrize("heading", [
@@ -112,8 +116,6 @@ def test_publication_response_data(client, publication_data):
                 else:
                     assert value in publications.data
 
-def test_publication_response_status_code(publication_response):
-    assert publication_response.status_code == 200
 
 
 def test_stardetail_template_text(client, SCdata):
