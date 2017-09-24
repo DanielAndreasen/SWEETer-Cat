@@ -89,7 +89,7 @@ def test_publication_headings(client):
         assert heading in publications.data
 
 
-def test_publication_response_data(client):
+def test_publication_response_data(client, publication_data):
     """Test all the plublication data is present.
 
     Test that links are inserted for the title and "read more" sections.
@@ -97,10 +97,8 @@ def test_publication_response_data(client):
     publications = client.get(url_for("publications"))
     assert publications.status_code == 200
 
-    with open('data/publications.json') as pubs:
-        pubs = json.load(pubs)
-    for paper_key in pubs:
-        for paper in pubs[paper_key]:
+    for paper_key in publication_data:
+        for paper in publication_data[paper_key]:
             for key, value in paper.items():
                 value = value.encode('utf-8')
                 if "adsabs" in key:
