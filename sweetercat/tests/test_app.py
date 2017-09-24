@@ -82,11 +82,11 @@ def test_request_paths():
             assert flask.request.path == path
 
 
-def test_publication_headings(client):
+@pytest.mark.parametrize("heading", [
+    b"Main papers", b"Derived papers", b"Authors:", b"Abstract:", b"read more"])
+def test_publication_page_headings(publication_response, heading):
     """Test for the labels Abstact:, Authors: etc."""
-    publications = client.get(url_for("publications"))
-    for heading in [b"Main papers", b"Derived papers", b"Authors:", b"Abstract:", b"read more"]:
-        assert heading in publications.data
+    assert heading in publication_response.data
 
 
 def test_publication_response_data(client, publication_data):
@@ -111,6 +111,9 @@ def test_publication_response_data(client, publication_data):
                     assert value[:480] in publications.data
                 else:
                     assert value in publications.data
+
+def test_publication_response_status_code(publication_response):
+    assert publication_response.status_code == 200
 
 
 def test_stardetail_template_text(client, SCdata):
