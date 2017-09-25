@@ -1,20 +1,25 @@
 from flask import Flask, render_template, request, url_for, redirect, send_from_directory, after_this_request
 import os
 import json
-from plot import plot_page
+from plot import plot_page, plot_page_mpld3, detail_plot
 from utils import readSC, planetAndStar, hz, table_convert
-
 
 # Setup Flask
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ['SC_secret']
 
 
+@app.route('/mpld3/', methods=['GET', 'POST'])
+def mpld3_plot():
+    df, columns = planetAndStar()
+    return plot_page_mpld3(df, columns, request)
+
+
 @app.route('/')
 def homepage(star=None):
     """Home page for SWEETer-Cat with updated table"""
     df, columns = readSC()
-    dfs = df.sort_values('updated', ascending=False)[:50]  # TODO: Remove the slicing!
+    dfs = df.sort_values('updated', ascending=False)#[:50]  # TODO: Remove the slicing!
     decimals = dict.fromkeys(['Vmag', 'Vmagerr', 'par', 'parerr', 'logg',
                               'loggerr', 'logglc', 'logglcerr', 'vterr', 'feh',
                               'feherr', 'mass', 'masserr'], 2)
@@ -36,6 +41,7 @@ def stardetail(star=None):
     """Page with details on the individual system"""
     if star:
         df, _ = planetAndStar(how='left')
+        t1, t2 = min(df['teff']), max(df['teff'])
         index = df['Star'] == star
         d = df.loc[index, :]
         if len(d):
@@ -55,8 +61,11 @@ def stardetail(star=None):
             df.loc[index, 'hz2'] = round(hz(df.loc[index, 'teff'].values[0],
                                             df.loc[index,  'lum'].values[0],
                                             model=4), 5)
+            df.fillna('...', inplace=True)
             info = df.loc[index, :].to_dict('records')
-            return render_template('detail.html', info=info, show_planet=show_planet)
+
+            plot = detail_plot(df[index], t1, t2)
+            return render_template('detail.html', info=info, show_planet=show_planet, plot=plot)
         else:
             return redirect(url_for('homepage'))
 
@@ -95,6 +104,7 @@ def download(fname):
     fmt = fname.split('.')[-1]
     if fmt in ['csv', 'hdf']:
         table_convert(fmt=fmt)
+
         @after_this_request
         def remove_file(response):
             try:
@@ -110,4 +120,5 @@ def download(fname):
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port, debug=True)

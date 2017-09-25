@@ -1,12 +1,10 @@
-import json
 import os
 
 import flask
 import pytest
-from flask import url_for
+from flask import escape, url_for
 
 from app import app as sc_app
-from utils import readSC
 
 try:
     from urllib.parse import urlparse
@@ -22,7 +20,7 @@ def test_homepage(client, SCdata):
     assert b'<a href="https://www.astro.up.pt/resources/sweet-cat/">SWEET-Cat</a>' in homepage.data
 
     # Table column names
-    __, cols = SCdata
+    _, cols = SCdata
     for col in cols:
         header = "<th>{0}</th>".format(col)
         print(header)
@@ -45,7 +43,8 @@ def test_parameter_description_on_homepage(client):
 # Need to check for 'stardetail' which also requires a star name.
 def test_stardetail_status_code(client, SCdata, planetStardata):
     """Test stardetail will return status code: 200 when submitted with star."""
-    # Passing in planetStardata moves the setup time (~4.8s) of the caching etc into the fixture, which can be shared between tests.
+    # Passing in planetStardata moves the setup time (~4.8s) of the
+    # caching etc into the fixture, which can be shared between tests
     df, _ = SCdata
     df = df.sample(5)
     # All stars are a slow test
@@ -57,7 +56,8 @@ def test_stardetail_status_code(client, SCdata, planetStardata):
     bad_star = client.get(url_for("stardetail", star="Not a star"), follow_redirects=False)
     assert bad_star.status_code == 302
     assert urlparse(bad_star.location).path == url_for("homepage")
-    assert client.get(url_for("stardetail", star="Not a star"), follow_redirects=True).status_code == 200
+    assert client.get(url_for("stardetail", star="Not a star"),
+                      follow_redirects=True).status_code == 200
 
 
 def test_stardetail_request_path(SCdata):
@@ -82,37 +82,54 @@ def test_request_paths():
             assert flask.request.path == path
 
 
-def test_publication_headings(client):
+def test_publication_response_status_code(publication_response):
+    assert publication_response.status_code == 200
+
+
+@pytest.mark.parametrize("heading", [
+    b"Main papers", b"Derived papers", b"Authors:", b"Abstract:", b"read more"])
+def test_publication_page_headings(publication_response, heading):
     """Test for the labels Abstact:, Authors: etc."""
-    publications = client.get(url_for("publications"))
-    for heading in [b"Main papers", b"Derived papers", b"Authors:", b"Abstract:", b"read more"]:
-        assert heading in publications.data
+    assert heading in publication_response.data
 
 
-def test_publication_response_data(client):
-    """Test all the plublication data is present.
+@pytest.mark.parametrize("category", ["main", "other"])
+def test_publication_titles(publication_response, publication_data, category):
+    """Test all the plublication titles are present."""
+    for paper in publication_data[category]:
+        title = escape(paper["title"]).encode('utf-8')
+        assert title in publication_response.data
+
+
+@pytest.mark.parametrize("category", ["main", "other"])
+def test_publication_links(publication_response, publication_data, category):
+    """Test all the plublication adsabs links are present.
 
     Test that links are inserted for the title and "read more" sections.
     """
-    publications = client.get(url_for("publications"))
-    assert publications.status_code == 200
+    for paper in publication_data[category]:
+        url = escape(paper["adsabs"])
+        read_more = '...<a href="{0}" target="_blank"> read more</a>'.format(url)
+        title_link = '<a href="{0}" target="_blank">{1}</a>'.format(url, paper["title"])
+        assert read_more.encode('utf-8') in publication_response.data
+        assert title_link.encode('utf-8') in publication_response.data
 
-    with open('data/publications.json') as pubs:
-        pubs = json.load(pubs)
-    for paper_key in pubs:
-        for paper in pubs[paper_key]:
-            for key, value in paper.items():
-                value = value.encode('utf-8')
-                if "adsabs" in key:
-                    url = paper["adsabs"].replace("&", "&amp;")
-                    read_more = '...<a href="{0}" target="_blank"> read more</a>'.format(url).encode('utf-8')
-                    title_link = '<a href="{0}" target="_blank">{1}</a>'.format(url, paper["title"]).encode('utf-8')
-                    assert title_link in publications.data
-                    assert read_more in publications.data
-                elif "abstract" in key:
-                    assert value[:480] in publications.data
-                else:
-                    assert value in publications.data
+
+@pytest.mark.parametrize("category", ["main", "other"])
+def test_publication_authors(publication_response, publication_data, category):
+    """Test all the plublication authors are present."""
+    for paper in publication_data[category]:
+        authors = escape(paper["authors"]).encode('utf-8')
+        assert authors in publication_response.data
+
+
+@pytest.mark.parametrize("category", ["main", "other"])
+def test_publication_abstracts(publication_response, publication_data, category):
+    """Test all the plublication abstracts are present."""
+    abstract_limit = 480   # characters to compare
+    for paper in publication_data[category]:
+        abstract = paper["abstract"][:abstract_limit].encode('utf-8')
+        assert abstract in publication_response.data
 
 
 def test_stardetail_template_text(client, SCdata):

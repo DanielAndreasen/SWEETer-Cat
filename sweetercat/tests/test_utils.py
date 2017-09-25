@@ -7,7 +7,7 @@ import pandas as pd
 import pytest
 
 from utils import (absolute_magnitude, hz, planetAndStar, plDensity, readSC,
-                   table_convert)
+                   table_convert, stellar_radius, planetary_radius, get_default)
 
 
 def test_absolute_magnitude():
@@ -94,3 +94,40 @@ def test_table_convert():
             os.remove(fname)
     with pytest.raises(NotImplementedError):
         table_convert('fits')
+
+
+def test_stellar_radius():
+    mass, logg = 1, 4.44
+    assert isinstance(stellar_radius(mass, logg), float)
+    assert stellar_radius(mass, logg) == 1
+    assert stellar_radius(0, logg) == 0
+    with pytest.raises(TypeError):
+        stellar_radius('...', logg)
+    with pytest.raises(TypeError):
+        stellar_radius(mass, '...')
+    with pytest.raises(ValueError):
+        stellar_radius(-1, logg)
+
+
+def test_planetary_radius():
+    mass, radius = 1, 1
+    assert isinstance(planetary_radius(mass, radius), (int, float))
+    assert planetary_radius(mass, radius) == radius
+    assert planetary_radius('...', radius) == radius
+    assert planetary_radius(0, '...') == 0
+    assert planetary_radius('...', '...') == '...'
+    assert round(planetary_radius(1, '...'), 2) == 1
+    assert round(planetary_radius(0.2, '...'), 2) == 5.33
+    with pytest.raises(ValueError):
+        planetary_radius(-1, radius)
+
+
+def test_get_default():
+    value = 42
+    assert get_default(value, 1, int) == value
+    assert get_default(value, 'hello', str) == 'hello'
+    assert isinstance(get_default(value, 1, int), int)
+    assert isinstance(get_default(value, 'hello', str), str)
+    assert get_default('...', 42, str) == 42
+    assert get_default('---', 42, str, na_value='---') == 42
+    assert isinstance(get_default('---', 42, str, na_value='---'), int)

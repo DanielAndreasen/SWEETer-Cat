@@ -1,6 +1,8 @@
+import warnings
 import numpy as np
 import pandas as pd
-from PyAstronomy import pyasl
+from astropy.io import votable
+from astropy import constants as c
 from werkzeug.contrib.cache import SimpleCache
 cache = SimpleCache()
 
@@ -11,6 +13,18 @@ colors = {
     'Red': '#d62728',
     'Purple': '#9467bd',
 }
+
+
+def readExoplanetEU():
+    """Read the exoplanet.eu database from the 'data' folder and store as
+    pandas DataFrame
+    """
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        vot = votable.parse('data/exoplanetEU.vo.gz', invalid='mask')
+    vot = vot.get_first_table().to_table(use_names_over_ids=True)
+    df = vot.to_pandas()
+    return df
 
 
 def absolute_magnitude(parallax, m):
@@ -80,7 +94,7 @@ def planetAndStar(how='inner'):
     """
     deu = cache.get('exoplanetDB')
     if deu is None:
-        deu = pyasl.ExoplanetEU2().getAllDataPandas()
+        deu = readExoplanetEU()
         rename = {'name': 'plName',
                   'star_name': 'stName',
                   'mass': 'plMass',
@@ -98,7 +112,15 @@ def planetAndStar(how='inner'):
                   'mag_h': 'mag_h',
                   'mag_k': 'mag_k'}
         deu.rename(columns=rename, inplace=True)
-        deu['stName'] = [s.decode() if isinstance(s, bytes) else s for s in deu['stName']]
+        idx = np.zeros(len(deu), dtype=bool)
+        deu['plName'] = [s.decode() if isinstance(s, bytes) else s for s in deu['plName']]
+        for i, planet in enumerate(deu['plName']):
+            for pl in 'abcdefgh':
+                if planet.endswith(' {}'.format(pl)):
+                    idx[i] = True
+                    continue
+        deu.loc[idx, 'stName'] = deu.loc[idx, 'plName'].str[:-2]
+        deu.loc[~idx, 'stName'] = deu.loc[~idx, 'plName']
         deu['plDensity'] = plDensity(deu['plMass'], deu['plRadius'])  # Add planet density
         cache.set('exoplanetDB', deu, timeout=5*60)
 
@@ -117,7 +139,47 @@ def plDensity(mass, radius):
     Assumes Jupiter mass and radius given."""
     mjup_cgs = 1.8986e30     # Jupiter mass in g
     rjup_cgs = 6.9911e9      # Jupiter radius in cm
-    return 3 * mjup_cgs * mass / (4 * np.pi * (rjup_cgs * radius)**3)   # g/cm^3
+    return 3 * mjup_cgs * mass / (4 * np.pi * (rjup_cgs * radius)**3)  # g/cm^3
+
+
+def stellar_radius(M, logg):
+    """Calculate stellar radius given mass and logg"""
+    if not isinstance(M, (int, float)):
+        raise TypeError('Mass must be int or float. {} type given'.format(type(M)))
+    if not isinstance(logg, (int, float)):
+        raise TypeError('logg must be int or float. {} type given'.format(type(logg)))
+    if M < 0:
+        raise ValueError('Only positive stellar masses allowed.')
+
+    R = M/(10**(logg-4.44))
+    return R
+
+
+def planetary_radius(mass, radius):
+    """Calculate planetary radius if not given assuming a density dependent on
+    mass"""
+    if not isinstance(mass, (int, float)):
+        if isinstance(radius, (int, float)):
+            return radius
+        else:
+            return '...'
+    if mass < 0:
+        raise ValueError('Only positive planetary masses allowed.')
+
+    Mj = c.M_jup
+    Rj = c.R_jup
+    if radius == '...' and isinstance(mass, (int, float)):
+        if mass < 0.01:  # Earth density
+            rho = 5.51
+        elif 0.01 <= mass <= 0.5:
+            rho = 1.64  # Neptune density
+        else:
+            rho = Mj/(4./3*np.pi*Rj**3)  # Jupiter density
+        R = ((mass*Mj)/(4./3*np.pi*rho))**(1./3)  # Neptune density
+        R /= Rj
+    else:
+        return radius
+    return R.value
 
 
 def hz(teff, lum, model=1):
@@ -170,3 +232,10 @@ def table_convert(fmt="csv"):
             df.to_hdf(name, key="sweetcat", mode="w", format='table')
         elif fmt == "csv":
             df.to_csv(name, sep=",", index=False)
+
+
+def get_default(value, default, dtype, na_value='...'):
+    if isinstance(value, dtype) and (value != na_value):
+        return value
+    else:
+        return default

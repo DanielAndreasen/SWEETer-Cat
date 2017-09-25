@@ -1,0 +1,82 @@
+{% extends "template.html" %}
+
+{% block body %}
+
+<div class="col-lg-3">
+  <h3>Select your settings: </h3>
+  <form class="form-inline" name="color_button" method='POST'>
+
+    <div class="input-group">
+      <span class="input-group-addon"><label>x1</label></span>
+      <select name="x1">
+      {% for column in columns %}
+        {% if column == x1 %}
+          <option selected="selected">{{ x1 }}</option>
+        {% else %}
+          <option value="{{ column }}">{{ column }}</option>
+        {% endif %}
+      {% endfor %}
+    </select>
+    </div>
+    <br>
+    <div class="input-group">
+      <span class="input-group-addon"><label>x2</label></span>
+      <select name="x2">
+      {% for column in columns %}
+        {% if column == x2 %}
+          <option selected="selected">{{ x2 }}</option>
+        {% else %}
+          <option value="{{ column }}">{{ column }}</option>
+        {% endif %}
+      {% endfor %}
+    </select>
+    </div>
+    <br>
+    <div class="input-group">
+      <span class="input-group-addon"><label>y1</label></span>
+      <select name="y1">
+      {% for column in columns %}
+        {% if column == y1 %}
+          <option selected="selected">{{ y1 }}</option>
+        {% else %}
+          <option value="{{ column }}">{{ column }}</option>
+        {% endif %}
+      {% endfor %}
+    </select>
+    </div>
+    <br>
+    <div class="input-group">
+      <span class="input-group-addon"><label>y2</label></span>
+      <select name="y2">
+      {% for column in columns %}
+        {% if column == y2 %}
+          <option selected="selected">{{ y2 }}</option>
+        {% else %}
+          <option value="{{ column }}">{{ column }}</option>
+        {% endif %}
+      {% endfor %}
+    </select>
+    </div>
+    <br>
+    <div class="input-group">
+      <span class="input-group-addon"><label>z</label></span>
+      <select name="z">
+      {% for column in columns %}
+        {% if column == z %}
+          <option selected="selected">{{ z }}</option>
+        {% else %}
+          <option value="{{ column }}">{{ column }}</option>
+        {% endif %}
+      {% endfor %}
+    </select>
+    </div>
+    <br>
+    <button class="btn btn-info" type="submit">Submit</button>
+  </form>
+</div>
+
+<div class="col-lg-9">
+  <h1>mpld3 plot</h1>
+  {{ plot|safe }}
+</div>
+{% endblock %}

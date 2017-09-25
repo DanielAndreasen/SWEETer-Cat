@@ -1,3 +1,6 @@
+import matplotlib
+matplotlib.use('Agg')
+
 from bokeh.embed import components
 from bokeh.layouts import column, row
 from bokeh.models import ColorBar, HoverTool, LinearColorMapper, Spacer
@@ -8,12 +11,119 @@ from bokeh.util.string import encode_utf8
 from flask import flash, redirect, render_template, session, url_for
 import numpy as np
 import pandas as pd
+from utils import colors, get_default, stellar_radius, planetary_radius
 
-from utils import colors
+import matplotlib.cm as cm
+import matplotlib.pyplot as plt
+from mpld3 import fig_to_html, plugins
 
 colorschemes = {'Viridis': [Viridis11, 'Viridis256'],
                 'Inferno': [Inferno11, 'Inferno256'],
                 'Plasma':  [Plasma11,  'Plasma256']}
+
+# Name: [distance (AU), diameter (km)]
+# From http://www.enchantedlearning.com/subjects/astronomy/planets/
+ss_planets = {
+    'Mercury': [0.39, 4878],
+    'Venus': [0.723, 12104],
+    'Earth': [1, 12756],
+    'Mars': [1.524, 6787],
+    'Jupiter': [5.203, 142796],
+    'Saturn': [9.539, 120660],
+    'Uranus': [19.18, 51118],
+    'Neptune': [30.06, 48600],
+    'Pluto': [39.53, 2274]}
+
+
+def detail_plot(df, tlow, thigh):
+
+    if len(df) == sum(df['sma'] == '...'):
+        return None
+
+    hz1 = get_default(df['hz1'].values[0], -2, float)
+    hz2 = get_default(df['hz2'].values[0], -1, float)
+    M = get_default(df['mass'].values[0], 1, float)
+    logg = get_default(df['logg'].values[0], 4.44, float)
+    color = get_default(df['teff'].values[0], 5777, float)
+    tlow = get_default(max(2500, tlow), 2500, int)
+    thigh = get_default(min(8500, thigh), 8500, int)
+
+    R = stellar_radius(M, logg)
+    r = [planetary_radius(mi, ri) for mi, ri in df.loc[:, ['plMass', 'plRadius']].values]
+    smas = df['sma'].values
+    max_smas = max([smai for smai in smas if isinstance(smai, (int, float))])
+    Rs = max(500, 500*R)
+    rs = [max(80, 30*ri) for ri in r]
+
+    fig, ax = plt.subplots(1, figsize=(18, 2))
+    ax.scatter([0], [1], s=Rs, c=color, vmin=tlow, vmax=thigh, cmap=cm.autumn)
+    no_sma = []
+    for i, sma in enumerate(smas):
+        if sma == '...':
+            no_sma.append('{} has no SMA'.format(df['plName'].values[i]))
+            continue
+        if sma < hz1:
+            dist = hz1-sma
+            ax.scatter(sma, [1], s=rs[i], c=dist, vmin=0, vmax=hz1, cmap=cm.autumn)
+        elif hz1 <= sma <= hz2:
+            ax.scatter(sma, [1], s=rs[i], c='k')
+        else:
+            dist = sma-hz2
+            ax.scatter(sma, [1], s=rs[i], c=dist, vmin=hz2, vmax=max_smas, cmap=cm.winter_r)
+
+    if 0 < hz1 < hz2:
+        x = np.linspace(hz1, hz2, 10)
+        y = np.linspace(0.9, 1.1, 10)
+        z = np.array([[xi]*10 for xi in x[::-1]]).T
+        plt.contourf(x, y, z, 300, alpha=0.8, cmap=cm.summer)
+
+    for planet in ss_planets.keys():
+        s = ss_planets[planet][0]
+        r = 30*ss_planets[planet][1]/2.
+        r /= float(ss_planets['Jupiter'][1])
+        ax.scatter(s, [0.95], s=r*10, c='g')
+        ax.text(s-0.01, 0.97, planet, color='white')
+
+    ax.set_xlim(0.0, max_smas*1.2)
+    ax.set_ylim(0.9, 1.1)
+    ax.set_xlabel('Semi-major axis [AU]')
+    ax.yaxis.set_major_formatter(plt.NullFormatter())
+    ax.set_facecolor('black')  # Use "#f8f8f8" for same color as bg in navbar
+
+    for i, text in enumerate(no_sma):
+        ax.text(max_smas*0.8, 1.05-i*0.02, text, color='white')
+
+    try:
+        return fig_to_html(fig)
+    except TypeError:
+        return None
+
+
+def plot_page_mpld3(df, columns, request):
+    if request.method == 'POST':  # Something is being submitted
+        x1 = str(request.form['x1'])
+        x2 = str(request.form['x2'])
+        y1 = str(request.form['y1'])
+        y2 = str(request.form['y2'])
+        z = str(request.form['z'])
+    else:
+        x1, x2, y1, y2, z = 'teff', 'vt', 'Vabs', 'feh', 'logg'
+    # Does not work with NaN values!
+    df = df.loc[:, list(set([x1, x2, y1, y2, z]))].dropna(axis=0)
+    fig, ax = plt.subplots(2, 2, figsize=(14, 8), sharex='col', sharey='row')
+    points = ax[0, 0].scatter(df[x1], df[y1], c=df[z], alpha=0.6)
+    points = ax[1, 0].scatter(df[x1], df[y2], c=df[z], alpha=0.6)
+    points = ax[0, 1].scatter(df[x2], df[y1], c=df[z], alpha=0.6)
+    points = ax[1, 1].scatter(df[x2], df[y2], c=df[z], alpha=0.6)
+    ax[1, 0].set_xlabel(x1)
+    ax[1, 1].set_xlabel(x2)
+    ax[0, 0].set_ylabel(y1)
+    ax[1, 0].set_ylabel(y2)
+
+    plugins.connect(fig, plugins.LinkedBrush(points))
+    plot = fig_to_html(fig)
+    return render_template('plot_mpld3.html', plot=plot, columns=columns,
+                           x1=x1, x2=x2, y1=y1, y2=y2, z=z)
 
 
 def plot_page(df, columns, request, page):
