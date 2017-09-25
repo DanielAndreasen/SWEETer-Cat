@@ -128,7 +128,7 @@ def test_publication_abstracts(publication_response, publication_data, category)
     """Test all the plublication abstracts are present."""
     abstract_limit = 480   # characters to compare
     for paper in publication_data[category]:
-        abstract = escape(paper["abstract"])[:abstract_limit].encode('utf-8')
+        abstract = paper["abstract"][:abstract_limit].encode('utf-8')
         assert abstract in publication_response.data
 
 

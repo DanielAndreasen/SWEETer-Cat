@@ -8,7 +8,7 @@
     <h3><a href="{{ paper['adsabs'] }}" target="_blank">{{ paper['title'] }}</a></h3>
     <h4>Authors: <small>{{ paper['authors'] }}</small></h4>
     <h4>Abstract: </h4>
-    <p>{{ paper['abstract']|truncate(500) }}<a href="{{ paper['adsabs'] }}" target="_blank"> read more</a></p>
+    <p>{{ paper['abstract']|safe|truncate(500) }}<a href="{{ paper['adsabs'] }}" target="_blank"> read more</a></p>
   {% endfor %}
 </div>
 
@@ -19,7 +19,7 @@
     <h3><a href="{{ paper['adsabs'] }}" target="_blank">{{ paper['title'] }}</a></h3>
     <h4>Authors: <small>{{ paper['authors'] }}</small></h4>
     <h4>Abstract: </h4>
-    <p>{{ paper['abstract']|truncate(500) }}<a href="{{ paper['adsabs'] }}" target="_blank"> read more</a></p>
+    <p>{{ paper['abstract']|safe|truncate(500) }}<a href="{{ paper['adsabs'] }}" target="_blank"> read more</a></p>
   {% endfor %}
 </div>
 
