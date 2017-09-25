@@ -23,7 +23,7 @@ def SCdata():
 
 @pytest.fixture
 def planetStardata():
-    """SWEET-Cat + ExoplanetEU +  database fixture."""
+    """SWEET-Cat + ExoplanetEU + database fixture."""
     return planetAndStar()
 
 
