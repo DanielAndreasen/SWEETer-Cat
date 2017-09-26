@@ -53,7 +53,7 @@ before_script:
   - cd sweetercat
 
 script:
-  - pytest --cov=. --cov-report term-missing --durations 5
+  - pytest --cov=. --cov-report term-missing --cov-config .coveragerc --durations 5
 
 after_success:
   - coveralls -i
