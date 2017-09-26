@@ -109,8 +109,8 @@ def download(fname):
         def remove_file(response):
             try:
                 os.remove('data/{}'.format(fname))
-            except OSError:
-                pass
+            except OSError:  # pragma: no cover
+                pass  # pragma: no cover
             return response
         return send_from_directory('data', fname)
     elif fmt == 'tsv':
@@ -120,5 +120,5 @@ def download(fname):
 
 
 if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5000))
-    app.run(host='0.0.0.0', port=port, debug=True)
+    port = int(os.environ.get('PORT', 5000))  # pragma: no cover
+    app.run(host='0.0.0.0', port=port, debug=True)  # pragma: no cover
