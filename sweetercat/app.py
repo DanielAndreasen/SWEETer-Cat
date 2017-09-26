@@ -33,7 +33,7 @@ def homepage(star=None):
     columns = dfs.columns
     dfs = dfs.loc[:, columns]
     dfs = dfs.to_dict('records')
-    return render_template('main.html', rows=dfs, columns=columns[1:-1])
+    return render_template('main.html', rows=dfs, columns=columns[1:-2])
 
 
 @app.route('/star/<string:star>/')

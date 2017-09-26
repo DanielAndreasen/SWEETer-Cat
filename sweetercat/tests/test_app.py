@@ -24,7 +24,7 @@ def test_homepage(client, SCdata):
     for col in cols:
         header = "<th>{0}</th>".format(col)
         print(header)
-        if col in ["Vabs"]:
+        if col in ['Vabs', 'lum']:
             assert header.encode('utf-8') not in homepage.data
         else:
             assert header.encode('utf-8') in homepage.data
