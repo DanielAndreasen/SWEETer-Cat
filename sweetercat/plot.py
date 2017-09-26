@@ -190,13 +190,13 @@ def plot_page(df, columns, request, page):
             session['z'] = 'None'
         else:
             x = 'teff'
-            y = 'Vabs'
+            y = 'lum'
             z = 'logg'
             x1, x2 = 8000, 2500
-            y1, y2 = 33, 10
-            yscale = 'linear'
+            y1, y2 = 1e-3, 3000
+            yscale = 'log'
             session['x'] = 'teff'
-            session['y'] = 'Vabs'
+            session['y'] = 'lum'
             session['z'] = 'logg'
         color = 'Blue'
         xscale = 'linear'

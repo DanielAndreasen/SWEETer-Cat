@@ -1,3 +1,4 @@
+from __future__ import division
 import warnings
 import numpy as np
 import pandas as pd
@@ -47,6 +48,10 @@ def absolute_magnitude(parallax, m):
     return M
 
 
+def luminosity(mass, teff, logg):
+    return mass * (teff/5777)**4 * (10**(4.44-logg))
+
+
 def readSC(nrows=None):
     """Read the SWEET-Cat database and cache it (if it isn't already).
 
@@ -64,11 +69,12 @@ def readSC(nrows=None):
         df.drop('tmp', axis=1, inplace=True)
         df['flag'] = df['flag'] == 1  # Turn to bool
         df['Vabs'] = absolute_magnitude(df['par'], df['Vmag'])
+        df['lum'] = luminosity(df['mass'], df['teff'], df['logg'])
         df['Star'] = df['Star'].str.strip()
 
         plots = ['Vmag', 'Vmagerr', 'Vabs', 'par', 'parerr', 'teff', 'tefferr',
                  'logg', 'loggerr', 'logglc', 'logglcerr', 'vt', 'vterr',
-                 'feh', 'feherr', 'mass', 'masserr']
+                 'feh', 'feherr', 'mass', 'masserr', 'lum']
         cache.set('starDB', df, timeout=5*60)
         cache.set('starCols', plots, timeout=5*60)
     if nrows is not None:
