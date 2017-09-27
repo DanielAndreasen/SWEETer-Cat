@@ -4,6 +4,7 @@
 [![Coverage Status](https://coveralls.io/repos/github/DanielAndreasen/SWEETer-Cat/badge.svg?branch=master)](https://coveralls.io/github/DanielAndreasen/SWEETer-Cat?branch=master)
 [![Updates](https://pyup.io/repos/github/DanielAndreasen/SWEETer-Cat/shield.svg)](https://pyup.io/repos/github/DanielAndreasen/SWEETer-Cat/)
 [![Python 3](https://pyup.io/repos/github/DanielAndreasen/SWEETer-Cat/python-3-shield.svg)](https://pyup.io/repos/github/DanielAndreasen/SWEETer-Cat/)
+[![Known Vulnerabilities](https://snyk.io/test/github/danielandreasen/sweeter-cat/badge.svg)](https://snyk.io/test/github/danielandreasen/sweeter-cat)
 
 # SWEETer-Cat
 Make [SWEET-Cat](https://www.astro.up.pt/resources/sweet-cat/) sweet again
