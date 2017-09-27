@@ -218,7 +218,7 @@ def plot_page(df, columns, request, page):
 
     title = '{} vs. {}:\tNumber of objects in plot: {}'.format(x.name, y.name, num_points)
 
-    tools = "resize,crosshair,pan,wheel_zoom,box_zoom,reset,box_select,lasso_select,save".split(',')
+    tools = "crosshair,pan,wheel_zoom,box_zoom,reset,box_select,lasso_select,save".split(',')
     fig = figure(title=title, tools=tools + [hover], plot_width=800, plot_height=400,
                  toolbar_location='above',
                  x_range=[x1, x2], y_range=[y1, y2],
