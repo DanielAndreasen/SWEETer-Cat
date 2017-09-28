@@ -6,28 +6,29 @@ from flask import escape, url_for
 
 from app import app as sc_app
 
-try:
-    from urllib.parse import urlparse
-except ImportError:
-    from urlparse import urlparse
+try:  # pragma: no cover
+    from urllib.parse import urlparse  # pragma: no cover
+except ImportError:  # pragma: no cover
+    from urlparse import urlparse  # pragma: no cover
 
 
 def test_homepage(client, SCdata):
     homepage = client.get(url_for("homepage"))
     assert homepage.status_code == 200
 
-    # Link to SWEEt-Cat
+    # Link to SWEET-Cat
     assert b'<a href="https://www.astro.up.pt/resources/sweet-cat/">SWEET-Cat</a>' in homepage.data
 
+    # NOTE: Not relevant in this format. Is it necessary?
     # Table column names
-    _, cols = SCdata
-    for col in cols:
-        header = "<th>{0}</th>".format(col)
-        print(header)
-        if col in ['Vabs', 'lum']:
-            assert header.encode('utf-8') not in homepage.data
-        else:
-            assert header.encode('utf-8') in homepage.data
+    # _, cols = SCdata
+    # for col in cols:
+    #     header = "<th>{0}</th>".format(col)
+    #     print(header)
+    #     if col in ['Vabs', 'lum']:
+    #         assert header.encode('utf-8') not in homepage.data
+    #     else:
+    #         assert header.encode('utf-8') in homepage.data
 
 
 def test_parameter_description_on_homepage(client):

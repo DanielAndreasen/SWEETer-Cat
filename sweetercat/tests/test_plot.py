@@ -6,10 +6,10 @@ from flask import url_for
 
 from plot import check_scale, count, extract, get_limits, scaled_histogram
 
-try:
-    from urllib.parse import urlparse
-except ImportError:
-    from urlparse import urlparse
+try:  # pragma: no cover
+    from urllib.parse import urlparse  # pragma: no cover
+except ImportError:  # pragma: no cover
+    from urlparse import urlparse  # pragma: no cover
 
 
 @pytest.fixture()
