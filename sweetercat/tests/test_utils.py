@@ -6,20 +6,20 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from utils import (absolute_magnitude, hz, planetAndStar, plDensity, readSC,
-                   table_convert, stellar_radius, planetary_radius, get_default,
-                   luminosity)
+from utils import absolute_magnitude, hz, planetAndStar, plDensity, readSC
+from utils import table_convert, stellar_radius, planetary_radius, get_default
+from utils import luminosity, luminosity2
 
 
 def test_absolute_magnitude():
     """Test the absolute_magnitude function."""
     m = 10
     assert isinstance(absolute_magnitude(1, 1), float)
-    assert absolute_magnitude(1, m) > m
-    assert absolute_magnitude(1, m) == 15
-    assert absolute_magnitude(0.1, m) == m
-    assert absolute_magnitude(0.01, m) < m
-    assert absolute_magnitude(1 / 10, m) == m
+    assert absolute_magnitude(1000, m) > m
+    assert absolute_magnitude(1000, m) == 15
+    assert absolute_magnitude(100, m) == m
+    assert absolute_magnitude(1, m) < m
+    assert absolute_magnitude(1 / 10, m) == -5
     with pytest.raises(ZeroDivisionError):
         absolute_magnitude(0, m)
 
@@ -141,3 +141,17 @@ def test_luminosity():
     assert luminosity(0, teff, logg) == 0
     assert luminosity(mass, 0, logg) == 0
     assert luminosity(mass, teff, 0) != 0
+
+
+def test_luminosity2():
+    p, m = 10, 10
+    ps = 1/4.848136811133344e-09
+    ms = -26.74
+    assert isinstance(luminosity2(p, m), (int, float))
+    assert luminosity2(ps, ms) == 1
+    assert round(luminosity2(p, m), 3) == 0.857
+    assert int(luminosity2(p, 0)) == 8567
+    with pytest.raises(ZeroDivisionError):
+        luminosity2(0, m)
+    with pytest.raises(TypeError):
+        luminosity2(p, 'm')

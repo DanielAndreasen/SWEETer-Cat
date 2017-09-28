@@ -42,14 +42,53 @@ def absolute_magnitude(parallax, m):
     M : float
       The absolute magnitude
     """
-    d = 1 / parallax
+    d = 1 / (parallax*1e-3)  # Conversion to arcsecond before deriving distance
     mu = 5 * np.log10(d) - 5
     M = m - mu
     return M
 
 
 def luminosity(mass, teff, logg):
+    """Stellar luminosity based on standard formula:
+            L=4\pi R^2 \sigma Teff^4
+    scaled with Solar values.
+
+    Inputs
+    ------
+    mass : int, float, np.ndarray
+      Stellar mass in Solar units
+    teff : int, float, np.ndarray
+      Stellar effective temperature in K
+    logg : int, float, np.ndarray
+      Stellar surface gravity in cgs
+
+    Output
+    ------
+    Stellar luminosity in Solar units
+    """
     return mass * (teff/5777)**4 * (10**(4.44-logg))
+
+
+def luminosity2(parallax, m):
+    """Stellar luminosity based on magnitude (probably V) and parallax based on
+            m = ms-2.5*log10(L/Ls*(d/ds)**2)
+
+    Inputs
+    ------
+    parallax : int, float, np.ndarray
+      Parallax in milli-arcsecond. Note: not arcseconds. It will be conversion
+    m : in, float, np.ndarray
+      Apparent magnitude. Usually from V band
+
+    Output
+    ------
+    Stellar luminosity in Solar units
+    """
+    ds = 4.848136811133344e-06  # Distance to Sun in pc
+    ms = -26.74
+    d = 1/(parallax*1e-3)
+    L = (d/ds)**2 * 10**((ms-m)/2.5)
+    return L
 
 
 def readSC(nrows=None):
