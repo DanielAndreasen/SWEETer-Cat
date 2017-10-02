@@ -195,3 +195,23 @@ def test_redirect_on_wrong_xyz(client, form_data, endpoint, dimension):
 
     assert redirected_plot.status_code == 200
     assert b"Select your settings:" in redirected_plot.data
+
+
+@pytest.mark.parametrize("endpoint,dimension", [
+    ("plot", "colorscheme"),
+    ("plot", "xscale"),
+    ("plot_exo", "yscale"),
+    ("plot", "checkboxes"),
+    ])
+def test_wrong_colorscheme_scales_checkbox(client, form_data, endpoint, dimension):
+    form_data[dimension] = "wrong"
+
+    plot = client.post(url_for(endpoint), data=form_data, follow_redirects=False)
+    redirected_plot = client.post(url_for(endpoint), data=form_data, follow_redirects=True)
+
+    assert plot.status_code == 302   # Redirection code
+    assert b'Redirecting...' in plot.data
+    assert urlparse(plot.location).path == url_for(endpoint)  # redirect location
+
+    assert redirected_plot.status_code == 200
+    assert b"Select your settings:" in redirected_plot.data

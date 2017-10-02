@@ -106,6 +106,12 @@ def plot_page_mpld3(df, columns, request):
         y1 = str(request.form['y1'])
         y2 = str(request.form['y2'])
         z = str(request.form['z'])
+        if (x1 not in columns) or (x1 not in columns):
+            return redirect(url_for(mpld3_plot))
+        elif (y1 not in columns) or (y1 not in columns):
+            return redirect(url_for(mpld3_plot))
+        elif (z not in columns):
+            return redirect(url_for(mpld3_plot))
     else:
         x1, x2, y1, y2, z = 'teff', 'vt', 'Vabs', 'feh', 'logg'
     # Does not work with NaN values!
@@ -158,7 +164,12 @@ def plot_page(df, columns, request, page):
             return redirect(url_for(page))
 
         colorscheme = str(request.form.get('colorscheme', colorscheme))
+        if colorscheme not in colorschemes.keys():
+            return redirect(url_for(page))
+
         checkboxes = request.form.getlist("checkboxes")
+        if checkboxes[0] not in [[], '', 'homo']:
+            return redirect(url_for(page))
 
         df, x, y, z = extract(df, x, y, z, checkboxes)
 
@@ -176,6 +187,10 @@ def plot_page(df, columns, request, page):
 
         xscale = str(request.form['xscale'])
         yscale = str(request.form['yscale'])
+        if xscale not in ['linear', 'log']:
+            return redirect(url_for(page))
+        if yscale not in ['linear', 'log']:
+            return redirect(url_for(page))
 
     else:
         if page == "plot_exo":
