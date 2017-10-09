@@ -17,8 +17,9 @@
 #       Must be a positive integer. Generally set in the 64-2048
 #       range.
 #
-
-bind = '127.0.0.1:5000'
+import os
+port = int(os.environ.get('PORT', 5000))
+bind = '0.0.0.0:{}'.format(port)
 backlog = 2048
 reload = True
 

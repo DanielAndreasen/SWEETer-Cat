@@ -19,12 +19,30 @@
     <thead>
       <tr>
         <th>Star</th>
-        {% for column in columns %}
-          {% if column == 'link' %}
-          {% else %}
-            <th>{{ column }}</th>
-          {% endif %}
-        {% endfor %}
+        <th><label title="HD number">HD</label></th>
+        <th><label title="Right ascension">RA</label></th>
+        <th><label title="Declination">dec</label></th>
+        <th><label title="Visual apparent magnitude">V</label></th>
+        <th><label title="Error on visual apparent magnitude">&sigma;<sub>V<sub></label></th>
+        <th><label title="Parallax [milli-arcsecond]">&pi;</label></th>
+        <th><label title="Error on parallax [milli-arcsecond]">&sigma;<sub>&pi;<sub></label></th>
+        <th><label title="Source of parallax">Source</label></th>
+        <th><label title="Effective temperature [K]">T<sub>eff</sub></label></th>
+        <th><label title="Error on effective temperature [K]">&sigma;<sub>T<sub>eff</sub></sub></label></th>
+        <th><label title="Surface gravity [cgs]">logg</label></th>
+        <th><label title="Error on surface gravity [cgs]">&sigma;<sub>logg</sub></label></th>
+        <th><label title="Surface gravity from light-curve [cgs]">logg<sub>lc</sub></label></th>
+        <th><label title="Error on surface gravity from light-curve [cgs]">&sigma;<sub>logg<sub>lc</sub></sub></label></th>
+        <th><label title="Microturbulence [km/s]">&xi;<sub>micro</sub></label></th>
+        <th><label title="Error on microturbulence [km/s]">&sigma;<sub>&xi;<sub>micro</sub></sub></label></th>
+        <th><label title="Metallicity [dex]">[Fe/H]</label></th>
+        <th><label title="Error on metallicity [dex]">&sigma;<sub>[Fe/H]</sub></label></th>
+        <th><label title="Stellar mass [M&odot;]">M</label></th>
+        <th><label title="Error on stellar mass [M&odot;]">&sigma;<sub>M</sub></label></th>
+        <th><label title="Author for parameters">Author</label></th>
+        <th><label title="Flag to mark homogeneous derived parameters">Flag</label></th>
+        <th><label title="Last updated">Updated</label></th>
+        <th><label title="Special comments">Comment</label></th>
       </tr>
     </thead>
     <tbody>
@@ -36,7 +54,7 @@
             <td style="white-space:nowrap;"><a target="_blank" href="{{ row['link'] }}">{{ row['Author'] }}</a></td>
           {% elif column == 'link' %}
           {% else %}
-            <td style="white-space:nowrap;">{{row[column]}}</td>
+            <td style="white-space:nowrap;">{{ row[column] }}</td>
           {% endif %}
         {% endfor %}
       </tr>

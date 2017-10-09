@@ -6,10 +6,10 @@ from flask import url_for
 
 from plot import check_scale, count, extract, get_limits, scaled_histogram
 
-try:
-    from urllib.parse import urlparse
-except ImportError:
-    from urlparse import urlparse
+try:  # pragma: no cover
+    from urllib.parse import urlparse  # pragma: no cover
+except ImportError:  # pragma: no cover
+    from urlparse import urlparse  # pragma: no cover
 
 
 @pytest.fixture()
@@ -184,6 +184,26 @@ def test_homogeneous_flag(client, form_data):
     ("plot_exo", "z")
 ])
 def test_redirect_on_wrong_xyz(client, form_data, endpoint, dimension):
+    form_data[dimension] = "wrong"
+
+    plot = client.post(url_for(endpoint), data=form_data, follow_redirects=False)
+    redirected_plot = client.post(url_for(endpoint), data=form_data, follow_redirects=True)
+
+    assert plot.status_code == 302   # Redirection code
+    assert b'Redirecting...' in plot.data
+    assert urlparse(plot.location).path == url_for(endpoint)  # redirect location
+
+    assert redirected_plot.status_code == 200
+    assert b"Select your settings:" in redirected_plot.data
+
+
+@pytest.mark.parametrize("endpoint,dimension", [
+    ("plot", "colorscheme"),
+    ("plot", "xscale"),
+    ("plot_exo", "yscale"),
+    ("plot", "checkboxes"),
+    ])
+def test_wrong_colorscheme_scales_checkbox(client, form_data, endpoint, dimension):
     form_data[dimension] = "wrong"
 
     plot = client.post(url_for(endpoint), data=form_data, follow_redirects=False)
