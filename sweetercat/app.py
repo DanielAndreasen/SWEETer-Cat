@@ -9,12 +9,6 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ['SC_secret']
 
 
-@app.route('/mpld3/', methods=['GET', 'POST'])
-def mpld3_plot():
-    df, columns = planetAndStar()
-    return plot_page_mpld3(df, columns, request)
-
-
 @app.route('/')
 def homepage(star=None):
     """Home page for SWEETer-Cat with updated table"""
@@ -68,6 +62,12 @@ def stardetail(star=None):
             return render_template('detail.html', info=info, show_planet=show_planet, plot=plot)
         else:
             return redirect(url_for('homepage'))
+
+
+@app.route('/mpld3/', methods=['GET', 'POST'])
+def mpld3_plot():
+    df, columns = planetAndStar()
+    return plot_page_mpld3(df, columns, request)
 
 
 @app.route("/plot/", methods=['GET', 'POST'])
