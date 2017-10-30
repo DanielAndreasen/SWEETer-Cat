@@ -27,4 +27,4 @@ astropy==2.0.2
 matplotlib==2.1.0
 mpld3==0.3
 tables===3.4.2
-apscheduler==3.3.1
+apscheduler==3.4.0
