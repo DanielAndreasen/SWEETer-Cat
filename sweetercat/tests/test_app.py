@@ -53,9 +53,14 @@ def test_stardetail_status_code(client, SCdata, planetStardata):
     for star in stars:
         print("Testing {}".format(star))   # Catch star name if test fails.
         assert client.get(url_for("stardetail", star=star)).status_code == 200
-        print("{} passed".format(star))
-    bad_star = client.get(url_for("stardetail", star="Not a star"), follow_redirects=False)
+        print("{} passed".format(star)
+ 
+
+def test_invalid_starname(bad_starname): 
+    bad_star = client.get(url_for("stardetail", star=bad_starname),
+                          follow_redirects=False)
     assert bad_star.status_code == 302
+    # redirects to homepage
     assert urlparse(bad_star.location).path == url_for("homepage")
     assert client.get(url_for("stardetail", star="Not a star"),
                       follow_redirects=True).status_code == 200
