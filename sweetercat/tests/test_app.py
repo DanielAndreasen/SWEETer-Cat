@@ -199,7 +199,7 @@ def test_error_404(client):
 
     assert b'This page could not be found' in error404.data
     assert b'Our space monkeys are working on the issue...' in error404.data
-    assert b'<img src="static/spacemonkey.png" alt="">' in error404.data
+    assert b'<img src="/static/spacemonkey.png" alt="">' in error404.data
 
 
 def test_issue54_rounding(client):
