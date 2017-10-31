@@ -53,8 +53,7 @@ def test_stardetail_status_code(client, SCdata, planetStardata):
     for star in stars:
         print("Testing {}".format(star))   # Catch star name if test fails.
         assert client.get(url_for("stardetail", star=star)).status_code == 200
-        print("{} passed".format(star)
- 
+        print("{} passed".format(star))
 
 
 def test_bad_starname(client, bad_starname):
@@ -172,7 +171,7 @@ def test_stardetail_template_text(client, SCdata):
             assert b"Parameters from the literature" in star_detail.data
         for text in sttext:
             assert text.encode("utf-8") in star_detail.data
-        print("{0} Passed".format(star)
+        print("{0} Passed".format(star))
     # if (star has planet parameters): # Need planetandStar instead of readSC
     # for text in pltext:
     #     assert text.encode("utf-8") in star_detail.data
