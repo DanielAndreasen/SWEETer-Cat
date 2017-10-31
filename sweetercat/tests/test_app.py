@@ -56,15 +56,23 @@ def test_stardetail_status_code(client, SCdata, planetStardata):
         print("{} passed".format(star)
  
 
-def test_invalid_starname(bad_starname): 
+
+def test_bad_starname(client, bad_starname):
     bad_star = client.get(url_for("stardetail", star=bad_starname),
                           follow_redirects=False)
     assert bad_star.status_code == 302
     # redirects to homepage
     assert urlparse(bad_star.location).path == url_for("homepage")
-    assert client.get(url_for("stardetail", star="Not a star"),
-                      follow_redirects=True).status_code == 200
-    
+
+
+@pytest.mark.xfail(reason='None is not allowed to pass to the function')
+def test_invalid_starname(client, invalid_starname):
+    print(invalid_starname)
+    invalid_star = client.get(url_for("stardetail", star=invalid_starname),
+                              follow_redirects=False)
+    # Error 404, which gives here a status code 200 (404 page exists)
+    assert invalid_star.status_code == 200
+
 
 def test_stardetail_request_path(SCdata):
     """Test that the stardetail renders properly."""

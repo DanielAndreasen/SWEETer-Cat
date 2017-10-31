@@ -40,6 +40,12 @@ def publication_data():
     return pubs
 
 @pytest.fixture(scope="module",
-                params=["Not a Star", "", "None", None])
+                params=["Not a Star", "None"])
 def bad_starname(request):
+    return request.param
+
+
+@pytest.fixture(scope="module",
+                params=["", None])
+def invalid_starname(request):
     return request.param
