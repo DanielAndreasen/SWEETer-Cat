@@ -7,8 +7,6 @@ python:
 
 # Setup anaconda
 before_install:
-  # http://conda.pydata.org/docs/travis.html
-  - sudo apt-get update
   - if [[ "$TRAVIS_PYTHON_VERSION" == "2.7" ]]; then
       travis_retry wget https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh -O miniconda.sh;
     else
@@ -42,11 +40,6 @@ install:
   # Setup PyAstronomy folder
   - echo -n $HOME/PyAData > $HOME/.pyaConfigWhere
   - mkdir $HOME/PyAData
-
-  # Remove futures for python 3
-  - if [[ "$TRAVIS_PYTHON_VERSION" == 3* ]]; then
-      travis_retry pip uninstall futures -y;
-    fi
 
 before_script:
   # Pre-download the PyAData.
