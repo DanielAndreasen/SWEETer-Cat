@@ -31,8 +31,7 @@ def test_homepage(client, SCdata):
     #         assert header.encode('utf-8') in homepage.data
 
 
-
-    def test_parameter_description_on_homepage(client):
+ def test_parameter_description_on_homepage(client):
     homepage = client.get(url_for("homepage"))
     assert b"/static/table.pdf" in homepage.data
     assert b"A detailed description of each field can be found"in homepage.data
