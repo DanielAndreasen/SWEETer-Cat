@@ -31,7 +31,8 @@ def test_homepage(client, SCdata):
     #         assert header.encode('utf-8') in homepage.data
 
 
-def test_parameter_description_on_homepage(client):
+
+    def test_parameter_description_on_homepage(client):
     homepage = client.get(url_for("homepage"))
     assert b"/static/table.pdf" in homepage.data
     assert b"A detailed description of each field can be found"in homepage.data
@@ -51,15 +52,15 @@ def test_stardetail_status_code(client, SCdata, planetStardata):
     # All stars are a slow test
     stars = df.Star.values
     for star in stars:
-        print(star)   # Catch star name if test fails.
+        print("Testing {}".format(star))   # Catch star name if test fails.
         assert client.get(url_for("stardetail", star=star)).status_code == 200
-
+        print("{} passed".format(star))
     bad_star = client.get(url_for("stardetail", star="Not a star"), follow_redirects=False)
     assert bad_star.status_code == 302
     assert urlparse(bad_star.location).path == url_for("homepage")
     assert client.get(url_for("stardetail", star="Not a star"),
                       follow_redirects=True).status_code == 200
-
+    
 
 def test_stardetail_request_path(SCdata):
     """Test that the stardetail renders properly."""
@@ -67,13 +68,14 @@ def test_stardetail_request_path(SCdata):
     df = df.sample(50)
     stars = df.Star.values
     for star in stars:
-        print(star)
+        print("Testing {}".format(star))
         # BD+ stars have replaced it with a space. Not a problem in app since
         # the stardetail show up with planets
         star = star.replace('+', ' ')
         with sc_app.test_request_context('/stardetail/?star={}'.format(star)):
             assert flask.request.path == '/stardetail/'
             assert flask.request.args['star'] == star
+        print("{} Passed".format(star))
 
 
 def test_request_paths():
@@ -149,6 +151,7 @@ def test_stardetail_template_text(client, SCdata):
     stars = df.Star
 
     for i, star in stars.iteritems():
+        print("Test {}: {}".format(i, star))
         star_detail = client.get(url_for("stardetail", star=star))
 
         if df["flag"][i]:
@@ -157,7 +160,7 @@ def test_stardetail_template_text(client, SCdata):
             assert b"Parameters from the literature" in star_detail.data
         for text in sttext:
             assert text.encode("utf-8") in star_detail.data
-
+        print("{0} Passed".format(star)
     # if (star has planet parameters): # Need planetandStar instead of readSC
     # for text in pltext:
     #     assert text.encode("utf-8") in star_detail.data
