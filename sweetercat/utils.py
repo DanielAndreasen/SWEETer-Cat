@@ -1,4 +1,3 @@
-from __future__ import division
 import warnings
 import numpy as np
 import pandas as pd
@@ -42,7 +41,7 @@ def absolute_magnitude(parallax, m):
     M : float
       The absolute magnitude
     """
-    d = 1 / (parallax*1e-3)  # Conversion to arcsecond before deriving distance
+    d = 1. / (parallax*1e-3)  # Conversion to arcsecond before deriving distance
     mu = 5 * np.log10(d) - 5
     M = m - mu
     return M
@@ -66,7 +65,7 @@ def luminosity(mass, teff, logg):
     ------
     Stellar luminosity in Solar units
     """
-    return mass * (teff/5777)**4 * (10**(4.44-logg))
+    return mass * (teff/5777.)**4 * (10**(4.44-logg))
 
 
 def luminosity2(parallax, m):
@@ -86,7 +85,7 @@ def luminosity2(parallax, m):
     """
     ds = 4.848136811133344e-06  # Distance to Sun in pc
     ms = -26.74
-    d = 1/(parallax*1e-3)
+    d = 1./(parallax*1e-3)
     L = (d/ds)**2 * 10**((ms-m)/2.5)
     return L
 
@@ -196,6 +195,7 @@ def stellar_radius(M, logg):
     if M < 0:
         raise ValueError('Only positive stellar masses allowed.')
 
+    M = float(M)
     R = M/(10**(logg-4.44))
     return R
 
