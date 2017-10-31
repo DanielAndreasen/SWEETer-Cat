@@ -60,8 +60,7 @@ def stardetail(star=None):
 
             plot = detail_plot(df[index], t1, t2)
             return render_template('detail.html', info=info, show_planet=show_planet, plot=plot)
-        else:
-            return redirect(url_for('homepage'))
+    return redirect(url_for('homepage'))
 
 
 @app.route('/mpld3/', methods=['GET', 'POST'])
