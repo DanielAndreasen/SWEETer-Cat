@@ -20,7 +20,6 @@ tornado==4.5.2
 urllib3==1.22
 Werkzeug==0.12.2
 pandas==0.21.0
-PyAstronomy==0.11.1
 scipy==1.0.0
 astropy==2.0.2
 matplotlib==2.0.2
