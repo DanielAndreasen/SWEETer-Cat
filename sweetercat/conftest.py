@@ -38,3 +38,8 @@ def publication_data():
     with open('data/publications.json') as pubs:
         pubs = json.load(pubs)
     return pubs
+
+@pytest.fixture(scope="module",
+                params=["Not a Star", "", "None", None])
+def bad_starname(request):
+    return request.param
