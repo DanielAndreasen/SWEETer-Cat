@@ -100,22 +100,22 @@ def error_404(error):
 @app.route('/download/<path:fname>')
 def download(fname):
     """Download SWEET-Cat table in different formats and clean afterwards"""
-    fmt = fname.split('.')[-1]
-    if fmt in ['csv', 'hdf']:
-        table_convert(fmt=fmt)
+    if fname.startswith('sweet-cat'):
+        print(fname)
+        fmt = fname.split('.')[-1]
+        if fmt in ['csv', 'hdf']:
+            table_convert(fmt=fmt)
 
-        @after_this_request
-        def remove_file(response):
-            try:
-                os.remove('data/{}'.format(fname))
-            except OSError:  # pragma: no cover
-                pass  # pragma: no cover
-            return response
-        return send_from_directory('data', fname)
-    elif fmt == 'tsv':
+            @after_this_request
+            def remove_file(response):
+                try:
+                    os.remove('data/{}'.format(fname))
+                except OSError:  # pragma: no cover
+                    pass  # pragma: no cover
+                return response
         return send_from_directory('data', fname)
     else:
-        return redirect(url_for('homepage'))
+        return send_from_directory('data', fname)
 
 
 if __name__ == '__main__':

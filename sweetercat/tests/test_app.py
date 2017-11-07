@@ -188,8 +188,8 @@ def test_download_status_code(client):
         assert client.get(url_for('download', fname=fname)).status_code == 200
         assert not os.path.isfile('data/{}'.format(fname))
 
-    # Invlaid format
-    assert client.get(url_for('download', fname='sweet-cat.fits')).status_code == 302
+    # Invlaid format but goes to the 404 page
+    assert client.get(url_for('download', fname='sweet-cat.fits')).status_code == 200
 
 
 def test_error_404(client):
