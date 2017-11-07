@@ -96,6 +96,11 @@ def about():
     return render_template('about.html')
 
 
+@app.route('/local/')
+def local():
+    return render_template('local.html')
+
+
 @app.errorhandler(404)
 def error_404(error):
     """Simple handler for status code: 404"""

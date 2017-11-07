@@ -1,0 +1,73 @@
+{% extends "template.html" %}
+
+{% block body %}
+
+<div class="col-lg-7">
+<h1>Run the analysis locally</h1>
+
+<p>
+For many reasons it can be advantegeous to run the analysis locally on your own
+computer. Here we describe how to get the current databases (SWEET-Cat and
+exoplanet.eu) and to combine them in Python
+</p>
+
+<h2>Get the data</h2>
+
+<p>
+Before getting any further, please get the two databses below by clicking the
+buttons. Note that the data is updated on a weekly basis if any new planets are
+found, or homogeneous stellar parameters are added. If you already have a
+working python enviroment, chances are that you do not need to worry about any
+special requirements. However, we also make the list of Python packages
+available in the table below ready for download. Last you will need the script
+also provided in the table below.
+</p>
+
+<table class="table table-hover table-responsive">
+  <thead>
+    <th>SWEET-Cat</th>
+    <th>Exoplanet.eu</th>
+    <th>Requirements</th>
+    <th>Script</th>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a class="btn btn-info" href="/download/sweet-cat.csv">SWEET-Cat.csv</a></td>
+      <td><a class="btn btn-info" href="/download/exoplanetEU.vo.gz">exoplanetEU.vo.gz</a></td>
+      <td><a class="btn btn-info" href="/download/requirements.txt">requirements.txt</a></td>
+      <td><a class="btn btn-info" href="/download/sweetcat.py">sweetcat.py</a></td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>Combining the data</h2>
+
+<p>
+It is important to combine the two data sets if into one combined data set. This
+is done by comparing the stellar names. To do this use the script provided above.
+</p>
+<p>
+Simply place the script, the requirement file, and the two data sets in the same
+working folder and run:
+<br>
+<code style="margin-left:2vw;">
+  $ python sweetcat.py -h
+</code>
+<br>
+to see some help text.
+</p>
+<p>
+If you have any problems running the script, then you might have to install any
+missing dependencies:
+<br>
+<code style="margin-left:2vw;">
+  $ pip install -r requirements.txt
+</code>
+<br>
+If this does not resolve the issue, then feel free to <a
+href="/about">contact</a> us.</p>
+
+
+</div>
+
+{% endblock %}
