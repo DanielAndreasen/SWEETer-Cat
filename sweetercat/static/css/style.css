@@ -35,6 +35,7 @@ hr {
   display: grid;
   grid-template-columns: 1;
 }
+
 .plot {
   grid-column: 1;
   grid-row: auto;

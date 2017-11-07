@@ -55,7 +55,7 @@ def detail_plot(df, tlow, thigh):
     Rs = max(500, 500*R)
     rs = [max(80, 30*ri) for ri in r]
 
-    fig, ax = plt.subplots(1, figsize=(18, 2))
+    fig, ax = plt.subplots(1, figsize=(14, 2))
     ax.scatter([0], [1], s=Rs, c=color, vmin=tlow, vmax=thigh, cmap=cm.autumn)
     no_sma = []
     for i, sma in enumerate(smas):
@@ -89,6 +89,7 @@ def detail_plot(df, tlow, thigh):
     ax.set_xlabel('Semi-major axis [AU]')
     ax.yaxis.set_major_formatter(plt.NullFormatter())
     ax.set_facecolor('black')  # Use "#f8f8f8" for same color as bg in navbar
+    plt.tight_layout()
 
     for i, text in enumerate(no_sma):
         ax.text(max_smas*0.8, 1.05-i*0.02, text, color='white')
