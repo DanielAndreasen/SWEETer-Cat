@@ -91,6 +91,11 @@ def publications():
     return render_template('publications.html', publications=pubs)
 
 
+@app.route('/about/')
+def about():
+    return render_template('about.html')
+
+
 @app.errorhandler(404)
 def error_404(error):
     """Simple handler for status code: 404"""
