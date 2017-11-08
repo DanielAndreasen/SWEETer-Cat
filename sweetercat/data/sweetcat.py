@@ -1,10 +1,7 @@
 from __future__ import division, print_function
-import warnings
 import argparse
 import numpy as np
 import pandas as pd
-from astropy.io import votable
-from astropy import constants as c
 import matplotlib.pyplot as plt
 
 plt.rcParams['xtick.direction'] = 'in'
@@ -45,11 +42,7 @@ def readSC():
 def readExo():
     """Read the exoplanet.eu database and store as pandas DataFrame.
     """
-    with warnings.catch_warnings():
-        warnings.simplefilter("ignore")
-        vot = votable.parse('exoplanetEU.vo.gz', invalid='mask')
-    vot = vot.get_first_table().to_table(use_names_over_ids=True)
-    df = vot.to_pandas()
+    df = pd.read_csv('exoplanetEU.csv')
     return df
 
 

@@ -1,7 +1,5 @@
-import warnings
 import numpy as np
 import pandas as pd
-from astropy.io import votable
 from astropy import constants as c
 from werkzeug.contrib.cache import SimpleCache
 cache = SimpleCache()
