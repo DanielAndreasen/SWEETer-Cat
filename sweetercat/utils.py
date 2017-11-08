@@ -19,11 +19,7 @@ def readExoplanetEU():
     """Read the exoplanet.eu database from the 'data' folder and store as
     pandas DataFrame
     """
-    with warnings.catch_warnings():
-        warnings.simplefilter("ignore")
-        vot = votable.parse('data/exoplanetEU.vo.gz', invalid='mask')
-    vot = vot.get_first_table().to_table(use_names_over_ids=True)
-    df = vot.to_pandas()
+    df = pd.read_csv('data/exoplanetEU.csv')
     return df
 
 
