@@ -70,7 +70,7 @@ reload = True
 workers = 4
 worker_class = 'sync'
 worker_connections = 1000
-timeout = 30
+timeout = 100
 keepalive = 2
 
 #
