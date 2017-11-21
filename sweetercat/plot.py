@@ -169,12 +169,10 @@ def plot_page(df, columns, request, page):
             return redirect(url_for(page))
 
         checkboxes = request.form.getlist("checkboxes")
-        if len(checkboxes) == 0:
-            if checkboxes not in [[], '', 'homo']:
-                return redirect(url_for(page))
-        else:
-            if checkboxes[0] not in [[], '', 'homo']:
-                return redirect(url_for(page))
+        if not checkboxes:  # When [] is returned
+            checkboxes = ['']
+        if checkboxes[0] not in [[], '', 'homo']:
+            return redirect(url_for(page))
 
         df, x, y, z = extract(df, x, y, z, checkboxes)
 
