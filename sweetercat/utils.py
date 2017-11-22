@@ -38,13 +38,8 @@ def readExoplanetEU():
                   'mag_k': 'mag_k'}
         df.rename(columns=rename, inplace=True)
         idx = np.zeros(len(df), dtype=bool)
-        df['plName'] = [s.decode() if isinstance(s, bytes) else s for s in df['plName']]
-        df['stName'] = [s.decode() if isinstance(s, bytes) else s for s in df['stName']]
-        for i, planet in enumerate(df['plName']):
-            for pl in 'abcdefgh':
-                if planet.endswith(' {}'.format(pl)):
-                    idx[i] = True
-                    continue
+        for pl in 'abcdefgh':
+            idx = idx | df['plName'].str.endswith(' {}'.format(pl))
         df.loc[idx, 'stName'] = df.loc[idx, 'plName'].str[:-2]
         df.loc[~idx, 'stName'] = df.loc[~idx, 'plName']
         df['plDensity'] = plDensity(df['plMass'], df['plRadius'])  # Add planet density
