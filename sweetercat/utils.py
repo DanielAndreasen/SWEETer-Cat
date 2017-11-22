@@ -17,7 +17,39 @@ def readExoplanetEU():
     """Read the exoplanet.eu database from the 'data' folder and store as
     pandas DataFrame
     """
-    df = pd.read_csv('data/exoplanetEU.csv')
+    df = cache.get('exoplanetDB')
+    df = None
+    if df is None:
+        df = pd.read_csv('data/exoplanetEU.csv')
+        rename = {'name': 'plName',
+                  'star_name': 'stName',
+                  'mass': 'plMass',
+                  'radius': 'plRadius',
+                  'orbital_period': 'period',
+                  'semi_major_axis': 'sma',
+                  'eccentricity': 'eccentricity',
+                  'inclination': 'inclination',
+                  'discovered': 'discovered',
+                  'impact_parameter': 'b',
+                  'star_distance': 'dist',
+                  'mag_v': 'mag_v',
+                  'mag_i': 'mag_i',
+                  'mag_j': 'mag_j',
+                  'mag_h': 'mag_h',
+                  'mag_k': 'mag_k'}
+        df.rename(columns=rename, inplace=True)
+        idx = np.zeros(len(df), dtype=bool)
+        df['plName'] = [s.decode() if isinstance(s, bytes) else s for s in df['plName']]
+        df['stName'] = [s.decode() if isinstance(s, bytes) else s for s in df['stName']]
+        for i, planet in enumerate(df['plName']):
+            for pl in 'abcdefgh':
+                if planet.endswith(' {}'.format(pl)):
+                    idx[i] = True
+                    continue
+        df.loc[idx, 'stName'] = df.loc[idx, 'plName'].str[:-2]
+        df.loc[~idx, 'stName'] = df.loc[~idx, 'plName']
+        df['plDensity'] = plDensity(df['plMass'], df['plRadius'])  # Add planet density
+        cache.set('exoplanetDB', df, timeout=5*60)
     return df
 
 
@@ -115,8 +147,7 @@ def readSC(nrows=None):
 
 
 def planetAndStar(how='inner'):
-    """Read the SWEET-Cat and ExoplanetEU databases, merge them and cache them
-    (if it isn't already).
+    """Read the SWEET-Cat and ExoplanetEU databases and merge them.
 
     Input
     -----
@@ -130,42 +161,11 @@ def planetAndStar(how='inner'):
     c : list
       The columns that can be used for plotting
     """
-    deu = cache.get('exoplanetDB')
-    if deu is None:
-        deu = readExoplanetEU()
-        rename = {'name': 'plName',
-                  'star_name': 'stName',
-                  'mass': 'plMass',
-                  'radius': 'plRadius',
-                  'orbital_period': 'period',
-                  'semi_major_axis': 'sma',
-                  'eccentricity': 'eccentricity',
-                  'inclination': 'inclination',
-                  'discovered': 'discovered',
-                  'impact_parameter': 'b',
-                  'star_distance': 'dist',
-                  'mag_v': 'mag_v',
-                  'mag_i': 'mag_i',
-                  'mag_j': 'mag_j',
-                  'mag_h': 'mag_h',
-                  'mag_k': 'mag_k'}
-        deu.rename(columns=rename, inplace=True)
-        idx = np.zeros(len(deu), dtype=bool)
-        deu['plName'] = [s.decode() if isinstance(s, bytes) else s for s in deu['plName']]
-        for i, planet in enumerate(deu['plName']):
-            for pl in 'abcdefgh':
-                if planet.endswith(' {}'.format(pl)):
-                    idx[i] = True
-                    continue
-        deu.loc[idx, 'stName'] = deu.loc[idx, 'plName'].str[:-2]
-        deu.loc[~idx, 'stName'] = deu.loc[~idx, 'plName']
-        deu['plDensity'] = plDensity(deu['plMass'], deu['plRadius'])  # Add planet density
-        cache.set('exoplanetDB', deu, timeout=5*60)
-
+    df, columns = readSC()
+    deu = readExoplanetEU()
     cols = ['stName', 'plMass', 'plRadius', 'period', 'sma', 'eccentricity',
             'inclination', 'discovered', 'dist', 'b',
             'mag_v', 'mag_i', 'mag_j', 'mag_h', 'mag_k', 'plDensity']
-    df, columns = readSC()
     d = pd.merge(df, deu, left_on='Star', right_on='stName', how=how)
     c = columns + cols[1:]
     return d, c
