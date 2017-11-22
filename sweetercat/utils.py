@@ -18,7 +18,6 @@ def readExoplanetEU():
     pandas DataFrame
     """
     df = cache.get('exoplanetDB')
-    df = None
     if df is None:
         df = pd.read_csv('data/exoplanetEU.csv')
         rename = {'name': 'plName',
