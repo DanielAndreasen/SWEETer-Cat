@@ -58,8 +58,9 @@ def stardetail(star=None):
             df.fillna('...', inplace=True)
             info = df.loc[index, :].to_dict('records')
 
-            plot = detail_plot(df[index], t1, t2)
-            return render_template('detail.html', info=info, show_planet=show_planet, plot=plot)
+            # plot = detail_plot(df[index], t1, t2)
+            return render_template('detail.html', info=info, show_planet=show_planet)
+            # return render_template('detail.html', info=info, show_planet=show_planet, plot=plot)
     return redirect(url_for('homepage'))
 
 
