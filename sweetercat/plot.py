@@ -36,9 +36,9 @@ ss_planets = {
 
 
 def detail_plot(df, tlow, thigh):
-
-    if len(df) == sum(df['sma'] == '...'):
-        return None
+    if '...' in df['sma'].values:
+        if len(df) == sum(df['sma'] == '...'):
+            return None
 
     hz1 = get_default(df['hz1'].values[0], -2, float)
     hz2 = get_default(df['hz2'].values[0], -1, float)
