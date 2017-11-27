@@ -161,6 +161,8 @@ def planetAndStar(how='inner'):
             'inclination', 'discovered', 'dist', 'b',
             'mag_v', 'mag_i', 'mag_j', 'mag_h', 'mag_k', 'plDensity']
     d = pd.merge(df, deu, left_on='Star', right_on='stName', how=how)
+    d['radius'] = list(map(stellar_radius, d['mass'], d['logg']))
+    d['teq0'] = d.teff * np.sqrt((d.radius*700000)/(2*d.sma*150000000))
     c = columns + cols[1:]
     return d, c
 

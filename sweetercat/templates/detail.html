@@ -63,8 +63,9 @@
       <p>Period: {{ planet['period'] }}days</p>
       {% if planet['sma']|string != '...' %}
         <p>Semi-major axis: {{ planet['sma'] }} AU</p>
-        <p>Inner habitable zone limit: {{ planet['hz1'] }} AU</p>
-        <p>Outer habitable zone limit: {{ planet['hz2'] }} AU</p>
+        <p>Equilibrium temperature: {{ planet['teq0'] | int }} K</p>
+        <!-- <p>Inner habitable zone limit: {{ planet['hz1'] }} AU</p> -->
+        <!-- <p>Outer habitable zone limit: {{ planet['hz2'] }} AU</p> -->
       {% endif %}
     {% endfor %}
   {% endif %}
