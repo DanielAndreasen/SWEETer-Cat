@@ -40,30 +40,19 @@ def stardetail(star=None):
         d = df.loc[index, :].copy()
         if len(d):
             show_planet = bool(~d['plName'].isnull().values[0])
-            d.fillna('...', inplace=True)
             if show_planet:
-                s = d.loc[index, 'plName'].values
+                s = d['plName'].values
                 s = [si.decode() if isinstance(si, bytes) else si for si in s]
                 s = ['{} {}'.format(si[:-2], si[-1].lower()) for si in s]
-                # df.loc[index, 'plName'] = [si.decode() if isinstance(si, bytes) else si for si in s]
-                # s = d.loc[index, 'plName'].values
-                # df.loc[index, 'plName'] = ['{} {}'.format(si[:-2], si[-1].lower()) for si in s]
-                # s = d.loc[index, 'plName'].values
-                d.loc[index, 'exolink'] = ['http://exoplanet.eu/catalog/{}/'.format(si.lower().replace(' ', '_')) for si in s]
-            d.loc[index, 'lum'] = (d.teff/5777)**4 * (d.mass/((10**d.logg)/(10**4.44)))**2
-            d.loc[index, 'hz1'] = round(hz(d.loc[index, 'teff'].values[0],
-                                            d.loc[index,  'lum'].values[0],
-                                            model=2), 5)
-            d.loc[index, 'hz2'] = round(hz(d.loc[index, 'teff'].values[0],
-                                            d.loc[index,  'lum'].values[0],
-                                            model=4), 5)
+                d['exolink'] = ['http://exoplanet.eu/catalog/{}/'.format(si.lower().replace(' ', '_')) for si in s]
+            d['lum'] = (d.teff/5777)**4 * (d.mass/((10**d.logg)/(10**4.44)))**2
+            d['hz1'] = round(hz(d['teff'].values[0], d['lum'].values[0], model=2), 5)
+            d['hz2'] = round(hz(d['teff'].values[0], d['lum'].values[0], model=4), 5)
             d.fillna('...', inplace=True)
-            info = d.loc[index, :].to_dict('records')
+            info = d.to_dict('records')
 
-            # plot = detail_plot(df[index], t1, t2)
-            return render_template('detail_test.html', info=info, show_planet=show_planet)
-            # return render_template('detail.html', info=info, show_planet=show_planet)
-            # return render_template('detail.html', info=info, show_planet=show_planet, plot=plot)
+            plot = detail_plot(d, t1, t2)
+            return render_template('detail.html', info=info, show_planet=show_planet, plot=plot)
     return redirect(url_for('homepage'))
 
 
