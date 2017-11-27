@@ -2,7 +2,65 @@
 
 {% block body %}
 
-<h1>This is a test</h1>
-<h2>Input: {{ star }}</h2>
+<h1><a target="_blank" href="http://simbad.u-strasbg.fr/simbad/sim-basic?Ident={{ info[0]['Star'] }}">{{ info[0]['Star'] }}</a></h1>
+<div class="col-lg-6">
+  <h2>Stellar information</h2>
+  <h3>General info</h3>
+  <p>Reference article: <a href="{{ info[0]['link'] }}" target="_blank">{{ info[0]['Author'] }}</a></p>
+  <p>Right ascension: {{ info[0]['RA'] }}</p>
+  <p>Declination: {{ info[0]['dec_x'] }}</p>
+  <p>Magnitude: {{ info[0]['Vmag'] }} &plusmn; {{ info[0]['Vmagerr'] }}</p>
+  <p>Parallax: {{ info[0]['par'] }} &plusmn; {{ info[0]['parerr'] }} mas</p>
+
+  <h3>Atmospheric parameters
+  {% if info[0]['flag'] %}
+    <small>Parameters analysed by the Porto group</small>
+  {% else %}
+    <small>Parameters from the literature</small>
+  {% endif %}
+  </h3>
+  <p>Teff: {{ info[0]['teff']|int }} &plusmn; {{ info[0]['tefferr']|int }} K</p>
+  <p>logg: {{ info[0]['logg'] }} &plusmn; {{ info[0]['loggerr'] }} dex</p>
+  <p>[Fe/H]: {{ info[0]['feh'] }} &plusmn; {{ info[0]['feherr'] }} dex</p>
+  <p>vt: {{ info[0]['vt'] }} &plusmn; {{ info[0]['vterr'] }} km/s</p>
+
+  <h3>Other info</h3>
+  <p>Mass: {{ info[0]['mass'] }} &plusmn; {{ info[0]['masserr'] }}</p>
+  {% if info[0]['Comment']|string != '...' %}
+    <p>Special comment: {{ info[0]['Comment'] }}</p>
+  {% endif %}
+</div>
+
+
+<div class="col-lg-6">
+  {% if show_planet %}
+    <h2>Planetary information</h2>
+
+    {% for planet in info %}
+      <h2><a href="{{ planet['exolink'] }}" target="_blank">{{ planet['plName'] }}</a></h2>
+      <h3>General info</h3>
+      {% if planet['plMass']|string != '...' %}
+        <p>Mass: {{ planet['plMass'] }}M<sub>Jup</sub></p>
+      {% endif %}
+      {% if planet['plRadius']|string != '...' %}
+        <p>Radius: {{ planet['plRadius']|string }}R<sub>Jup</sub></p>
+      {% endif %}
+      {% if planet['plDensity']|string != '...' %}
+        <p>Density: {{ planet['plRadius']|string }} g/cm<sup>3</sup></p>
+      {% endif %}
+
+      <h3>Orbital parameters</h3>
+      <p>Period: {{ planet['period'] }}days</p>
+      {% if planet['sma']|string != '...' %}
+        <p>Semi-major axis: {{ planet['sma'] }} AU</p>
+        <p>Equilibrium temperature: {{ planet['teq0'] | int }} K</p>
+        <!-- <p>Inner habitable zone limit: {{ planet['hz1'] }} AU</p> -->
+        <!-- <p>Outer habitable zone limit: {{ planet['hz2'] }} AU</p> -->
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+
+</div>
+
 
 {% endblock %}

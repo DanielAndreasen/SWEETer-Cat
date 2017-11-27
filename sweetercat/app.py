@@ -33,7 +33,6 @@ def homepage(star=None):
 @app.route('/star/<string:star>/')
 def stardetail(star=None):
     """Page with details on the individual system"""
-    return render_template('detail_test.html', star=star)
     if star:
         df, _ = planetAndStar(how='left')
         t1, t2 = min(df['teff']), max(df['teff'])
@@ -60,6 +59,7 @@ def stardetail(star=None):
             info = df.loc[index, :].to_dict('records')
 
             # plot = detail_plot(df[index], t1, t2)
+            return render_template('detail_test.html', info=info, show_planet=show_planet)
             return render_template('detail.html', info=info, show_planet=show_planet)
             # return render_template('detail.html', info=info, show_planet=show_planet, plot=plot)
     return redirect(url_for('homepage'))
