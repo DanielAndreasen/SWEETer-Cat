@@ -48,10 +48,11 @@ def stardetail(star=None):
             d['lum'] = (d.teff/5777)**4 * (d.mass/((10**d.logg)/(10**4.44)))**2
             d['hz1'] = round(hz(d['teff'].values[0], d['lum'].values[0], model=2), 5)
             d['hz2'] = round(hz(d['teff'].values[0], d['lum'].values[0], model=4), 5)
+
+            plot = detail_plot(d, t1, t2)
             d.fillna('...', inplace=True)
             info = d.to_dict('records')
 
-            plot = detail_plot(d, t1, t2)
             return render_template('detail.html', info=info, show_planet=show_planet, plot=plot)
     return redirect(url_for('homepage'))
 

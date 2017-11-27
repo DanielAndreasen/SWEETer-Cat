@@ -36,9 +36,8 @@ ss_planets = {
 
 
 def detail_plot(df, tlow, thigh):
-    if '...' in df['sma'].values:
-        if len(df) == sum(df['sma'] == '...'):
-            return None
+    if len(df) == sum(df['sma'].isnull()):
+        return None
 
     hz1 = get_default(df['hz1'].values[0], -2, float)
     hz2 = get_default(df['hz2'].values[0], -1, float)
@@ -59,7 +58,7 @@ def detail_plot(df, tlow, thigh):
     ax.scatter([0], [1], s=Rs, c=color, vmin=tlow, vmax=thigh, cmap=cm.autumn)
     no_sma = []
     for i, sma in enumerate(smas):
-        if sma == '...':
+        if np.isnan(sma):
             no_sma.append('{} has no SMA'.format(df['plName'].values[i]))
             continue
         if sma < hz1:
