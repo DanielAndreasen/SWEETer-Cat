@@ -40,27 +40,29 @@ def stardetail(star=None):
         d = df.loc[index, :]
         if len(d):
             show_planet = bool(~d['plName'].isnull().values[0])
-            df.fillna('...', inplace=True)
+            d.fillna('...', inplace=True)
             if show_planet:
-                s = df.loc[index, 'plName'].values
-                df.loc[index, 'plName'] = [si.decode() if isinstance(si, bytes) else si for si in s]
-                s = df.loc[index, 'plName'].values
-                df.loc[index, 'plName'] = ['{} {}'.format(si[:-2], si[-1].lower()) for si in s]
-                s = df.loc[index, 'plName'].values
-                df.loc[index, 'exolink'] = ['http://exoplanet.eu/catalog/{}/'.format(si.lower().replace(' ', '_')) for si in s]
-            df.loc[index, 'lum'] = (d.teff/5777)**4 * (d.mass/((10**d.logg)/(10**4.44)))**2
-            df.loc[index, 'hz1'] = round(hz(df.loc[index, 'teff'].values[0],
-                                            df.loc[index,  'lum'].values[0],
+                s = d.loc[index, 'plName'].values
+                s = [si.decode() if isinstance(si, bytes) else si for si in s]
+                s = ['{} {}'.format(si[:-2], si[-1].lower()) for si in s]
+                # df.loc[index, 'plName'] = [si.decode() if isinstance(si, bytes) else si for si in s]
+                # s = d.loc[index, 'plName'].values
+                # df.loc[index, 'plName'] = ['{} {}'.format(si[:-2], si[-1].lower()) for si in s]
+                # s = d.loc[index, 'plName'].values
+                d.loc[index, 'exolink'] = ['http://exoplanet.eu/catalog/{}/'.format(si.lower().replace(' ', '_')) for si in s]
+            d.loc[index, 'lum'] = (d.teff/5777)**4 * (d.mass/((10**d.logg)/(10**4.44)))**2
+            d.loc[index, 'hz1'] = round(hz(d.loc[index, 'teff'].values[0],
+                                            d.loc[index,  'lum'].values[0],
                                             model=2), 5)
-            df.loc[index, 'hz2'] = round(hz(df.loc[index, 'teff'].values[0],
-                                            df.loc[index,  'lum'].values[0],
+            d.loc[index, 'hz2'] = round(hz(d.loc[index, 'teff'].values[0],
+                                            d.loc[index,  'lum'].values[0],
                                             model=4), 5)
-            df.fillna('...', inplace=True)
-            info = df.loc[index, :].to_dict('records')
+            d.fillna('...', inplace=True)
+            info = d.loc[index, :].to_dict('records')
 
             # plot = detail_plot(df[index], t1, t2)
             return render_template('detail_test.html', info=info, show_planet=show_planet)
-            return render_template('detail.html', info=info, show_planet=show_planet)
+            # return render_template('detail.html', info=info, show_planet=show_planet)
             # return render_template('detail.html', info=info, show_planet=show_planet, plot=plot)
     return redirect(url_for('homepage'))
 
