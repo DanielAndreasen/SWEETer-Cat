@@ -37,7 +37,7 @@ def stardetail(star=None):
         df, _ = planetAndStar(how='left')
         t1, t2 = min(df['teff']), max(df['teff'])
         index = df['Star'] == star
-        d = df.loc[index, :]
+        d = df.loc[index, :].copy()
         if len(d):
             show_planet = bool(~d['plName'].isnull().values[0])
             d.fillna('...', inplace=True)
