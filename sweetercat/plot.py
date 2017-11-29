@@ -11,11 +11,12 @@ from bokeh.util.string import encode_utf8
 from flask import flash, redirect, render_template, session, url_for
 import numpy as np
 import pandas as pd
-from utils import colors, get_default, stellar_radius, planetary_radius
+from utils import colors, get_default, planetary_radius
 
 import matplotlib.cm as cm
 import matplotlib.pyplot as plt
 from mpld3 import fig_to_html, plugins
+
 
 colorschemes = {'Viridis': [Viridis11, 'Viridis256'],
                 'Inferno': [Inferno11, 'Inferno256'],
@@ -36,8 +37,6 @@ ss_planets = {
 
 
 def detail_plot(df, tlow, thigh):
-    if len(df) == sum(df['sma'].isnull()):
-        return None
 
     hz1 = get_default(df['hz1'].values[0], -2, float)
     hz2 = get_default(df['hz2'].values[0], -1, float)
@@ -47,7 +46,7 @@ def detail_plot(df, tlow, thigh):
     tlow = get_default(max(2500, tlow), 2500, int)
     thigh = get_default(min(8500, thigh), 8500, int)
 
-    R = stellar_radius(M, logg)
+    R = df.iloc[0]['radius']
     r = [planetary_radius(mi, ri) for mi, ri in df.loc[:, ['plMass', 'plRadius']].values]
     smas = df['sma'].values
     max_smas = max([smai for smai in smas if isinstance(smai, (int, float))])
@@ -87,14 +86,15 @@ def detail_plot(df, tlow, thigh):
     ax.set_ylim(0.9, 1.1)
     ax.set_xlabel('Semi-major axis [AU]')
     ax.yaxis.set_major_formatter(plt.NullFormatter())
-    ax.set_facecolor('black')  # Use "#f8f8f8" for same color as bg in navbar
+    ax.set_facecolor('black')
     plt.tight_layout()
 
     for i, text in enumerate(no_sma):
         ax.text(max_smas*0.8, 1.05-i*0.02, text, color='white')
 
     try:
-        return fig_to_html(fig)
+        h = fig_to_html(fig, no_extras=True, template_type='simple', use_http=True)
+        return h
     except TypeError:
         return None
 

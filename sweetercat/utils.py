@@ -19,7 +19,7 @@ def readExoplanetEU():
     """
     df = cache.get('exoplanetDB')
     if df is None:
-        df = pd.read_csv('data/exoplanetEU.csv')
+        df = pd.read_csv('data/exoplanetEU.csv', engine='c')
         rename = {'name': 'plName',
                   'star_name': 'stName',
                   'mass': 'plMass',
@@ -123,7 +123,7 @@ def readSC(nrows=None):
     df = cache.get('starDB')
     plots = cache.get('starCols')
     if (df is None) or (plots is None):
-        df = pd.read_table('data/sweet-cat.tsv')
+        df = pd.read_table('data/sweet-cat.tsv', engine='c')
         df.drop('tmp', axis=1, inplace=True)
         df['flag'] = df['flag'] == 1  # Turn to bool
         df['Vabs'] = absolute_magnitude(df['par'], df['Vmag'])
