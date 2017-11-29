@@ -12,7 +12,7 @@ app.config['SECRET_KEY'] = os.environ['SC_secret']
 @app.route('/')
 def homepage():
     """Home page for SWEETer-Cat with updated table"""
-    df, columns = readSC()
+    df, _ = readSC()
     dfs = df.sort_values('updated', ascending=False)#[:50]  # TODO: Remove the slicing!
     decimals = dict.fromkeys(['Vmag', 'Vmagerr', 'par', 'parerr', 'logg',
                               'loggerr', 'logglc', 'logglcerr', 'vterr', 'feh',
