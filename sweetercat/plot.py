@@ -49,7 +49,7 @@ def detail_plot(df, tlow, thigh):
     R = df.iloc[0]['radius']
     r = [planetary_radius(mi, ri) for mi, ri in df.loc[:, ['plMass', 'plRadius']].values]
     smas = df['sma'].values
-    max_smas = max([smai for smai in smas if isinstance(smai, (int, float))])
+    max_smas = max([smai for smai in smas if isinstance(smai, (int, float)) and not np.isnan(smai)])
     Rs = max(500, 500*R)
     rs = [max(80, 30*ri) for ri in r]
 
