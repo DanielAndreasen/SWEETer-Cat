@@ -87,6 +87,8 @@ def detail_plot(df, tlow, thigh):
     ax.set_ylim(0.9, 1.1)
     ax.set_xlabel('Semi-major axis [AU]')
     ax.yaxis.set_major_formatter(plt.NullFormatter())
+    ax.set_yticks([])
+    ax.spines['left'].set_visible(False)
     ax.set_facecolor('black')
     plt.tight_layout()
 
