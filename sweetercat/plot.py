@@ -56,6 +56,13 @@ def detail_plot(df, tlow, thigh):
     fig, ax = plt.subplots(1, figsize=(14, 2))
     ax.scatter([0], [1], s=Rs, c=color, vmin=tlow, vmax=thigh, cmap=cm.autumn)
     no_sma = []
+
+    if 0 < hz1 < hz2:
+        x = np.linspace(hz1, hz2, 10)
+        y = np.linspace(0.9, 1.1, 10)
+        z = np.array([[xi]*10 for xi in x[::-1]]).T
+        plt.contourf(x, y, z, 300, alpha=0.8, cmap=cm.summer)
+
     for i, sma in enumerate(smas):
         if np.isnan(sma):
             no_sma.append('{} has no SMA'.format(df['plName'].values[i]))
@@ -64,16 +71,10 @@ def detail_plot(df, tlow, thigh):
             dist = hz1-sma
             ax.scatter(sma, [1], s=rs[i], c=dist, vmin=0, vmax=hz1, cmap=cm.autumn)
         elif hz1 <= sma <= hz2:
-            ax.scatter(sma, [1], s=rs[i], c='k')
+            ax.scatter(sma, [1], s=rs[i], c='k', alpha=0.8)
         else:
             dist = sma-hz2
             ax.scatter(sma, [1], s=rs[i], c=dist, vmin=hz2, vmax=max_smas, cmap=cm.winter_r)
-
-    if 0 < hz1 < hz2:
-        x = np.linspace(hz1, hz2, 10)
-        y = np.linspace(0.9, 1.1, 10)
-        z = np.array([[xi]*10 for xi in x[::-1]]).T
-        plt.contourf(x, y, z, 300, alpha=0.8, cmap=cm.summer)
 
     for planet in ss_planets.keys():
         s = ss_planets[planet][0]
