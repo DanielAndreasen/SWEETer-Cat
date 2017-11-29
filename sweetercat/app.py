@@ -23,7 +23,6 @@ def homepage(star=None):
         dfs[col] = dfs[col].astype(int)
     dfs.fillna('...', inplace=True)
     columns = dfs.columns
-    dfs = dfs.loc[:, columns]
     dfs = dfs.to_dict('records')
     return render_template('main.html', rows=dfs, columns=columns[1:-2])
 
