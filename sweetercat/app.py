@@ -19,10 +19,8 @@ def homepage(star=None):
                               'feherr', 'mass', 'masserr'], 2)
     dfs = dfs.round(decimals=decimals)
     for col in ('teff', 'tefferr'):  # These should be integers
-        idx = dfs[col].isnull()
-        dfs[col] = dfs[col].astype(str)
-        dfs.loc[~idx, col] = [s[:-2] for s in dfs.loc[~idx, col]]
-        dfs.loc[idx, col] = '...'
+        dfs[col].fillna(0, inplace=True)
+        dfs[col] = dfs[col].astype(int)
     dfs.fillna('...', inplace=True)
     columns = dfs.columns
     dfs = dfs.loc[:, columns]
