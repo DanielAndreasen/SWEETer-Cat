@@ -10,7 +10,7 @@ app.config['SECRET_KEY'] = os.environ['SC_secret']
 
 
 @app.route('/')
-def homepage(star=None):
+def homepage():
     """Home page for SWEETer-Cat with updated table"""
     df, columns = readSC()
     dfs = df.sort_values('updated', ascending=False)#[:50]  # TODO: Remove the slicing!
