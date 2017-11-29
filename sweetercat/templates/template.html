@@ -66,5 +66,24 @@
         });
     </script>
 
+    <script src="static/js/doppler.min.js"></script>
+    <script>
+      window.addEventListener('load', function() {
+        console.log('callback - doppler.js config loaded');
+        window.doppler.init(function(bandwidth) {
+          var threshold = 4;
+          var diff = bandwidth.left - bandwidth.right;
+          console.log(bandwidth.left);
+          console.log(bandwidth.right);
+          console.log(diff);
+          // if (bandwidth.left > threshold || bandwidth.right > threshold) {
+          if (diff > threshold) {
+            $("#sc-table_next").click()
+            console.log('callback - next page');
+          }
+        });
+      });
+    </script>
+
   </body>
 </html>
