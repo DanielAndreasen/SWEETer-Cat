@@ -8,7 +8,7 @@ import pytest
 
 from utils import absolute_magnitude, hz, planetAndStar, plDensity, readSC
 from utils import table_convert, stellar_radius, planetary_radius, get_default
-from utils import luminosity, luminosity2
+from utils import luminosity
 
 
 def test_absolute_magnitude():
@@ -135,23 +135,11 @@ def test_get_default():
 
 
 def test_luminosity():
-    mass, teff, logg = 1.3, 4554, 4.32
-    assert luminosity(1, 5777, 4.44) == 1
-    assert isinstance(luminosity(mass, teff, logg), (int, float))
-    assert luminosity(0, teff, logg) == 0
-    assert luminosity(mass, 0, logg) == 0
-    assert luminosity(mass, teff, 0) != 0
-
-
-def test_luminosity2():
-    p, m = 10, 10
-    ps = 1/4.848136811133344e-09
-    ms = -26.74
-    assert isinstance(luminosity2(p, m), (int, float))
-    assert luminosity2(ps, ms) == 1
-    assert round(luminosity2(p, m), 3) == 0.857
-    assert int(luminosity2(p, 0)) == 8567
+    teff, m, par, mass = 5777, 8.07, 22.06e-3, 1.04
+    assert round(luminosity(teff, m, par, mass), 2) == 1.03
+    assert isinstance(luminosity(teff, m, par, mass), (int, float))
+    assert np.isnan(luminosity(0, m, par, mass))
+    assert luminosity(teff, 0, par, mass) != 0
+    assert np.isnan(luminosity(teff, m, par, 0))
     with pytest.raises(ZeroDivisionError):
-        luminosity2(0, m)
-    with pytest.raises(TypeError):
-        luminosity2(p, 'm')
+        luminosity(teff, m, 0, mass)

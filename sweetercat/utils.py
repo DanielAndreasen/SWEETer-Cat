@@ -67,47 +67,65 @@ def absolute_magnitude(parallax, m):
     return M
 
 
-def luminosity(mass, teff, logg):
-    """Stellar luminosity based on standard formula:
-            L=4\pi R^2 \sigma Teff^4
-    scaled with Solar values.
+def luminosity(teff, m, par, mass):
+    """
+    Calculate the luminosity the real way
 
     Inputs
     ------
-    mass : int, float, np.ndarray
-      Stellar mass in Solar units
-    teff : int, float, np.ndarray
-      Stellar effective temperature in K
-    logg : int, float, np.ndarray
-      Stellar surface gravity in cgs
+    teff : int
+      Effective temperature in K
+    m : float
+      Apparent magnitude
+    par : float
+      Parallax in arcsec
+    mass : float
+      Stellar mass in solar units
 
     Output
     ------
-    Stellar luminosity in Solar units
+    lum : float
+      Stellar luminosity in solar units
     """
-    return mass * (teff/5777.)**4 * (10**(4.44-logg))
+    if teff == 0:
+        return np.nan
+    if mass == 0:
+        return np.nan
+    bcflow = bolcor(teff)
+    dpc = 1./par
+    mabs = m + 5 - 5*np.log10(dpc)
+    mbol = mabs + bcflow
+    lum = (10**(-2.*mbol/5.))*78.9336121
+    return lum
 
 
-def luminosity2(parallax, m):
-    """Stellar luminosity based on magnitude (probably V) and parallax based on
-            m = ms-2.5*log10(L/Ls*(d/ds)**2)
+def bolcor(teff):
+    """
+    The bolometric correction
 
-    Inputs
-    ------
-    parallax : int, float, np.ndarray
-      Parallax in milli-arcsecond. Note: not arcseconds. It will be conversion
-    m : in, float, np.ndarray
-      Apparent magnitude. Usually from V band
+    Input
+    -----
+    teff : int
+      Effective temperature in K
 
     Output
     ------
-    Stellar luminosity in Solar units
+    bcflow : float
+      The bolometric correction
     """
-    ds = 4.848136811133344e-06  # Distance to Sun in pc
-    ms = -26.74
-    d = 1./(parallax*1e-3)
-    L = (d/ds)**2 * 10**((ms-m)/2.5)
-    return L
+    lteff = np.log10(teff)
+    if lteff < 3.7:
+        p = [-0.190537291496456e+05, 0.155144866764412e+05, -0.421278819301717e+04, 0.381476328422343e+03]
+    elif (3.7 <= lteff) and (lteff < 3.9):
+        p = [-0.370510203809015e+05, 0.385672629965804e+05, -0.150651486316025e+05, 0.261724637119416e+04, -0.170623810323864e+03]
+    else:
+        p = [-0.118115450538963e+06, 0.137145973583929e+06, -0.636233812100225e+05, 0.147412923562646e+05, -0.170587278406872e+04, 0.788731721804990e+02]
+
+    # The arrays are in form of:
+    #   p[0] + p[1]*x + p[2]*x**2 + ...
+    # But np.poly1d expects it inversed
+    bcflow = np.poly1d(p[::-1])(lteff)
+    return bcflow
 
 
 def readSC(nrows=None):
@@ -127,7 +145,7 @@ def readSC(nrows=None):
         df.drop('tmp', axis=1, inplace=True)
         df['flag'] = df['flag'] == 1  # Turn to bool
         df['Vabs'] = absolute_magnitude(df['par'], df['Vmag'])
-        df['lum'] = luminosity(df['mass'], df['teff'], df['logg'])
+        df['lum'] = map(luminosity, df['teff'], df['Vmag'], df['par']*1E-3, df['mass'])
         df['Star'] = df['Star'].str.strip()
 
         plots = ['Vmag', 'Vmagerr', 'Vabs', 'par', 'parerr', 'teff', 'tefferr',
