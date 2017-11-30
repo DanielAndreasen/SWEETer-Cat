@@ -96,7 +96,8 @@ def detail_plot(df, tlow, thigh):
         ax.text(max_smas*0.8, 1.05-i*0.02, text, color='white')
 
     try:
-        h = fig_to_html(fig, no_extras=True, template_type='simple', use_http=True)
+        h = fig_to_html(fig)
+        # h = fig_to_html(fig, no_extras=True, template_type='simple', use_http=True)
         return h
     except TypeError:
         return None
