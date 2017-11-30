@@ -145,7 +145,7 @@ def readSC(nrows=None):
         df.drop('tmp', axis=1, inplace=True)
         df['flag'] = df['flag'] == 1  # Turn to bool
         df['Vabs'] = absolute_magnitude(df['par'], df['Vmag'])
-        df['lum'] = map(luminosity, df['teff'], df['Vmag'], df['par']*1E-3, df['mass'])
+        df['lum'] = list(map(luminosity, df['teff'], df['Vmag'], df['par']*1E-3, df['mass']))
         df['Star'] = df['Star'].str.strip()
 
         plots = ['Vmag', 'Vmagerr', 'Vabs', 'par', 'parerr', 'teff', 'tefferr',
