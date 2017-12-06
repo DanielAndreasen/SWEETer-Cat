@@ -15,6 +15,7 @@ def homepage():
     df, _ = readSC()
     df['alink'] = list(map(author_html, df['Author'], df['link']))
     dfs = df.sort_values('updated', ascending=False)#[:50]  # TODO: Remove the slicing!
+    dfs.drop(['Author', 'link'], axis=1, inplace=True)
     decimals = dict.fromkeys(['Vmag', 'Vmagerr', 'par', 'parerr', 'logg',
                               'loggerr', 'logglc', 'logglcerr', 'vterr', 'feh',
                               'feherr', 'mass', 'masserr'], 2)
@@ -23,9 +24,8 @@ def homepage():
         dfs[col].fillna(0, inplace=True)
         dfs[col] = dfs[col].astype(int)
     dfs.fillna('...', inplace=True)
-    columns = dfs.columns
     dfs = dfs.to_dict('records')
-    return render_template('main.html', rows=dfs, columns=columns[1:-2])
+    return render_template('main.html', rows=dfs)
 
 
 @app.route('/star/<string:star>/')

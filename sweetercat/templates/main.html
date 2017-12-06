@@ -2,11 +2,56 @@
 
 {% block body %}
 
+<script type="text/javascript">
+  $(document).ready(function() {
+    var data = [];
+    {% for row in rows %}
+        data.push([
+          unescape('<a target="_blank" href="/star/{{ row['Star'] }}"><b>{{ row['Star'] }}</b></a>'),
+          "{{ row['HD'] }}",
+          "{{ row['RA'] }}",
+          "{{ row['dec'] }}",
+          "{{ row['Vmag'] }}",
+          "{{ row['Vmagerr'] }}",
+          "{{ row['par'] }}",
+          "{{ row['parerr'] }}",
+          "{{ row['source'] }}",
+          {{ row['teff'] }},
+          {{ row['tefferr'] }},
+          "{{ row['logg'] }}",
+          "{{ row['loggerr'] }}",
+          "{{ row['logglc'] }}",
+          "{{ row['logglcerr'] }}",
+          "{{ row['vt'] }}",
+          "{{ row['vterr'] }}",
+          "{{ row['feh'] }}",
+          "{{ row['feherr'] }}",
+          "{{ row['mass'] }}",
+          "{{ row['masserr'] }}",
+          unescape('{{ row['alink']|safe }}'),
+          "{{ row['flag'] }}",
+          "{{ row['updated'] }}",
+          "{{ row['Comment'] }}",
+                ]);
+    {% endfor %}
+
+    $('#sc-table').DataTable({
+      data: data,
+      deferRender: true,
+      scrollY: 500,
+      scrollCollapse: true,
+      scroller: true
+    });
+  });
+</script>
+
+
   <h1>SWEETer-Cat</h1>
 
   <p>Bringing <a href="https://www.astro.up.pt/resources/sweet-cat/">SWEET-Cat</a> to new sweets!</p>
 
-  <p>A detailed description of each field can be found <a href="{{ url_for('static', filename='table.pdf') }}">here</a></p>
+  <p>A detailed description of each field can be found <a href="{{ url_for('static', filename='table.pdf') }}">here</a>,
+  or by hovering your mouse over each column name.</p>
 
   <p>Downdload the table in the following formats:
   <a class="btn btn-info" href="download/sweet-cat.tsv">TSV</a>
@@ -45,21 +90,6 @@
         <th><label title="Special comments">Comment</label></th>
       </tr>
     </thead>
-    <tbody>
-      {% for row in rows %}
-      <tr>
-        <th scope="row" style="white-space:nowrap;"><a target="_blank" href="/star/{{ row['Star'] }}">{{ row['Star'] }}</a></th>
-        {% for column in columns %}
-          {% if column == 'Author' %}
-            <td style="white-space:nowrap;"><a target="_blank" href="{{ row['link'] }}">{{ row['Author'] }}</a></td>
-          {% elif column == 'link' %}
-          {% else %}
-            <td style="white-space:nowrap;">{{ row[column] }}</td>
-          {% endif %}
-        {% endfor %}
-      </tr>
-      {% endfor %}
-    </tbody>
   </table>
 
 {% endblock %}

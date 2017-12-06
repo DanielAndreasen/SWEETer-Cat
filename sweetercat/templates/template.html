@@ -6,6 +6,11 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/scroller/1.4.3/js/dataTables.scroller.min.js "></script>
+
+
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/united/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.15/css/dataTables.bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/scroller/1.4.2/css/scroller.bootstrap.min.css">
@@ -45,45 +50,14 @@
 
       {% endblock %}
     </div>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <script src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.10.15/js/dataTables.bootstrap.min.js"></script>
-    <script src="https://cdn.datatables.net/scroller/1.4.2/js/dataTables.scroller.min.js"></script>
-
-    <script type="text/javascript">
-      $(document).ready(function() {
-        $('#sc-table').DataTable( {
-            "order": [[ 23, "desc" ]],
-        } );
-      } );
-    </script>
-
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <script type="text/javascript">
       particlesJS.load('particles', "{{ url_for('static', filename='particles.json') }}", function() {
         console.log('callback - particles.js config loaded');
         });
     </script>
-
-    <!-- <script src="static/js/doppler.min.js"></script>
-    <script>
-      window.addEventListener('load', function() {
-        console.log('callback - doppler.js config loaded');
-        window.doppler.init(function(bandwidth) {
-          var threshold = 4;
-          var diff = bandwidth.left - bandwidth.right;
-          console.log(bandwidth.left);
-          console.log(bandwidth.right);
-          console.log(diff);
-          // if (bandwidth.left > threshold || bandwidth.right > threshold) {
-          if (diff > threshold) {
-            $("#sc-table_next").click()
-            console.log('callback - next page');
-          }
-        });
-      });
-    </script> -->
 
   </body>
 </html>
