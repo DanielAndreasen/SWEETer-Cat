@@ -292,3 +292,23 @@ def get_default(value, default, dtype, na_value='...'):
         return value
     else:
         return default
+
+
+def author_html(author, link):
+    """
+    Create HTML anchor tag for author with correct link to ADSABS
+
+    Inputs
+    ------
+    author : str
+      Name of the author(s)
+    link : str
+      Link to article
+
+    Output
+    ------
+    alink : str
+      Author anchor tag to link
+    """
+    alink = '<a target="_blank" href="{}">{}</a>'.format(link, author)
+    return alink

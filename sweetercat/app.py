@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, url_for, redirect, send_from_
 import os
 import json
 from plot import plot_page, plot_page_mpld3, detail_plot
-from utils import readSC, planetAndStar, hz, table_convert
+from utils import readSC, planetAndStar, hz, table_convert, author_html
 
 # Setup Flask
 app = Flask(__name__)
@@ -13,6 +13,7 @@ app.config['SECRET_KEY'] = os.environ['SC_secret']
 def homepage():
     """Home page for SWEETer-Cat with updated table"""
     df, _ = readSC()
+    df['alink'] = list(map(author_html, df['Author'], df['link']))
     dfs = df.sort_values('updated', ascending=False)#[:50]  # TODO: Remove the slicing!
     decimals = dict.fromkeys(['Vmag', 'Vmagerr', 'par', 'parerr', 'logg',
                               'loggerr', 'logglc', 'logglcerr', 'vterr', 'feh',

@@ -8,7 +8,7 @@ import pytest
 
 from utils import absolute_magnitude, hz, planetAndStar, plDensity, readSC
 from utils import table_convert, stellar_radius, planetary_radius, get_default
-from utils import luminosity
+from utils import luminosity, author_html
 
 
 def test_absolute_magnitude():
@@ -143,3 +143,12 @@ def test_luminosity():
     assert np.isnan(luminosity(teff, m, par, 0))
     with pytest.raises(ZeroDivisionError):
         luminosity(teff, m, 0, mass)
+
+
+def test_author_html():
+    author = "Frodo Baggins"
+    link = "hobbiton.me"
+
+    alink = author_html(author, link)
+    expected = '<a target="_blank" href="hobbiton.me">Frodo Baggins</a>'
+    assert alink == expected
