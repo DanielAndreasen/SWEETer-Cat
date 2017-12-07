@@ -310,5 +310,13 @@ def author_html(author, link):
     alink : str
       Author anchor tag to link
     """
-    alink = '<a target="_blank" href="{}">{}</a>'.format(link, author)
+    if (',' in author) and (',' in link):
+        authors = author.split(',')
+        links = link.split(',')
+        alinks = []
+        for author, link in zip(authors, links):
+            alinks.append('<a target="_blank" href="{}">{}</a>'.format(link.strip(), author.strip()))
+        alink = ', '.join(alinks)
+    else:
+        alink = '<a target="_blank" href="{}">{}</a>'.format(link, author)
     return alink

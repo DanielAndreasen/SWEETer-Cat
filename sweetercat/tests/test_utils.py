@@ -145,10 +145,19 @@ def test_luminosity():
         luminosity(teff, m, 0, mass)
 
 
-def test_author_html():
+def test_single_author_html():
     author = "Frodo Baggins"
     link = "hobbiton.me"
 
     alink = author_html(author, link)
     expected = '<a target="_blank" href="hobbiton.me">Frodo Baggins</a>'
+    assert alink == expected
+
+
+def test_multiple_author_html():
+    author = "Frodo Baggins, Samwise Gamgee"
+    link = "hobbiton.me, greendragon.io"
+
+    alink = author_html(author, link)
+    expected = '<a target="_blank" href="hobbiton.me">Frodo Baggins</a>, <a target="_blank" href="greendragon.io">Samwise Gamgee</a>'
     assert alink == expected
