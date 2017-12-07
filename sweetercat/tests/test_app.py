@@ -192,6 +192,13 @@ def test_download_status_code(client):
     assert client.get(url_for('download', fname='sweet-cat.fits')).status_code == 200
 
 
+def test_download_other(client):
+    fname = 'requirements.txt'
+    c = client.get(url_for('download', fname=fname))
+    assert c.status_code == 200
+    assert os.path.isfile('data/{}'.format(fname))
+
+
 def test_error_404(client):
     """Test the 404 response of an invalid url."""
     error404 = client.get('/invalid_url')
@@ -213,3 +220,20 @@ def test_table_is_clean(client):
     assert b'nan' not in homepage.data
     # "..." is not null so "..."[:-2] -> .
     assert b'<td style="white-space:nowrap;">.</td>' not in homepage.data
+
+
+def test_about_page(client):
+    c = client.get(url_for('about'))
+    assert c.status_code == 200
+    assert b'open an issue on Github' in c.data
+
+
+def test_local_page(client):
+    c = client.get(url_for('local'))
+    assert c.status_code == 200
+    assert b'Combining the data' in c.data
+
+
+def test_mpld3_status_code(client):
+    c = client.get(url_for('mpld3_plot'))
+    assert c.status_code == 200
