@@ -16,14 +16,12 @@ def homepage():
     df['alink'] = list(map(author_html, df['Author'], df['link']))
     dfs = df.sort_values('updated', ascending=False)#[:50]  # TODO: Remove the slicing!
     dfs.drop(['Author', 'link'], axis=1, inplace=True)
-    decimals = dict.fromkeys(['Vmag', 'Vmagerr', 'par', 'parerr', 'logg',
-                              'loggerr', 'logglc', 'logglcerr', 'vterr', 'feh',
-                              'feherr', 'mass', 'masserr'], 2)
+    cols = ['par', 'parerr', 'logg', 'loggerr', 'logglc', 'logglcerr', 'vterr',
+            'mass', 'masserr', 'Vmag', 'Vmagerr', 'feh', 'feherr']
+    decimals = dict.fromkeys(cols, 2)
     dfs = dfs.round(decimals=decimals)
-    for col in ('teff', 'tefferr'):  # These should be integers
-        dfs[col].fillna(0, inplace=True)
-        dfs[col] = dfs[col].astype(int)
-    dfs.fillna('...', inplace=True)
+    dfs['HD'].fillna('...', inplace=True)
+    dfs['Comment'].fillna('...', inplace=True)
     dfs = dfs.to_dict('records')
     return render_template('main.html', rows=dfs)
 

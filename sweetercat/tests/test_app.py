@@ -217,7 +217,7 @@ def test_issue54_rounding(client):
 
 def test_table_is_clean(client):
     homepage = client.get(url_for("homepage"))
-    assert b'nan' not in homepage.data
+    assert b'NaN' not in homepage.data
     # "..." is not null so "..."[:-2] -> .
     assert b'<td style="white-space:nowrap;">.</td>' not in homepage.data
 
