@@ -224,3 +224,19 @@ def test_local_page(client):
 def test_mpld3_status_code(client):
     c = client.get(url_for('mpld3_plot'))
     assert c.status_code == 200
+
+
+def test_stardetail_no_sma(client, planetStardata):
+    """Test stardetail will return status code: 200 when submitted with planet
+    without known SMA."""
+    df, _ = planetStardata
+    df = df[df.sma.isnull()]
+    d0 = df[df.Star == 'Kepler-154']
+    df = df.sample(2)
+    df = df.append(d0)
+    # All stars are a slow test
+    stars = df.Star.values
+    for star in stars:
+        print("Testing {}".format(star))   # Catch star name if test fails.
+        assert client.get(url_for("stardetail", star=star)).status_code == 200
+        print("{} passed".format(star))
