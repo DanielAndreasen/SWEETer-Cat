@@ -95,12 +95,7 @@ def detail_plot(df, tlow, thigh):
     for i, text in enumerate(no_sma):
         ax.text(max_smas*0.8, 1.05-i*0.02, text, color='white')
 
-    try:
-        h = fig_to_html(fig)
-        # h = fig_to_html(fig, no_extras=True, template_type='simple', use_http=True)
-        return h
-    except TypeError:
-        return None
+    return fig_to_html(fig)
 
 
 def plot_page_mpld3(df, columns, request):
