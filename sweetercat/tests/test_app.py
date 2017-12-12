@@ -76,7 +76,7 @@ def test_invalid_starname(client, invalid_starname):
 def test_stardetail_request_path(SCdata):
     """Test that the stardetail renders properly."""
     df, _ = SCdata
-    df = df.sample(50)
+    df = df.sample(5)
     stars = df.Star.values
     for star in stars:
         print("Testing {}".format(star))
