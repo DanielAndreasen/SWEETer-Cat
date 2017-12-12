@@ -132,7 +132,7 @@ def stellar_radius(M, logg):
     try:
         M = float(M)
         R = M/(10**(logg-4.44))
-    except:
+    except ValueError:
         return np.nan
     return R
 
