@@ -256,3 +256,19 @@ def test_stardetail_inside_hz(client, planetStardata):
         print("Testing {}".format(star))   # Catch star name if test fails.
         assert client.get(url_for("stardetail", star=star)).status_code == 200
         print("{} passed".format(star))
+
+
+def test_stardetail_no_planets(client, planetStardata):
+    """Test stardetail will return status code: 200 when submitted with planet
+    without known SMA."""
+    df, _ = planetStardata
+    # GJ 581 has a star before, inside, and after the HZ
+    d0 = df[df.Star == 'GJ 667C']
+    df = df.sample(2)
+    df = df.append(d0)
+    # All stars are a slow test
+    stars = df.Star.values
+    for star in stars:
+        print("Testing {}".format(star))   # Catch star name if test fails.
+        assert client.get(url_for("stardetail", star=star)).status_code == 200
+        print("{} passed".format(star))
