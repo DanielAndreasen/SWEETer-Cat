@@ -215,3 +215,10 @@ def test_wrong_colorscheme_scales_checkbox(client, form_data, endpoint, dimensio
 
     assert redirected_plot.status_code == 200
     assert b"Select your settings:" in redirected_plot.data
+
+
+def test_empty_checkbox(client, form_data):
+    form_data['checkboxes'] = []
+    for endpoint in ('plot', 'plot_exo'):
+        plot = client.post(url_for(endpoint), data=form_data, follow_redirects=False)
+        assert plot.status_code == 200
