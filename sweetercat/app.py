@@ -22,6 +22,7 @@ def homepage():
     dfs = dfs.round(decimals=decimals)
     dfs['HD'].fillna('...', inplace=True)
     dfs['Comment'].fillna('...', inplace=True)
+    dfs['source'].fillna('...', inplace=True)
     dfs = dfs.to_dict('records')
     return render_template('main.html', rows=dfs)
 
