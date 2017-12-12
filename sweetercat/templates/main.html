@@ -34,16 +34,17 @@
           "{{ row['flag'] }}",
           "{{ row['updated'] }}",
           "{{ row['Comment'] }}",
-                ]);
+                   ]);
     {% endfor %}
 
     $('#sc-table').DataTable({
       data: data,
       deferRender: true,
+      scrollX: true,
       scrollY: 500,
       scrollCollapse: true,
       scroller: true,
-      "order": [[ 23, "desc" ]]
+      order: [[ 23, "desc" ]]
     });
   });
 </script>
