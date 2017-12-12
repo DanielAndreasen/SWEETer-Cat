@@ -12,23 +12,12 @@ except ImportError:  # pragma: no cover
     from urlparse import urlparse  # pragma: no cover
 
 
-def test_homepage(client, SCdata):
+def test_homepage_status_code(client):
     homepage = client.get(url_for("homepage"))
     assert homepage.status_code == 200
 
     # Link to SWEET-Cat
     assert b'<a href="https://www.astro.up.pt/resources/sweet-cat/">SWEET-Cat</a>' in homepage.data
-
-    # NOTE: Not relevant in this format. Is it necessary?
-    # Table column names
-    # _, cols = SCdata
-    # for col in cols:
-    #     header = "<th>{0}</th>".format(col)
-    #     print(header)
-    #     if col in ['Vabs', 'lum']:
-    #         assert header.encode('utf-8') not in homepage.data
-    #     else:
-    #         assert header.encode('utf-8') in homepage.data
 
 
 def test_parameter_description_on_homepage(client):
