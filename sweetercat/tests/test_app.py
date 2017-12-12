@@ -154,11 +154,12 @@ def test_stardetail_template_text(client, SCdata):
     sttext = ["General info", "Reference article:", "Right ascension:", "Declination:",
               "Magnitude:", "Parallax:", "mas", "Atmospheric parameters", "Teff:", "K",
               "logg:", "[Fe/H]:", "dex", "vt:", "km/s", "Other info", "Mass:"]
-    # pltext = ["Planetary information", "Mass", "MJup", "Radius", "RJup", "Density",
-    #           "Orbital parameters", "Period:", "days", "Semi-major axis:", "AU",
-    #           "Inner habitable zone limit:", "Density", "Outer habitable zone limit:"]
     df, _ = SCdata
-    df = df.sample(5)
+    d0 = df[df.Star == 'Kepler-617']
+    d1 = df[df.Star == 'Kepler-444']
+    df = df.sample(3)
+    df = df.append([d0, d1])
+
     stars = df.Star
 
     for i, star in stars.iteritems():
@@ -172,9 +173,6 @@ def test_stardetail_template_text(client, SCdata):
         for text in sttext:
             assert text.encode("utf-8") in star_detail.data
         print("{0} Passed".format(star))
-    # if (star has planet parameters): # Need planetandStar instead of readSC
-    # for text in pltext:
-    #     assert text.encode("utf-8") in star_detail.data
 
 
 def test_download_status_code(client):
