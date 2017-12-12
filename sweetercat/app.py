@@ -56,7 +56,7 @@ def stardetail(star=None):
     return redirect(url_for('homepage'))
 
 
-@app.route('/mpld3/', methods=['GET', 'POST'])
+@app.route('/linked/', methods=['GET', 'POST'])
 def mpld3_plot():
     df, columns = planetAndStar()
     return plot_page_mpld3(df, columns, request)
