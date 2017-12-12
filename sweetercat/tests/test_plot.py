@@ -222,3 +222,18 @@ def test_empty_checkbox(client, form_data):
     for endpoint in ('plot', 'plot_exo'):
         plot = client.post(url_for(endpoint), data=form_data, follow_redirects=False)
         assert plot.status_code == 200
+
+
+def test_mpld3_post_request(client, form_data):
+    data = {'x1': 'teff', 'x2': 'vt', 'y1': 'Vabs', 'y2': 'feh', 'z': 'logg'}
+    plot = client.post(url_for('mpld3_plot'), data=data, follow_redirects=False)
+    assert plot.status_code == 200
+    assert b"Select your settings:" in plot.data
+
+
+@pytest.mark.parametrize("dimension", ['x1', 'x2', 'y1', 'y2', 'z'])
+def test_mpld3_post_request_wrong(client, form_data, dimension):
+    data = {'x1': 'teff', 'x2': 'vt', 'y1': 'Vabs', 'y2': 'feh', 'z': 'logg'}
+    data[dimension] = 'wrong'
+    plot = client.post(url_for('mpld3_plot'), data=data, follow_redirects=False)
+    assert plot.status_code == 302
