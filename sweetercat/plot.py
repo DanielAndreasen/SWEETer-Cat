@@ -103,12 +103,9 @@ def plot_page_mpld3(df, columns, request):
         y1 = str(request.form['y1'])
         y2 = str(request.form['y2'])
         z = str(request.form['z'])
-        if (x1 not in columns) or (x2 not in columns):
-            return redirect(url_for('mpld3_plot'))
-        elif (y1 not in columns) or (y2 not in columns):
-            return redirect(url_for('mpld3_plot'))
-        elif (z not in columns):
-            return redirect(url_for('mpld3_plot'))
+        for requested_col in {x1, x2, y1, y2, z}:
+            if requested_col not in columns:
+                return redirect(url_for('mpld3_plot'))
     else:
         x1, x2, y1, y2, z = 'teff', 'vt', 'Vabs', 'feh', 'logg'
     # Does not work with NaN values!
