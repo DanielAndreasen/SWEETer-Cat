@@ -112,7 +112,7 @@ def plot_page_mpld3(df, columns, request):
     else:
         x1, x2, y1, y2, z = 'teff', 'vt', 'Vabs', 'feh', 'logg'
     # Does not work with NaN values!
-    df = df.loc[:, list(set([x1, x2, y1, y2, z]))].dropna(axis=0)
+    df = df.loc[:, {x1, x2, y1, y2, z}].dropna(axis=0)
     fig, ax = plt.subplots(2, 2, figsize=(14, 8), sharex='col', sharey='row')
     points = ax[0, 0].scatter(df[x1], df[y1], c=df[z], alpha=0.6)
     points = ax[1, 0].scatter(df[x1], df[y2], c=df[z], alpha=0.6)
