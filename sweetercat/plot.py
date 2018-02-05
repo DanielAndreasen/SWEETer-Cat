@@ -261,7 +261,7 @@ def plot_page(df, columns, request, page):
         fig.xaxis.axis_label = x.name
         fig.yaxis.axis_label = y.name
 
-    # Horizontal historgram
+    # Horizontal histogram
     hhist, hedges, hmax = scaled_histogram(x, num_points, xscale)
 
     ph = figure(toolbar_location=None, plot_width=fig.plot_width, plot_height=200, x_range=fig.x_range,
@@ -273,7 +273,7 @@ def plot_page(df, columns, request, page):
 
     ph.quad(bottom=0, left=hedges[:-1], right=hedges[1:], top=hhist, color="white", line_color=colors[color])
 
-    # Vertical historgram
+    # Vertical histogram
     vhist, vedges, vmax = scaled_histogram(y, num_points, yscale)
 
     pv = figure(toolbar_location=None, plot_width=200, plot_height=fig.plot_height, x_range=(-vmax*0.1, vmax),

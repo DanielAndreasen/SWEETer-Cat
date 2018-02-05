@@ -15,11 +15,11 @@ plt.rcParams['ytick.major.width'] = 2
 
 def parser():
     c = ['Vabs', 'Vmag', 'Vmagerr', 'par', 'parerr', 'teff', 'tefferr', 'lum',
-    'logg', 'loggerr', 'logglc', 'logglcerr', 'vt', 'vterr', 'feh', 'feherr',
-    'mass', 'masserr', 'radius', 'plMass', 'plRadius',  'period', 'sma',
-    'eccentricity', 'inclination', 'discovered', 'omega', 'tperi', 'b',
-    'geometric_albedo', 'mag_v', 'mag_i', 'mag_j', 'mag_h', 'mag_k', 'dist',
-    'plDensity', 'hz1', 'hz2']
+        'logg', 'loggerr', 'logglc', 'logglcerr', 'vt', 'vterr', 'feh', 'feherr',
+        'mass', 'masserr', 'radius', 'plMass', 'plRadius',  'period', 'sma',
+        'eccentricity', 'inclination', 'discovered', 'omega', 'tperi', 'b',
+        'geometric_albedo', 'mag_v', 'mag_i', 'mag_j', 'mag_h', 'mag_k', 'dist',
+        'plDensity', 'hz1', 'hz2']
     parser = argparse.ArgumentParser(description='Script for working with SWEET-Cat')
     parser.add_argument('-o', '--output', action='store_true',
                 help='Save the output in sweet-cat-combined.csv')

@@ -14,7 +14,7 @@ def homepage():
     """Home page for SWEETer-Cat with updated table"""
     df, _ = readSC()
     df['alink'] = list(map(author_html, df['Author'], df['link']))
-    dfs = df.sort_values('updated', ascending=False)#[:50]  # TODO: Remove the slicing!
+    dfs = df.sort_values('updated', ascending=False)  # [:50]  # TODO: Remove the slicing!
     dfs.drop(['Author', 'link'], axis=1, inplace=True)
     cols = ['par', 'parerr', 'logg', 'loggerr', 'logglc', 'logglcerr', 'vterr',
             'mass', 'masserr', 'Vmag', 'Vmagerr', 'feh', 'feherr']
