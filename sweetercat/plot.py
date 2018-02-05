@@ -363,17 +363,17 @@ def count(x, y, xlimits, ylimits):
         raise TypeError("Axis limits are not of type List.")
     elif (len(xlimits) != 2) or (len(ylimits) != 2):
         raise ValueError("Axis limits not of length 2.")
-    # Sort Incase axis is revesed
+    # Sort incase axis is reversed
     xlimits.sort()
     ylimits.sort()
-    return int(sum((xlimits[0] < x) & (x < xlimits[1]) &
-                   (ylimits[0] < y) & (y < ylimits[1])))
+    return np.count_nonzero((xlimits[0] < x) & (x < xlimits[1]) &
+                            (ylimits[0] < y) & (y < ylimits[1]))
 
 
 def extract(df, x, y, z, checkboxes):
-    """Extract columns from dataframe.
+    """Extract columns from DataFrame.
 
-    Handles z=None case and homogenous masking with 'flag'.
+    Handles z=None case and homogeneous masking with 'flag'.
     Input Types
     df: DataFrame
     x: str
@@ -381,10 +381,10 @@ def extract(df, x, y, z, checkboxes):
     z: str or None
     checkboxes: list
     """
-    if "homo" in checkboxes:  # Homogenous filtering
+    if "homo" in checkboxes:  # Homogeneous filtering
         df = df[df["flag"]]
 
-    cols = filter(None, set(['Star', x, y, z, "flag"]))
+    cols = filter(None, {'Star', x, y, z, "flag"})
     df = df.loc[:, cols].dropna()
     x = df[x]
     y = df[y]
