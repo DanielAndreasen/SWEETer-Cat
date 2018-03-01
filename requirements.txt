@@ -21,7 +21,7 @@ urllib3==1.22
 Werkzeug==0.14.1
 pandas==0.22.0
 scipy==1.0.0
-astropy==2.0.2
+astropy==3.0
 matplotlib==2.0.2
 mpld3==0.3
 tables===3.4.2
