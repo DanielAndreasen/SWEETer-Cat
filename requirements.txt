@@ -18,7 +18,7 @@ singledispatch==3.4.0.3
 six==1.11.0
 tornado==5.0.1
 urllib3==1.22
-Werkzeug==0.13
+Werkzeug==0.14.1
 pandas==0.21.0
 scipy==1.0.0
 astropy==2.0.2
