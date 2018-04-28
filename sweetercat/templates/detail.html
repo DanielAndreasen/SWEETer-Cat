@@ -35,7 +35,7 @@
   <p>vt: {{ info[0]['vt'] }} &plusmn; {{ info[0]['vterr'] }} km/s</p>
 
   <h3>Other info</h3>
-  <p>Mass: {{ info[0]['mass'] }} &plusmn; {{ info[0]['masserr'] }}</p>
+  <p>Mass: {{ info[0]['mass'] }} &plusmn; {{ info[0]['masserr'] }} M<sub>&odot;</sub></p>
   {% if info[0]['Comment']|string != '...' %}
     <p>Special comment: {{ info[0]['Comment'] }}</p>
   {% endif %}
