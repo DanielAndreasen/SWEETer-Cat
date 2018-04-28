@@ -50,13 +50,17 @@
       <h2><a href="{{ planet['exolink'] }}" target="_blank">{{ planet['plName'] }}</a></h2>
       <h3>General info</h3>
       {% if planet['plMass']|string != '...' %}
-        <p>Mass: {{ planet['plMass'] }}M<sub>Jup</sub></p>
+        {% if planet['plMass'] < 0.314 %}
+          <p>Mass: {{ (planet['plMass']/0.00314)|round(3) }}M<sub>Earth</sub></p>
+        {% else %}
+          <p>Mass: {{ planet['plMass']|round(3) }}M<sub>Jup</sub></p>
+        {% endif %}
       {% endif %}
       {% if planet['plRadius']|string != '...' %}
-        <p>Radius: {{ planet['plRadius']|string }}R<sub>Jup</sub></p>
+        <p>Radius: {{ planet['plRadius']|round(3)|string }}R<sub>Jup</sub></p>
       {% endif %}
       {% if planet['plDensity']|string != '...' %}
-        <p>Density: {{ planet['plRadius']|string }} g/cm<sup>3</sup></p>
+        <p>Density: {{ planet['plRadius']|round(3)|string }} g/cm<sup>3</sup></p>
       {% endif %}
 
       <h3>Orbital parameters</h3>
