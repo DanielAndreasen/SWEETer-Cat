@@ -51,7 +51,7 @@
       <h3>General info</h3>
       {% if planet['plMass']|string != '...' %}
         {% if planet['plMass'] < 0.314 %}
-          <p>Mass: {{ (planet['plMass']/0.00314)|round(3) }}M<sub>Earth</sub></p>
+          <p>Mass: {{ (planet['plMass']/0.0031463518655061432)|round(3) }}M<sub>Earth</sub></p>
         {% else %}
           <p>Mass: {{ planet['plMass']|round(3) }}M<sub>Jup</sub></p>
         {% endif %}
