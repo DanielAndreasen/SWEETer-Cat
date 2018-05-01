@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 import os
+import sys
+import argparse
 from PyAstronomy import pyasl
 
 from tornado.ioloop import IOLoop
@@ -29,16 +31,36 @@ def setup():
     print('Setup done!')
 
 
+def parse_args(args):
+    """Take care of all the argparse stuff.
+
+    :returns: the args Namespace
+    """
+    parser = argparse.ArgumentParser(description='Update DB on schedule.')
+    parser.add_argument("-i", "--interval", help='Update interval in minutes',
+                        type=int, default=15)
+    parser.add_argument("-n", "--now", help='Update DB now only.', action="store_true")
+
+    return parser.parse_args(args)
+
+
 if __name__ == '__main__':
+    args = parse_args(sys.argv[1:])
+    interval = args.interval
+
     # Prepare PyAstronomy
     setup()
 
-    print('Starting scheduler...')
-    scheduler = TornadoScheduler()
-    scheduler.add_job(tick, 'interval', minutes=15)
-    scheduler.start()
+    if args.now:
+        # Single update
+        tick()
+    else:
+        print('Starting scheduler...')
+        scheduler = TornadoScheduler()
+        scheduler.add_job(tick, 'interval', minutes=interval)
+        scheduler.start()
 
-    try:
-        IOLoop.instance().start()
-    except (KeyboardInterrupt, SystemExit):
-        pass
+        try:
+            IOLoop.instance().start()
+        except (KeyboardInterrupt, SystemExit):
+            pass
