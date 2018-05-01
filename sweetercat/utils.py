@@ -123,7 +123,7 @@ def bolcor(teff):
 
     # The arrays are in form of:
     #   p[0] + p[1]*x + p[2]*x**2 + ...
-    # But np.poly1d expects it inversed
+    # But np.poly1d expects it reversed
     bcflow = np.poly1d(p[::-1])(lteff)
     return bcflow
 

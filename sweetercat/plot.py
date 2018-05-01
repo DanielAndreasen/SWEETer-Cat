@@ -103,16 +103,13 @@ def plot_page_mpld3(df, columns, request):
         y1 = str(request.form['y1'])
         y2 = str(request.form['y2'])
         z = str(request.form['z'])
-        if (x1 not in columns) or (x2 not in columns):
-            return redirect(url_for('mpld3_plot'))
-        elif (y1 not in columns) or (y2 not in columns):
-            return redirect(url_for('mpld3_plot'))
-        elif (z not in columns):
-            return redirect(url_for('mpld3_plot'))
+        for requested_col in {x1, x2, y1, y2, z}:
+            if requested_col not in columns:
+                return redirect(url_for('mpld3_plot'))
     else:
         x1, x2, y1, y2, z = 'teff', 'vt', 'Vabs', 'feh', 'logg'
     # Does not work with NaN values!
-    df = df.loc[:, list(set([x1, x2, y1, y2, z]))].dropna(axis=0)
+    df = df.loc[:, {x1, x2, y1, y2, z}].dropna(axis=0)
     fig, ax = plt.subplots(2, 2, figsize=(14, 8), sharex='col', sharey='row')
     points = ax[0, 0].scatter(df[x1], df[y1], c=df[z], alpha=0.6)
     points = ax[1, 0].scatter(df[x1], df[y2], c=df[z], alpha=0.6)
@@ -261,7 +258,7 @@ def plot_page(df, columns, request, page):
         fig.xaxis.axis_label = x.name
         fig.yaxis.axis_label = y.name
 
-    # Horizontal historgram
+    # Horizontal histogram
     hhist, hedges, hmax = scaled_histogram(x, num_points, xscale)
 
     ph = figure(toolbar_location=None, plot_width=fig.plot_width, plot_height=200, x_range=fig.x_range,
@@ -273,7 +270,7 @@ def plot_page(df, columns, request, page):
 
     ph.quad(bottom=0, left=hedges[:-1], right=hedges[1:], top=hhist, color="white", line_color=colors[color])
 
-    # Vertical historgram
+    # Vertical histogram
     vhist, vedges, vmax = scaled_histogram(y, num_points, yscale)
 
     pv = figure(toolbar_location=None, plot_width=200, plot_height=fig.plot_height, x_range=(-vmax*0.1, vmax),
@@ -363,17 +360,17 @@ def count(x, y, xlimits, ylimits):
         raise TypeError("Axis limits are not of type List.")
     elif (len(xlimits) != 2) or (len(ylimits) != 2):
         raise ValueError("Axis limits not of length 2.")
-    # Sort Incase axis is revesed
+    # Sort incase axis is reversed
     xlimits.sort()
     ylimits.sort()
-    return int(sum((xlimits[0] < x) & (x < xlimits[1]) &
-                   (ylimits[0] < y) & (y < ylimits[1])))
+    return np.count_nonzero((xlimits[0] < x) & (x < xlimits[1]) &
+                            (ylimits[0] < y) & (y < ylimits[1]))
 
 
 def extract(df, x, y, z, checkboxes):
-    """Extract columns from dataframe.
+    """Extract columns from DataFrame.
 
-    Handles z=None case and homogenous masking with 'flag'.
+    Handles z=None case and homogeneous masking with 'flag'.
     Input Types
     df: DataFrame
     x: str
@@ -381,10 +378,10 @@ def extract(df, x, y, z, checkboxes):
     z: str or None
     checkboxes: list
     """
-    if "homo" in checkboxes:  # Homogenous filtering
+    if "homo" in checkboxes:  # Homogeneous filtering
         df = df[df["flag"]]
 
-    cols = filter(None, set(['Star', x, y, z, "flag"]))
+    cols = filter(None, {'Star', x, y, z, "flag"})
     df = df.loc[:, cols].dropna()
     x = df[x]
     y = df[y]

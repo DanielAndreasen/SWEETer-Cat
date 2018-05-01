@@ -92,13 +92,13 @@ def test_publication_response_status_code(publication_response):
 @pytest.mark.parametrize("heading", [
     b"Main papers", b"Derived papers", b"Authors:", b"Abstract:", b"read more"])
 def test_publication_page_headings(publication_response, heading):
-    """Test for the labels Abstact:, Authors: etc."""
+    """Test for the labels Abstract:, Authors: etc."""
     assert heading in publication_response.data
 
 
 @pytest.mark.parametrize("category", ["main", "other"])
 def test_publication_titles(publication_response, publication_data, category):
-    """Test all the plublication titles are present."""
+    """Test all the publication titles are present."""
     for paper in publication_data[category]:
         title = escape(paper["title"]).encode('utf-8')
         assert title in publication_response.data
@@ -106,7 +106,7 @@ def test_publication_titles(publication_response, publication_data, category):
 
 @pytest.mark.parametrize("category", ["main", "other"])
 def test_publication_links(publication_response, publication_data, category):
-    """Test all the plublication adsabs links are present.
+    """Test all the publication adsabs links are present.
 
     Test that links are inserted for the title and "read more" sections.
     """
@@ -120,7 +120,7 @@ def test_publication_links(publication_response, publication_data, category):
 
 @pytest.mark.parametrize("category", ["main", "other"])
 def test_publication_authors(publication_response, publication_data, category):
-    """Test all the plublication authors are present."""
+    """Test all the publication authors are present."""
     for paper in publication_data[category]:
         authors = escape(paper["authors"]).encode('utf-8')
         assert authors in publication_response.data
@@ -128,7 +128,7 @@ def test_publication_authors(publication_response, publication_data, category):
 
 @pytest.mark.parametrize("category", ["main", "other"])
 def test_publication_abstracts(publication_response, publication_data, category):
-    """Test all the plublication abstracts are present."""
+    """Test all the publication abstracts are present."""
     abstract_limit = 480   # characters to compare
     for paper in publication_data[category]:
         abstract = paper["abstract"][:abstract_limit].encode('utf-8')
@@ -136,7 +136,7 @@ def test_publication_abstracts(publication_response, publication_data, category)
 
 
 def test_stardetail_template_text(client, SCdata):
-    """Test that that text on the stardetails are returned.
+    """Test that that text on the star detail page is returned.
 
     (Maybe a bit overboard)
     """
@@ -175,7 +175,7 @@ def test_download_status_code(client):
         assert client.get(url_for('download', fname=fname)).status_code == 200
         assert not os.path.isfile('data/{}'.format(fname))
 
-    # Invlaid format but goes to the 404 page
+    # Invalid format but goes to the 404 page
     assert client.get(url_for('download', fname='sweet-cat.fits')).status_code == 200
 
 
