@@ -1,4 +1,4 @@
-#!/usr/bin/en/env python 
+#!/usr/bin/env python
 import os
 from PyAstronomy import pyasl
 
