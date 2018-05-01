@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 import os
-import sys
 import argparse
 from PyAstronomy import pyasl
 
@@ -31,7 +30,7 @@ def setup():
     print('Setup done!')
 
 
-def parse_args(args):
+def parse_args():
     """Take care of all the argparse stuff.
 
     :returns: the args Namespace
@@ -41,11 +40,11 @@ def parse_args(args):
                         type=int, default=15)
     parser.add_argument("-n", "--now", help='Update DB now only.', action="store_true")
 
-    return parser.parse_args(args)
+    return parser.parse_args()
 
 
 if __name__ == '__main__':
-    args = parse_args(sys.argv[1:])
+    args = parse_args()
     interval = args.interval
 
     # Prepare PyAstronomy
