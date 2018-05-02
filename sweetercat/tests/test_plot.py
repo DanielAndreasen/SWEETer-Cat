@@ -242,3 +242,36 @@ def test_mpld3_post_request_wrong(client, mpld3_form_data, dimension):
     mpld3_form_data[dimension] = 'wrong'
     plot = client.post(url_for('mpld3_plot'), data=mpld3_form_data, follow_redirects=False)
     assert plot.status_code == 302
+
+
+@pytest.fixture()
+def fig():
+    import matplotlib.pyplot as plt
+    fig = plt.figure()
+    yield fig
+
+    # Close fig after test
+    plt.close(fig)
+
+
+def test_detail_scatter_fix(fig, SCdata):
+    """This test is to confirm the the detail plot fix continues to work.
+    plt.scatter() might change after Issue #10365."""
+    from utils import get_default
+    ax = fig.add_subplot(111)
+    star = "Kepler-617"
+    df, _ = SCdata
+    df0 = df[df.Star == star]
+    df = df.sample(5)
+    df.append([df0])
+    for df_row in df:
+        print("Star = ", df_row.Star)
+        color = get_default(df['teff'].values[0], 5777, float)
+        print("color", color, type(color))
+
+        with pytest.raises(TypeError):
+            ax.scatter([0], [1], c=color)
+
+        # This checks that the new version with color in [] does not raise an error.
+        ax.scatter([0], [1], c=[color])
+
