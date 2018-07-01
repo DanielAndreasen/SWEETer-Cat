@@ -27,4 +27,4 @@ mpld3==0.3
 tables==3.4.4
 apscheduler==3.5.1
 PyAstronomy==0.12
-airbrake
+airbrake==2.1.0
