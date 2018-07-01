@@ -1,7 +1,7 @@
 numpy==1.14.5
 PyYAML==3.12
 pandas==0.23.1
-scipy==1.0.0
+scipy==1.1.0
 astropy==3.0.2
 matplotlib==2.0.2
 tables===3.4.2
