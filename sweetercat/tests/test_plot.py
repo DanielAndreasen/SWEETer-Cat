@@ -264,9 +264,11 @@ def test_detail_scatter_fix(fig, SCdata):
     df0 = df[df.Star == star]
     df = df.sample(5)
     df.append([df0])
-    for df_row in df:
-        print("Star = ", df_row.Star)
-        color = get_default(df['teff'].values[0], 5777, float)
+    teffs = df["teff"].values
+    for teff in teffs:
+        print("teff ", teff)
+
+        color = get_default(teff, 5777, float)
         print("color", color, type(color))
 
         with pytest.raises(TypeError):
