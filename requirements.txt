@@ -16,7 +16,7 @@ PyYAML==3.13
 requests==2.19.1
 singledispatch==3.4.0.3
 six==1.11.0
-tornado==4.5.2
+tornado==5.1
 urllib3==1.22
 Werkzeug==0.13
 pandas==0.21.0
