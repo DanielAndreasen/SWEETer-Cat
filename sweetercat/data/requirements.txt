@@ -1,5 +1,5 @@
 numpy==1.15.0
-PyYAML==3.12
+PyYAML==3.13
 pandas==0.21.0
 scipy==1.0.0
 astropy==3.0.2
