@@ -13,7 +13,7 @@ MarkupSafe==1.0
 numpy==1.15.0
 python-dateutil==2.7.3
 PyYAML==3.13
-requests==2.18.4
+requests==2.19.1
 singledispatch==3.4.0.3
 six==1.11.0
 tornado==4.5.2
