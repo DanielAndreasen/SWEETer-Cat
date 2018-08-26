@@ -30,7 +30,10 @@ install:
   - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION
   - source activate test-environment
   # - python setup.py install
-  - travis_retry pip install -r requirements.txt
+  # - travis_retry pip install -r requirements.txt
+  # This is a hack to get around the distultils installed older versions error since pip 10.
+  # e.g. https://github.com/pypa/pip/issues/5247
+  - travis_retry pip install -r requirements.txt --ignore-installed certifi
 
   # Testing requirements
   - travis_retry pip install -r test_requirements.txt
