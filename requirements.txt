@@ -26,5 +26,5 @@ matplotlib==2.2.3
 mpld3==0.3
 tables==3.4.4
 apscheduler==3.5.3
-PyAstronomy==0.12
+PyAstronomy==0.13.0
 airbrake==2.1.0
