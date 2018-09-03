@@ -23,7 +23,8 @@ pandas==0.23.1
 scipy==1.1.0
 astropy==3.0.3
 matplotlib==2.0.2
-mpld3==0.3
+# mpld3==0.3
+git+git://github.com/mpld3/mpld3@master#egg=mpld3
 tables==3.4.4
 apscheduler==3.5.1
 PyAstronomy==0.12
