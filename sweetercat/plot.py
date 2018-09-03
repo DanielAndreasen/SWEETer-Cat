@@ -52,7 +52,7 @@ def detail_plot(df, tlow, thigh):
     rs = [max(80, 30*ri) for ri in r]
 
     fig, ax = plt.subplots(1, figsize=(14, 2))
-    ax.scatter([0], [1], s=Rs, c=color, vmin=tlow, vmax=thigh, cmap=cm.autumn)
+    ax.scatter([0], [1], s=Rs, c=[color], vmin=tlow, vmax=thigh, cmap=cm.autumn)
     no_sma = []
 
     if 0 < hz1 < hz2:
@@ -67,12 +67,12 @@ def detail_plot(df, tlow, thigh):
             continue
         if sma < hz1:
             dist = hz1-sma
-            ax.scatter(sma, [1], s=rs[i], c=dist, vmin=0, vmax=hz1, cmap=cm.autumn)
+            ax.scatter(sma, [1], s=rs[i], c=[dist], vmin=0, vmax=hz1, cmap=cm.autumn)
         elif hz1 <= sma <= hz2:
             ax.scatter(sma, [1], s=rs[i], c='k', alpha=0.8)
         else:
             dist = sma-hz2
-            ax.scatter(sma, [1], s=rs[i], c=dist, vmin=hz2, vmax=max_smas, cmap=cm.winter_r)
+            ax.scatter(sma, [1], s=rs[i], c=[dist], vmin=hz2, vmax=max_smas, cmap=cm.winter_r)
 
     for planet in ss_planets.keys():
         s = ss_planets[planet][0]
