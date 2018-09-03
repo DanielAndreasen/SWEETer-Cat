@@ -23,7 +23,6 @@ pandas==0.23.4
 scipy==1.1.0
 astropy==3.0.4
 matplotlib==2.2.3
-mpld3==0.3
 # mpld3==0.3
 git+git://github.com/mpld3/mpld3@master#egg=mpld3
 tables==3.4.4
