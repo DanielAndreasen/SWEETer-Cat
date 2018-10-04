@@ -5,7 +5,10 @@ venv
 *.csv
 *.yml
 !.travis.yml
-sweetercat/.cache
-.cache
+**/.cache
+**/.pytest_cache
 .coverage
 touchServer.py
+
+# PyCharm ide
+**/.idea
