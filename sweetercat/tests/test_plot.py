@@ -268,7 +268,7 @@ def test_detail_scatter_fix(fig, SCdata):
     teffs = df["teff"].values
     for teff in teffs:
         color = get_default(teff, 5777, float)
-        with pytest.raises(IndexError):
+        with pytest.raises((TypeError , IndexError)):
             ax.scatter([0], [1], c=color)
 
         # This checks that the new version with color in [] does not raise an error.
