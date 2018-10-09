@@ -255,8 +255,9 @@ def fig():
 
 
 def test_detail_scatter_fix(fig, SCdata):
-    """This test is to confirm the the detail plot fix continues to work.
-    plt.scatter() might change after Issue #10365."""
+    """This test is to confirm the plt.scatter() fix continues to work.
+
+    Error changed to Index error in matplotlib#11383"""
     from utils import get_default
     ax = fig.add_subplot(111)
     star = "Kepler-617"
@@ -266,12 +267,8 @@ def test_detail_scatter_fix(fig, SCdata):
     df.append([df0])
     teffs = df["teff"].values
     for teff in teffs:
-        print("teff ", teff)
-
         color = get_default(teff, 5777, float)
-        print("color", color, type(color))
-
-        with pytest.raises(TypeError):
+        with pytest.raises((TypeError , IndexError)):
             ax.scatter([0], [1], c=color)
 
         # This checks that the new version with color in [] does not raise an error.
