@@ -209,7 +209,7 @@ def plot_page(df, columns, request, page):
             session['x'] = 'teff'
             session['y'] = 'lum'
             session['z'] = 'logg'
-        color = 'Blue'
+        color = 'Orange'
         xscale = 'linear'
         checkboxes = []
         df, x, y, z = extract(df, x, y, z, checkboxes)
