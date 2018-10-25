@@ -8,7 +8,7 @@ import pytest
 
 from utils import absolute_magnitude, hz, planetAndStar, plDensity, readSC
 from utils import table_convert, stellar_radius, planetary_radius, get_default
-from utils import luminosity, author_html
+from utils import luminosity, author_html, generate_missing_link
 
 
 def test_absolute_magnitude():
@@ -161,3 +161,16 @@ def test_multiple_author_html():
     alink = author_html(author, link)
     expected = '<a target="_blank" href="hobbiton.me">Frodo Baggins</a>, <a target="_blank" href="greendragon.io">Samwise Gamgee</a>'
     assert alink == expected
+
+
+@pytest.mark.parametrize(
+    "input,expected",
+    [
+        (None, "http://exoplanet.eu/catalog/"),
+        ("CoRoT-31", "http://exoplanet.eu/catalog/corot-31_b/"),
+        ("gamma 1 Leo", "http://exoplanet.eu/catalog/gamma_1_leo_b/"),
+        ("SDSS1411+2009", "http://exoplanet.eu/catalog/sdss1411+2009_b/"),
+    ],
+)
+def test_generate_missing_link(input, expected):
+    assert generate_missing_link(input) == expected
