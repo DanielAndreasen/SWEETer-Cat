@@ -148,11 +148,16 @@ def readSC(nrows=None):
         df['lum'] = list(map(luminosity, df['teff'], df['Vmag'], df['par']*1E-3, df['mass']))
         df['Star'] = df['Star'].str.strip()
 
+        # Generate missing link https://github.com/DanielAndreasen/SWEETer-Cat/issues/135
+        for star in df.Star[df['link'].isnull()].values:
+            df.loc[df['Star'] == star, ['link']] = generate_missing_link(star)
+
         plots = ['Vmag', 'Vmagerr', 'Vabs', 'par', 'parerr', 'teff', 'tefferr',
                  'logg', 'loggerr', 'logglc', 'logglcerr', 'vt', 'vterr',
                  'feh', 'feherr', 'mass', 'masserr', 'lum']
         cache.set('starDB', df, timeout=5*60)
         cache.set('starCols', plots, timeout=5*60)
+
     if nrows is not None:
         return df.loc[:nrows-1, :], plots
     return df, plots
@@ -320,3 +325,26 @@ def author_html(author, link):
     else:
         alink = '<a target="_blank" href="{}">{}</a>'.format(link, author)
     return alink
+
+
+def generate_missing_link(star=None):
+    """Give exoplanet.eu link if link is missing.
+
+    See https://github.com/DanielAndreasen/SWEETer-Cat/issues/135.
+
+    Parameters
+    ----------
+    Star: str Optional
+        Star name from Sweet-cat.
+
+    Returns
+    -------
+    link: str
+        Link to exoplanet.eu.
+    """
+    if star is None:
+        link = "http://exoplanet.eu/catalog/"
+    else:
+        star_eu = star.lower().replace(" ", "_")
+        link = "http://exoplanet.eu/catalog/{}_b/".format(star_eu)
+    return link
