@@ -343,8 +343,8 @@ def generate_missing_link(star=None):
         Link to exoplanet.eu.
     """
     if star is None:
-        link = "http://exoplanet.eu/catalog/"
+         return "http://exoplanet.eu/catalog/"
     else:
-        star_eu = star.lower().replace(" ", "_")
-        link = "http://exoplanet.eu/catalog/{}_b/".format(star_eu)
-    return link
+        star_formatted = star.lower().replace(" ", "_")
+        return "http://exoplanet.eu/catalog/{}_b/".format(star_formatted)
+
