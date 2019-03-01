@@ -11,7 +11,7 @@ itsdangerous==1.1.0
 Jinja2==2.10
 MarkupSafe==1.1.1
 numpy==1.16.2
-python-dateutil==2.7.5
+python-dateutil==2.8.0
 PyYAML==3.13
 requests>=2.20.0
 singledispatch==3.4.0.3
