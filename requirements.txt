@@ -22,7 +22,7 @@ Werkzeug==0.14.1
 pandas==0.24.1
 scipy==1.2.1
 astropy==3.1.2
-matplotlib==3.0.2
+matplotlib==3.0.3
 git+https://github.com/mpld3/mpld3@master
 tables==3.4.4
 apscheduler==3.5.3
