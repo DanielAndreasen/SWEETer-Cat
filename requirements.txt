@@ -9,9 +9,9 @@ Flask==1.0.2
 idna==2.8
 itsdangerous==1.1.0
 Jinja2==2.10
-MarkupSafe==1.1.0
-numpy==1.16.1
-python-dateutil==2.7.5
+MarkupSafe==1.1.1
+numpy==1.16.2
+python-dateutil==2.8.0
 PyYAML==3.13
 requests>=2.20.0
 singledispatch==3.4.0.3
@@ -19,10 +19,10 @@ six==1.12.0
 tornado==5.1.1
 urllib3==1.24.1
 Werkzeug==0.14.1
-pandas==0.24.0
-scipy==1.2.0
-astropy==3.1.1
-matplotlib==3.0.2
+pandas==0.24.1
+scipy==1.2.1
+astropy==3.1.2
+matplotlib==3.0.3
 git+https://github.com/mpld3/mpld3@master
 tables==3.4.4
 apscheduler==3.5.3
