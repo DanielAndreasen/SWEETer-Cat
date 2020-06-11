@@ -46,10 +46,7 @@ def stardetail(star=None):
             d['hz1'] = round(hz(d['teff'].values[0], d['lum'].values[0], model=2), 5)
             d['hz2'] = round(hz(d['teff'].values[0], d['lum'].values[0], model=4), 5)
 
-            if len(d) == sum(d['sma'].isnull()):
-                plot = None
-            else:
-                plot = detail_plot(d, t1, t2)
+            plot = None if len(d) == sum(d['sma'].isnull()) else detail_plot(d, t1, t2)
             d.fillna('...', inplace=True)
             info = d.to_dict('records')
 

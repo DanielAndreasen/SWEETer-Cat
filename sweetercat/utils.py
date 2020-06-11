@@ -63,8 +63,7 @@ def absolute_magnitude(parallax, m):
     """
     d = 1. / (parallax*1e-3)  # Conversion to arcsecond before deriving distance
     mu = 5 * np.log10(d) - 5
-    M = m - mu
-    return M
+    return m - mu
 
 
 def luminosity(teff, m, par, mass):
@@ -95,8 +94,7 @@ def luminosity(teff, m, par, mass):
     dpc = 1./par
     mabs = m + 5 - 5*np.log10(dpc)
     mbol = mabs + bcflow
-    lum = (10**(-2.*mbol/5.))*78.9336121
-    return lum
+    return (10**(-2.*mbol/5.))*78.9336121
 
 
 def bolcor(teff):
@@ -209,8 +207,7 @@ def stellar_radius(M, logg):
         raise ValueError('Only positive stellar masses allowed.')
 
     M = float(M)
-    R = M/(10**(logg-4.44))
-    return R
+    return M/(10**(logg-4.44))
 
 
 def planetary_radius(mass, radius):
@@ -268,8 +265,7 @@ def hz(teff, lum, model=1):
     ts = teff-5780
     a, b, c, d = p[1], p[2], p[3], p[4]
     seff = seff_sun + a*ts + b*ts**2 + c*ts**3 + d*ts**4
-    dist = np.sqrt(lum/seff)
-    return dist
+    return np.sqrt(lum/seff)
 
 
 def table_convert(fmt="csv"):

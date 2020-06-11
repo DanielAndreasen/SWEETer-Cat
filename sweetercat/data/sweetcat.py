@@ -42,8 +42,7 @@ def readSC():
 def readExo():
     """Read the exoplanet.eu database and store as pandas DataFrame.
     """
-    df = pd.read_csv('exoplanetEU.csv')
-    return df
+    return pd.read_csv('exoplanetEU.csv')
 
 
 def absolute_magnitude(parallax, m):
@@ -62,8 +61,7 @@ def absolute_magnitude(parallax, m):
     """
     d = 1. / (parallax*1e-3)  # Conversion to arcsecond before deriving distance
     mu = 5 * np.log10(d) - 5
-    M = m - mu
-    return M
+    return m - mu
 
 
 def combine(df1, df2, how='inner'):
@@ -165,8 +163,7 @@ def hz(teff, lum, model=1):
     ts = teff-5780
     a, b, c, d = p[1], p[2], p[3], p[4]
     seff = seff_sun + a*ts + b*ts**2 + c*ts**3 + d*ts**4
-    dist = np.sqrt(lum/seff)
-    return dist
+    return np.sqrt(lum/seff)
 
 
 def hist(arr):
@@ -202,5 +199,5 @@ if __name__ == '__main__':
         hist(df[args.x])
     elif not args.x and args.y:
         hist(df[args.y])
-    elif args.x and args.y:
+    elif args.x:
         plot(df[args.x], df[args.y])

@@ -47,7 +47,12 @@ def detail_plot(df, tlow, thigh):
     R = df.iloc[0]['radius']
     r = [planetary_radius(mi, ri) for mi, ri in df.loc[:, ['plMass', 'plRadius']].values]
     smas = df['sma'].values
-    max_smas = max([smai for smai in smas if isinstance(smai, (int, float)) and not np.isnan(smai)])
+    max_smas = max(
+        smai
+        for smai in smas
+        if isinstance(smai, (int, float)) and not np.isnan(smai)
+    )
+
     Rs = max(500, 500*R)
     rs = [max(80, 30*ri) for ri in r]
 
@@ -195,7 +200,6 @@ def plot_page(df, columns, request, page):
             z = None
             x1, x2 = 1985, 2020
             y1, y2 = 0.0001, 200
-            yscale = 'log'
             session['x'] = 'discovered'
             session['y'] = 'plMass'
             session['z'] = 'None'
@@ -205,10 +209,10 @@ def plot_page(df, columns, request, page):
             z = 'logg'
             x1, x2 = 8000, 2500
             y1, y2 = 1e-3, 3000
-            yscale = 'log'
             session['x'] = 'teff'
             session['y'] = 'lum'
             session['z'] = 'logg'
+        yscale = 'log'
         color = 'Orange'
         xscale = 'linear'
         checkboxes = []

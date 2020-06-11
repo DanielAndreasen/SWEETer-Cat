@@ -15,10 +15,9 @@ except ImportError:  # pragma: no cover
 @pytest.fixture()
 def form_data():
     """Default form values for testing."""
-    form = {'color': 'Blue', 'x': 'teff', 'y': 'mass', 'z': 'Vmag',
+    return {'color': 'Blue', 'x': 'teff', 'y': 'mass', 'z': 'Vmag',
             'x1': "None", 'x2': "None", 'y1': "None", 'y2': "None",
             'xscale': 'linear', 'yscale': 'log', 'checkboxes': ''}
-    return form
 
 
 @pytest.mark.parametrize("end_point", ["plot", "plot_exo"])
@@ -143,11 +142,7 @@ def test_count_limit_errors(limit, error):
 ])
 def test_plot_extraction(SCdata, planetStardata, endpoint, x, y, z):
 
-    if endpoint == 'plot_exo':
-        df, _ = planetStardata
-    else:
-        df, _ = SCdata
-
+    df, _ = planetStardata if endpoint == 'plot_exo' else SCdata
     df1, x1, y1, z1 = extract(df, x, y, z, [])
     df2, x2, y2, z2 = extract(df, x, y, z, ["homo"])
 
@@ -165,10 +160,10 @@ def test_plot_extraction(SCdata, planetStardata, endpoint, x, y, z):
     assert len(x1) > len(x2)
     assert len(y1) > len(y2)
 
-    assert all([name in df1.columns for name in ["Star", x, y, z, "flag"]
-                if name is not None])
-    assert all([name in df2.columns for name in ["Star", x, y, z, "flag"]
-                if name is not None])
+    assert all(name in df1.columns for name in ["Star", x, y, z, "flag"]
+                    if name is not None)
+    assert all(name in df2.columns for name in ["Star", x, y, z, "flag"]
+                    if name is not None)
 
 
 def test_homogeneous_flag(client, form_data):
@@ -227,8 +222,7 @@ def test_empty_checkbox(client, form_data):
 @pytest.fixture()
 def mpld3_form_data():
     """Default form data values for mpld3 testing."""
-    form = {'x1': 'teff', 'x2': 'vt', 'y1': 'Vabs', 'y2': 'feh', 'z': 'logg'}
-    return form
+    return {'x1': 'teff', 'x2': 'vt', 'y1': 'Vabs', 'y2': 'feh', 'z': 'logg'}
 
 
 def test_mpld3_post_request(client, mpld3_form_data):
