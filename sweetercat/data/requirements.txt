@@ -1,4 +1,4 @@
-numpy==1.18.4
+numpy==1.19.0
 pyyaml>=4.2b1
 pandas==1.0.4
 scipy==1.4.1
