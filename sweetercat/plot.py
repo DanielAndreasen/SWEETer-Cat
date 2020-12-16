@@ -7,7 +7,6 @@ from bokeh.models import ColorBar, HoverTool, LinearColorMapper, Spacer
 from bokeh.palettes import Viridis11, Inferno11, Plasma11
 from bokeh.plotting import ColumnDataSource, figure
 from bokeh.resources import INLINE
-from bokeh.util.string import encode_utf8
 from flask import flash, redirect, render_template, session, url_for
 import numpy as np
 import pandas as pd
@@ -309,7 +308,7 @@ def plot_page(df, columns, request, page):
         colorschemes=colorschemes,
         colorscheme=colorscheme
     )
-    return encode_utf8(html)
+    return html
 
 
 def check_scale(x, y, xscale, yscale):

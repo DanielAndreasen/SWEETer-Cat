@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 from astropy import constants as c
-from werkzeug.contrib.cache import SimpleCache
+from cachelib import SimpleCache
 cache = SimpleCache()
 
 colors = {
