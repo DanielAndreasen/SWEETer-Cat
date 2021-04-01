@@ -26,5 +26,5 @@ matplotlib==3.4.1
 git+https://github.com/mpld3/mpld3@master
 tables==3.6.1
 apscheduler==3.7.0
-PyAstronomy==0.15.2
+PyAstronomy==0.16.0
 airbrake==2.1.2
