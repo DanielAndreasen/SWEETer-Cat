@@ -3,5 +3,5 @@ pyyaml>=4.2b1
 pandas==1.2.4
 scipy==1.6.3
 astropy==4.2.1
-matplotlib==3.3.3
+matplotlib==3.4.2
 tables==3.6.1
