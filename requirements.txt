@@ -2,7 +2,7 @@ gunicorn==20.1.0
 backports-abc==0.5
 bkcharts==0.2
 bokeh==2.4.1
-certifi==2021.5.30
+certifi==2021.10.8
 chardet==4.0.0
 click==8.0.1
 Flask==2.0.1
