@@ -9,7 +9,7 @@ Flask==2.1.2
 idna==3.3
 itsdangerous==2.1.2
 Jinja2>=2.10.1
-MarkupSafe==2.1.0
+MarkupSafe==2.1.1
 numpy==1.22.2
 python-dateutil==2.8.2
 pyyaml>=4.2b1
