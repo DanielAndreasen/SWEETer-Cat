@@ -2,6 +2,6 @@ numpy==1.23.0
 pyyaml>=4.2b1
 pandas==1.4.3
 scipy==1.8.1
-astropy==5.0.4
+astropy==5.1
 matplotlib==3.5.1
 tables==3.7.0
