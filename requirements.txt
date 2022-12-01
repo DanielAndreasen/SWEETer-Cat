@@ -1,7 +1,7 @@
 gunicorn==20.1.0
 backports-abc==0.5
 bkcharts==0.2
-bokeh==3.0.0
+bokeh==3.0.2
 certifi==2022.9.24
 chardet==5.0.0
 click==8.1.3
