@@ -4,4 +4,4 @@ pandas==1.5.3
 scipy==1.10.0
 astropy==5.2.1
 matplotlib==3.6.3
-tables==3.7.0
+tables==3.8.0
