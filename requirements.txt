@@ -24,7 +24,7 @@ scipy==1.10.0
 astropy==5.2.1
 matplotlib==3.6.3
 git+https://github.com/mpld3/mpld3@master
-tables==3.7.0
+tables==3.8.0
 apscheduler==3.9.1.post1
 PyAstronomy==0.18.0
 airbrake==2.1.2
