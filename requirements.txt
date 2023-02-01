@@ -14,7 +14,7 @@ numpy==1.24.1
 python-dateutil==2.8.2
 pyyaml>=4.2b1
 requests>=2.20.0
-singledispatch==3.7.0
+singledispatch==4.0.0
 six==1.16.0
 tornado==6.2
 urllib3>=1.24.2
