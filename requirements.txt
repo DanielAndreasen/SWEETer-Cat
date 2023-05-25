@@ -16,7 +16,7 @@ pyyaml>=4.2b1
 requests>=2.20.0
 singledispatch==4.0.0
 six==1.16.0
-tornado==6.3.1
+tornado==6.3.2
 urllib3>=1.24.2
 cachelib==0.10.2
 pandas==2.0.1
