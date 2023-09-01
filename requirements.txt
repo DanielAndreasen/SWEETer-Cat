@@ -20,7 +20,7 @@ tornado==6.3.3
 urllib3>=1.24.2
 cachelib==0.10.2
 pandas==2.1.0
-scipy==1.11.1
+scipy==1.11.2
 astropy==5.3
 matplotlib==3.7.1
 git+https://github.com/mpld3/mpld3@master
