@@ -1,7 +1,7 @@
 gunicorn==21.2.0
 backports-abc==0.5
 bkcharts==0.2
-bokeh==3.3.4
+bokeh==3.4.0
 certifi==2024.2.2
 chardet==5.2.0
 click==8.1.7
@@ -11,7 +11,7 @@ itsdangerous==2.1.2
 Jinja2>=2.10.1
 MarkupSafe==2.1.5
 numpy==1.26.4
-python-dateutil==2.9.0
+python-dateutil==2.9.0.post0
 pyyaml>=4.2b1
 requests>=2.20.0
 singledispatch==4.1.0
@@ -21,10 +21,10 @@ urllib3>=1.24.2
 cachelib==0.12.0
 pandas==2.2.1
 scipy==1.12.0
-astropy==6.0.0
+astropy==6.0.1
 matplotlib==3.8.3
 git+https://github.com/mpld3/mpld3@master
 tables==3.9.2
 apscheduler==3.10.4
-PyAstronomy==0.20.0
+PyAstronomy==0.21.0
 airbrake==2.1.2
