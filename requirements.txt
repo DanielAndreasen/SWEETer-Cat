@@ -1,4 +1,4 @@
-gunicorn==21.2.0
+gunicorn==22.0.0
 backports-abc==0.5
 bkcharts==0.2
 bokeh==3.4.0
