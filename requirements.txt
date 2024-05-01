@@ -18,7 +18,7 @@ singledispatch==4.1.0
 six==1.16.0
 tornado==6.4
 urllib3>=1.24.2
-cachelib==0.12.0
+cachelib==0.13.0
 pandas==2.2.1
 scipy==1.12.0
 astropy==6.0.1
