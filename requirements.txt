@@ -5,7 +5,7 @@ bokeh==3.4.1
 certifi==2024.2.2
 chardet==5.2.0
 click==8.1.7
-Flask==3.0.2
+Flask==3.0.3
 idna==3.6
 itsdangerous==2.1.2
 Jinja2>=2.10.1
