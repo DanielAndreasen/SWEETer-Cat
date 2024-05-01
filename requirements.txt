@@ -7,7 +7,7 @@ chardet==5.2.0
 click==8.1.7
 Flask==3.0.3
 idna==3.7
-itsdangerous==2.1.2
+itsdangerous==2.2.0
 Jinja2>=2.10.1
 MarkupSafe==2.1.5
 numpy==1.26.4
